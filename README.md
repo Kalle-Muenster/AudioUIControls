@@ -1,2 +1,2 @@
 # MidiGUI
-Set of control elements which 'out of the box' offer support for MIDI automation
+Set of control elements which 'out of the box' support MIDI automation
