@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet name="Slider" image="slider_H_png"
+             count="1">
+    <element name="Horizontal" count="3">
+        <group name="Blet" count="3">
+            <sprite name="Flat">
+                <X>0</X>
+                <Y>0</Y>
+                <W>256</W>
+                <H>31</H>
+            </sprite>
+            <sprite name="Lite">
+                <X>0</X>
+                <Y>32</Y>
+                <W>256</W>
+                <H>31</H>
+            </sprite>
+            <sprite name="Dark">
+                <X>0</X>
+                <Y>64</Y>
+                <W>256</W>
+                <H>31</H>
+            </sprite>
+        </group>
+        <array image="slider_leds_png"
+               name="Leds" box="32"
+               dir="X" count="8">
+            <X>12</X>
+            <Y>2</Y>
+            <W>8</W>
+            <H>28</H>
+        </array>
+        <group name="Nupsie" count="3">
+            <group name="Flat" count="3">
+                <sprite name="Small">
+                    <X>176</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>160</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>128</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+            <group name="Lite" count="3">
+                <sprite name="Small">
+                    <X>48</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>32</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>0</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+            <group name="Dark" count="3">
+                <sprite name="Small">
+                    <X>112</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>64</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+        </group>
+    </element>
+</SpriteSheet>

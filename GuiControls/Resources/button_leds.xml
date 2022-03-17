@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet name="LedButton" image="LedButton_LEDs" count="1">
+    <element enum="Stepflow.Gui.Orientation" count="3">
+        <group enum="Stepflow.Gui.Style" count="3">
+            <sprite name="Flat" image="LedButton_Flat">
+                <X>0</X>
+                <Y>0</Y>
+                <W>64</W>
+                <H>64</H>
+            </sprite>
+            <sprite name="Lite" image="LedButton_Lite">
+                <X>0</X>
+                <Y>0</Y>
+                <W>64</W>
+                <H>64</H>
+            </sprite>
+            <sprite name="Dark" image="LedButton_Dark">
+                <X>0</X>
+                <Y>0</Y>
+                <W>64</W>
+                <H>64</H>
+            </sprite>
+        </group>
+        <array name="Horizontal" enum="Stepflow.Gui.LED" count="8" dir="Y" box="32">
+            <X>0</X>
+            <Y>0</Y>
+            <W>32</W>
+            <H>32</H>
+        </array>
+        <array name="Vertical" enum="Stepflow.Gui.LED" count="8" dir="Y" box="32">
+            <X>32</X>
+            <Y>0</Y>
+            <W>32</W>
+            <H>32</H>
+        </array>
+    </element>
+</SpriteSheet>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet image="slider_leds_png"
+             elements="1">
+  <element name="LED" enum="Stepflow.Gui.Orientation" count="2">
+      <array name="Horizontal"
+             enum="Stepflow.Gui.LED" count="8"
+             box="32" dir="X">
+          <X>12</X>
+          <Y>2</Y>
+          <W>8</W>
+          <H>28</H>
+      </array>
+      <group name="Vertical"
+             enum="Stepflow.Gui.LED" count="8">
+          <sprite name="Green">
+              <X>2</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Red">
+              <X>34</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Orange">
+              <X>130</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Blue">
+              <X>98</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Cyan">
+              <X>226</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Pink">
+              <X>194</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Mint">
+              <X>162</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+          <sprite name="Gelb">
+              <X>66</X>
+              <Y>44</Y>
+              <W>28</W>
+              <H>8</H>
+          </sprite>
+      </group>
+  </element>
+</SpriteSheet>

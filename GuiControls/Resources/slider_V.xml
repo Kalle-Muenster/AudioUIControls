@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet name="Slider" image="slider_V_png"
+             enum="Stepflow.Gui.Orientation" count="1">
+    <element name="Vertical" count="2">
+        <group name="Blet" enum="Stepflow.Gui.Style" count="3">
+            <sprite name="Flat">
+                <X>0</X>
+                <Y>0</Y>
+                <W>31</W>
+                <H>256</H>
+            </sprite>
+            <sprite name="Lite">
+                <X>32</X>
+                <Y>0</Y>
+                <W>31</W>
+                <H>256</H>
+            </sprite>
+            <sprite name="Dark">
+                <X>64</X>
+                <Y>0</Y>
+                <W>31</W>
+                <H>256</H>
+            </sprite>
+        </group>
+        <array name="Leds" enum="Stepflow.Gui.LED"
+               image="slider_leds_png"
+               box="32" dir="X"
+               count="8">
+            <X>2</X>
+            <Y>44</Y>
+            <W>28</W>
+            <H>8</H>
+        </array>
+        <group name="Nupsie" enum="Stepflow.Gui.Style" count="3">
+            <group name="Flat" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>176</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>160</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>128</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+            <group name="Lite" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>48</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>32</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>0</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+            <group name="Dark" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>112</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>96</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>64</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+        </group>
+    </element>
+</SpriteSheet>

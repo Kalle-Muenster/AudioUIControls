@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet name="MidiSlider" enum="Stepflow.Gui.Orientation" count="3">
+    <element name="Rondeal" image="slider_R_png" enum="Stepflow.Gui.Style" count="4">
+        <group name="Flat" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="All">
+                    <X>128</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Min">
+                    <X>128</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>128</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>128</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Lite" count="4">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="All">
+                    <X>0</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Min">
+                    <X>0</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>0</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>0</X>
+                    <Y>128</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Dark" count="4">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="All">
+                    <X>128</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Min">
+                    <X>128</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>128</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>128</X>
+                    <Y>0</Y>
+                    <W>128</W>
+                    <H>128</H>
+                </sprite>
+            </group>
+        </group>
+        <array name="Led"
+               image="slider_leds_png"
+               enum="Stepflow.Gui.LED"
+               box="32" dir="X" count="8">
+            <X>12</X>
+            <Y>2</Y>
+            <W>8</W>
+            <H>28</H>
+        </array>
+    </element>
+    <element name="Horizontal" image="slider_H_png" enum="Stepflow.Gui.Style" count="4">
+        <group name="Flat" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>176</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>160</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>128</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="All">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>256</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Min">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>16</X>
+                    <Y>0</Y>
+                    <W>224</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>240</X>
+                    <Y>0</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Lite" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>48</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>32</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>0</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="Min">
+                    <X>0</X>
+                    <Y>32</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>16</X>
+                    <Y>32</Y>
+                    <W>224</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>240</X>
+                    <Y>32</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="All">
+                    <X>0</X>
+                    <Y>32</Y>
+                    <W>256</W>
+                    <H>31</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Dark" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>112</X>
+                    <Y>96</Y>
+                    <W>10</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>96</Y>
+                    <W>15</W>
+                    <H>24</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>64</X>
+                    <Y>96</Y>
+                    <W>20</W>
+                    <H>32</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="Min">
+                    <X>0</X>
+                    <Y>64</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>16</X>
+                    <Y>64</Y>
+                    <W>224</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>240</X>
+                    <Y>64</Y>
+                    <W>16</W>
+                    <H>31</H>
+                </sprite>
+                <sprite name="All">
+                    <X>0</X>
+                    <Y>64</Y>
+                    <W>256</W>
+                    <H>31</H>
+                </sprite>
+            </group>
+        </group>
+        <array name="Led"
+               image="slider_leds_png"
+               enum="Stepflow.Gui.LED"
+               box="32" dir="X" count="8">
+            <X>12</X>
+            <Y>2</Y>
+            <W>8</W>
+            <H>28</H>
+        </array>
+    </element>
+    <element name="Vertical" image="slider_V_png" enum="Stepflow.Gui.Style" count="4">
+        <group name="Flat" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>176</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>160</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>128</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="Min">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>0</X>
+                    <Y>16</Y>
+                    <W>31</W>
+                    <H>224</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>0</X>
+                    <Y>240</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="All">
+                    <X>0</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>256</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Lite" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>48</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>32</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>0</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="Min">
+                    <X>32</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>32</X>
+                    <Y>16</Y>
+                    <W>31</W>
+                    <H>224</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>32</X>
+                    <Y>240</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="All">
+                    <X>32</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>256</H>
+                </sprite>
+            </group>
+        </group>
+        <group name="Dark" count="2">
+            <group name="Nipple" enum="Stepflow.Gui.MipMap" count="3">
+                <sprite name="Small">
+                    <X>96</X>
+                    <Y>112</Y>
+                    <W>16</W>
+                    <H>10</H>
+                </sprite>
+                <sprite name="Medium">
+                    <X>96</X>
+                    <Y>96</Y>
+                    <W>24</W>
+                    <H>15</H>
+                </sprite>
+                <sprite name="Large">
+                    <X>96</X>
+                    <Y>64</Y>
+                    <W>32</W>
+                    <H>20</H>
+                </sprite>
+            </group>
+            <group name="Blet" count="4">
+                <sprite name="Min">
+                    <X>64</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="Mid">
+                    <X>64</X>
+                    <Y>16</Y>
+                    <W>31</W>
+                    <H>224</H>
+                </sprite>
+                <sprite name="Max">
+                    <X>64</X>
+                    <Y>240</Y>
+                    <W>31</W>
+                    <H>16</H>
+                </sprite>
+                <sprite name="All">
+                    <X>64</X>
+                    <Y>0</Y>
+                    <W>31</W>
+                    <H>256</H>
+                </sprite>
+            </group>
+        </group>
+        <array name="Led"
+               enum="Stepflow.Gui.LED"
+               image="slider_leds_png"
+               box="32" dir="X"
+               count="8">
+            <X>2</X>
+            <Y>44</Y>
+            <W>28</W>
+            <H>8</H>
+        </array>
+    </element>
+</SpriteSheet>

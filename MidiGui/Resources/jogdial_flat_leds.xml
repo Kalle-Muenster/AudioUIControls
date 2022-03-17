@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<SpriteSheet file="DieFlachenLeds" elements="1">
+  <element name="JogDial" count="1">
+      <group name="Flat" count="4">
+          <brush name="Top">
+              <X>122</X>
+              <Y>12</Y>
+              <W>11</W>
+              <H>53</H>
+          </brush>
+          <brush name="Left">
+              <X>12</X>
+              <Y>123</Y>
+              <W>53</W>
+              <H>11</H>
+          </brush>
+          <brush name="Right">
+              <X>191</X>
+              <Y>123</Y>
+              <W>53</W>
+              <H>11</H>
+          </brush>
+		  <brush name="Bottom">
+              <X>122</X>
+              <Y>191</Y>
+              <W>11</W>
+              <H>53</H>
+          </brush>
+      </group>
+  </element>
+</SpriteSheet>

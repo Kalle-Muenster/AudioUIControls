@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet name="Slider" image="slider_R_png" enum="Stepflow.Gui.Orientation" count="1">
+  <element name="Rondeal" count="3">
+      <group name="Blet" enum="Stepflow.Gui.Style" count="3">
+          <sprite name="Lite">
+              <X>0</X>
+              <Y>128</Y>
+              <W>128</W>
+              <H>128</H>
+          </sprite>
+          <sprite name="Dark">
+              <X>128</X>
+              <Y>0</Y>
+              <W>128</W>
+              <H>128</H>
+          </sprite>
+          <sprite name="Flat">
+              <X>128</X>
+              <Y>128</Y>
+              <W>128</W>
+              <H>128</H>
+          </sprite>
+      </group>
+      <array image="slider_leds_png"
+             name="Leds" box="32"
+             dir="X" count="8">
+          <X>12</X>
+          <Y>2</Y>
+          <W>8</W>
+          <H>28</H>
+      </array>
+      <group name="Nupsie" count="3">
+          <group name="Flat" count="3">
+              <sprite name="Small">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Medium">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Large">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+          </group>
+          <group name="Lite" count="3">
+              <sprite name="Small">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Medium">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Large">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+          </group>
+          <group name="Dark" count="3">
+              <sprite name="Small">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Medium">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+              <sprite name="Large">
+                  <X>0</X>
+                  <Y>0</Y>
+                  <W>128</W>
+                  <H>128</H>
+              </sprite>
+          </group>
+      </group>
+  </element>
+</SpriteSheet>
