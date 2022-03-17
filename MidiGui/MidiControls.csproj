@@ -222,7 +222,7 @@
     <None Include="Resources\jogdial_flat_leds.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SliderControl\GuiControls.csproj">
+    <ProjectReference Include="..\GuiControls\GuiControls.csproj">
       <Project>{681014c1-b3f7-403e-80a7-44c7f9132afd}</Project>
       <Name>GuiControls</Name>
     </ProjectReference>
