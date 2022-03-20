@@ -93,12 +93,6 @@
     <Reference Include="Consola">
       <HintPath>linkage\Consola.dll</HintPath>
     </Reference>
-    <Reference Include="ControlledValues">
-      <HintPath>linkage\ControlledValues.dll</HintPath>
-    </Reference>
-    <Reference Include="Int24Types">
-      <HintPath>linkage\Int24Types.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -122,8 +116,6 @@
     <Compile Include="Gui\GuiRanger.Designer.cs">
       <DependentUpon>GuiRanger.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\SpriteSheet.cs" />
-    <Compile Include="Gui\TouchFinger.cs" />
     <Compile Include="Gui\GuiMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -143,26 +135,24 @@
       <DependentUpon>ValueDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Elements.cs" />
+    <Compile Include="Helpers\PointerInput.cs" />
     <Compile Include="Helpers\Rectangles.cs" />
+    <Compile Include="Helpers\SpriteSheet.cs" />
+    <Compile Include="Helpers\TouchFinger.cs" />
     <Compile Include="Interfaces\Interactions.cs" />
+    <Compile Include="Interfaces\ValenceField.cs" />
     <Compile Include="Menues\ValenceBondMenu.cs" />
-    <Compile Include="Gui\ValenceField.cs">
-      <CustomToolNamespace>Stepflow.Gui</CustomToolNamespace>
-    </Compile>
     <Compile Include="Helpers\LedDrawer.cs" />
     <Compile Include="Helpers\TypesAndEnums.cs" />
     <Compile Include="Interfaces\Automation.cs" />
     <Compile Include="Interfaces\Connection.cs" />
     <Compile Include="Interfaces\Serialization.cs" />
-    <Compile Include="Helpers\PinAccessor.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="Win32Import\Win32DmxIO.cs" />
-    <Compile Include="Gui\PointerInput.cs" />
     <Compile Include="Gui\GuiSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -174,7 +164,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Win32Import\Win32PointerDevices.cs" />
     <Compile Include="Win32Import\Win32ReturnCode.cs" />
     <Compile Include="Win32Import\Win32SystemMetrics.cs" />
@@ -206,7 +195,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="PrepareLinkage.cmd" />
+    <None Include="PrepareLinkage48.cmd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -248,9 +237,15 @@
     <Folder Include="Dmx\" />
     <Folder Include="linkage\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ControlledValues\DotNetDLL\ControlledValues\ControlledValues\ControlledValues.vcxproj">
+      <Project>{fe259fec-3043-4289-b4eb-a4fbd0577180}</Project>
+      <Name>ControlledValues</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)PrepareLinkage.cmd $(PlatformName) $(Configuration)</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)PrepareLinkage48.cmd $(PlatformName) $(Configuration)</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

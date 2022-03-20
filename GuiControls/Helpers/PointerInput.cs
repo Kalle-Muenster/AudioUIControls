@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 //using Windows.Devices.Input;
 //using Windows.Devices.HumanInterfaceDevice;
-using Windows.Foundation;
+//using Windows.Foundation;
 using Win32Imports;
 using Win32Imports.Touch;
 using PointerAction = Win32Imports.Touch.PointerAction;

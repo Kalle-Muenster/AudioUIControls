@@ -13,6 +13,7 @@ using Stepflow.Gui.Helpers;
 using Orientation = Stepflow.Gui.Orientation;
 using Style       = Stepflow.Gui.Style;
 using Point32 = Win32Imports.Touch.Point32;
+using Resources = GuiControls.Properties.Resources;
 
 #if   USE_WITH_WF
 using System.Windows.Forms;
@@ -118,9 +119,9 @@ namespace Stepflow.Gui
             Valence.RegisterIntervaluableType<Controlled.Float32>();
             scale = SystemMetrics.SCREENSCALE;
             images = new Bitmap[3];
-            images[0] = Stepflow.Properties.Resources.meter_R;
-            images[1] = Stepflow.Properties.Resources.meter_H;
-            images[2] = Stepflow.Properties.Resources.meter_V;
+            images[0] = Resources.meter_R;
+            images[1] = Resources.meter_H;
+            images[2] = Resources.meter_V;
 
             TaskAssist<SteadyAction,Action>.Init( 60 );
             sources = new Rectangle[3][] {

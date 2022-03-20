@@ -85,10 +85,10 @@ namespace Midi
         private MidiInOut     midiIO = null;
         private TaskAssist<SteadyAction,Action> propellor;
 
-#if DEBUG
-        private System.Windows.Forms.Label lbl_position;
-        private System.Windows.Forms.Label lbl_motion;
-#endif
+//#if DEBUG
+//        private System.Windows.Forms.Label lbl_position;
+//        private System.Windows.Forms.Label lbl_motion;
+//#endif
 
         private static Rectangle rectFromXmlSheet(System.Xml.XPath.XPathNavigator xpath, string name)
         {
@@ -192,9 +192,9 @@ namespace Midi
                     MovementFast( this, new ValueChangeArgs<float>( actual > 0 ? m : -m ) );
                 } 
             }
-#if DEBUG
-            positText = string.Format("value: {0}, flow: {1}, Accel: {2}", pos.VAL, flow.VAL, Accellaration);
-#endif
+//#if DEBUG
+//            positText = string.Format("value: {0}, flow: {1}, Accel: {2}", pos.VAL, flow.VAL, Accellaration);
+//#endif
             flow.Active = state;
             pos.Active = state;
         }
@@ -253,10 +253,10 @@ namespace Midi
 
 
 
-#if DEBUG
-        private volatile string slopetext = "";
-        private volatile string positText = "";
-#endif
+//#if DEBUG
+//        private volatile string slopetext = "";
+//        private volatile string positText = "";
+//#endif
         private volatile uint slopetime = 0;
         private volatile bool useracces = false;
         private volatile bool slopecase = false;
@@ -346,7 +346,7 @@ namespace Midi
         }
 
 
-        public JogDial() {
+        public JogDial() { /*
 #if DEBUG
             this.lbl_position = new System.Windows.Forms.Label();
             this.lbl_position.Anchor = (System.Windows.Forms.AnchorStyles) ( 
@@ -382,15 +382,8 @@ namespace Midi
             this.Controls.Add(this.lbl_position);
 
             Consola.StdStream.Out.WriteLine( "Midi note C2: {0} Hz", Frequency.fromMidiNote( Win32Imports.Midi.Note.C2) );
-#endif
+#endif */
 
-            //try { touchinput = new PointerInput( this, Application.OpenForms[0] );
-            //} catch ( System.Exception ex ) {
-            //    Load += (object sender, EventArgs e) => {
-            //        touchinput = new PointerInput(this, Application.OpenForms[0]);
-            //        touchinput.TouchFingerDown += Touchinput_TouchFingerDown;
-            //    };
-            //}
             interaction = InteractionMode.FlowByQuadrants;
             InitializeComponent();
             midi().binding.InitializeComponent( this, components, Invalidate );
@@ -485,10 +478,10 @@ namespace Midi
 
         protected override void OnPaint( PaintEventArgs e )
         { base.OnPaint(e);
-#if DEBUG
-            lbl_position.Text = positText;
-            lbl_motion.Text = slopetext;
-#endif
+//#if DEBUG
+//            lbl_position.Text = positText;
+//            lbl_motion.Text = slopetext;
+//#endif
             float angle = pos.VAL;
             GraphicsState pushed = e.Graphics.Save();
               if( Style == Style.Flat ) {      
@@ -563,9 +556,9 @@ namespace Midi
                     angleOffset = touchPointAngle( e.Location ) - Position;
                     Wheel.MouseMove += Wheel_DirectionalInteraction;
                 } Wheel.MouseLeave += Wheel_MouseLeave;
-#if DEBUG
-                slopetext = "useracces";
-#endif
+//#if DEBUG
+//                slopetext = "useracces";
+//#endif
                 if( (!useracces) && slopecase ) {
                     SlopeCase = true;
                 } else {
@@ -673,11 +666,11 @@ namespace Midi
             } else {
                 if( SlopeCase = slopefunction() ) {
                     slopetime += (uint)propellor.driver.Speed;
-#if DEBUG
-                    slopetext = "slope: " + slopetime.ToString();
-                } else {
-                    slopetext = "slope done: " + slopetime.ToString();
-#endif
+//#if DEBUG
+//                    slopetext = "slope: " + slopetime.ToString();
+//                } else {
+//                    slopetext = "slope done: " + slopetime.ToString();
+//#endif
                 }
             }
         }

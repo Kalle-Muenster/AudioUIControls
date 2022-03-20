@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiControls", "GuiControls\GuiControls.csproj", "{681014C1-B3F7-403E-80A7-44C7F9132AFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiControls", "GuiControls\GuiControls48.csproj", "{681014C1-B3F7-403E-80A7-44C7F9132AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiControls", "MidiGui\MidiControls.csproj", "{81C51CA6-5C81-47A0-81AD-4379BD9C3460}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiControls", "MidiControls\MidiControls48.csproj", "{81C51CA6-5C81-47A0-81AD-4379BD9C3460}"
 	ProjectSection(ProjectDependencies) = postProject
 		{681014C1-B3F7-403E-80A7-44C7F9132AFD} = {681014C1-B3F7-403E-80A7-44C7F9132AFD}
 	EndProjectSection

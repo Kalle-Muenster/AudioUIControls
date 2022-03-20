@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <StartupObject>TestContainer.Program</StartupObject>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GuiControls\GuiControls50.csproj" />
+    <ProjectReference Include="..\MidiControls\MidiControls50.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Consola">
+      <HintPath>..\GuiControls\linkage\Consola.dll</HintPath>
+    </Reference>
+    <Reference Include="Int24Types">
+      <HintPath>..\GuiControls\linkage\Int24Types.dll</HintPath>
+    </Reference>
+    <Reference Include="TaskAssist">
+      <HintPath>..\GuiControls\linkage\TaskAssist.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

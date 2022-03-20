@@ -14,6 +14,7 @@ using System.Xml.XPath;
 using Point32 = Win32Imports.Touch.Point32;
 using Win32Imports.Touch;
 using System.Collections;
+using Resources = GuiControls.Properties.Resources;
 
 namespace Stepflow.Gui
 {
@@ -512,12 +513,12 @@ namespace Stepflow.Gui
             Valence.RegisterIntervaluableType<Controlled.Int32>();
 
             images = new Bitmap[] {
-                Properties.Resources.slider_leds_png,
-                Properties.Resources.slider_H_png,
-                Properties.Resources.slider_V_png
+                Resources.slider_leds_png,
+                Resources.slider_H_png,
+                Resources.slider_V_png
             };
 
-            SpriteSheet.Loader loader = new SpriteSheet.Loader( Properties.Resources.slider_complete_xml );
+            SpriteSheet.Loader loader = new SpriteSheet.Loader( Resources.slider_complete_xml );
 
             source = new IRectangle[2][][] {
                 new IRectangle[3][] {

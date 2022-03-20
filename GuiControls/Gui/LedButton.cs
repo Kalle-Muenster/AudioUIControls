@@ -12,6 +12,7 @@ using Stepflow.TaskAssist;
 using Stepflow.Controller;
 using Orientation = Stepflow.Gui.Orientation;
 using Rectangle = System.Drawing.Rectangle;
+using Resources = GuiControls.Properties.Resources;
 using ButtonValenceField = Stepflow.Gui.ValenceField< 
         Stepflow.Controlled.Int8,
         Stepflow.Gui.LedButtonValence
@@ -198,13 +199,13 @@ namespace Stepflow.Gui
             Valence.RegisterIntervaluableType<Controlled.Float32>();
 
             //images = SpriteSheet.loadSheetFromXml( Stepflow.Properties.Resources.button_leds_xml );
-            buttonLeds = Stepflow.Properties.Resources.LedButton_LEDs;
-            background = new Bitmap[6] { Stepflow.Properties.Resources.LedButton_Flat,
-                                         Stepflow.Properties.Resources.button_hover_Lite,
-                                         Stepflow.Properties.Resources.button_hover_Dark,
-                                         Stepflow.Properties.Resources.button_hover_Flat,
-                                         Stepflow.Properties.Resources.LedButton_Lite,
-                                         Stepflow.Properties.Resources.LedButton_Dark };
+            buttonLeds = Resources.LedButton_LEDs;
+            background = new Bitmap[6] { Resources.LedButton_Flat,
+                                         Resources.button_hover_Lite,
+                                         Resources.button_hover_Dark,
+                                         Resources.button_hover_Flat,
+                                         Resources.LedButton_Lite,
+                                         Resources.LedButton_Dark };
             TaskAssist<SteadyAction,Action>.Init( 60 );
         }
 
@@ -367,6 +368,7 @@ namespace Stepflow.Gui
 
         public void DefineState( int index, Enum value, LED color )
         {
+            if( led[9] != LED.off && led[9] == color ) return; 
             if( index > 0 && index < 9 ) {
                 States[index] = value;
                 led[index] = color;
@@ -376,16 +378,29 @@ namespace Stepflow.Gui
             }
         }
 
-        public void ResetButtonStates()
+        public bool SetUpState( LED color, Enum value )
         {
-            led[0] = LED.off;
-            States[0] = Default.NoState;
-            for( int i = 0; i < 8; ++i ) {
-                States[i+1] = (Default)(1<<i);
-                led[i+1] = LED.EMPTY;
-            } highest = 2;
-            led[9] = LED.off;
-            States[9] = Default.CLICK;
+            if (led[9] == color) return false;
+            int index = NumberOfStates;
+            if ((index <= 0 || index >= 8)) return false;
+            Type et = value.GetType();
+            bool accept = true;
+            for ( int i = 1; i<index; ++i ) {
+                if (led[i] == color) { index = i-1; break; }
+                if (States[i] == (Enum)LED.EMPTY) { index = i-1; break; }
+                if (et == States[i].GetType()) {
+                    if( !(accept = value.ToValue() != States[i].ToValue()) )
+                        break;
+                }
+            } if ( accept ) {
+                if ( accept = (++index < 9) ) {
+                    States[index] = value;
+                    led[index] = color;
+                    if ( index >= NumberOfStates ) {
+                        NumberOfStates = (byte)index;
+                    }
+                }
+            } return accept;
         }
 
         public void DefineClick( LED color )
@@ -393,20 +408,20 @@ namespace Stepflow.Gui
             led[9] = color;
         }
 
-        public void AddState( Enum newOrExistingState, LED newColor )
+        public void AddState( Enum newOrExistingState, LED newOrExistingColor )
         {
             bool found = false;
             byte brandNewState = 0;
             for( int i = 0; i < MaxNumState; ++i ) {
                 if( newOrExistingState == States[i] ) {
-                    led[i] = newColor;
+                    led[i] = newOrExistingColor;
                     found = true;
                     brandNewState = (byte)i;
                     break;
                 }
             } if( !found ) {
                 for( int i=0;i< MaxNumState; ++i ) {
-                    if( led[i] == newColor ) {
+                    if( led[i] == newOrExistingColor ) {
                         States[i] = newOrExistingState;
                         found = true;
                         brandNewState = (byte)i;
@@ -421,8 +436,20 @@ namespace Stepflow.Gui
                       ? brandNewState : highest;
             if( brandNewState > 0 ) {
                 States[brandNewState] = newOrExistingState;
-                led[brandNewState] = newColor;
+                led[brandNewState] = newOrExistingColor;
             }
+        }
+
+        public void ResetButtonStates()
+        {
+            led[0] = LED.off;
+            States[0] = Default.NoState;
+            for (int i = 0; i < 8; ++i) {
+                States[i + 1] = (Default)(1 << i);
+                led[i + 1] = LED.EMPTY;
+            } highest = 2;
+            led[9] = LED.off;
+            States[9] = Default.CLICK;
         }
 
         private Enum transition( Enum to )

@@ -1,4 +1,5 @@
-﻿//using Stepflow.Midi.ControlHelpers;
+﻿using GuiControls.Properties;
+
 namespace Stepflow.Gui
 {
     partial class LedButton
@@ -63,7 +64,7 @@ namespace Stepflow.Gui
             this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 33F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.BackgroundImage = global::Stepflow.Properties.Resources.LedButton_Lite;
+            this.BackgroundImage = Resources.LedButton_Lite;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.CausesValidation = false;
             this.ContextMenuStrip = this.mnu_config;

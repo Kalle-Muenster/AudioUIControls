@@ -3,6 +3,7 @@ using Stepflow;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Collections;
+using Resources = GuiControls.Properties.Resources;
 #if USE_WITH_WF
 using System.Drawing;
 using System.Windows.Forms;
@@ -20,11 +21,12 @@ using RectF  = System.Windows.Rect;
 using 
 #endif
 
+
 namespace System
 {
     public static class Extensions
     {
-        private static IFormatProvider fmtr = Stepflow.Properties.Resources.Culture;
+        private static IFormatProvider fmtr = GuiControls.Properties.Resources.Culture;
         public static Int32 ToInt32( this Enum value )
         {
             return (value as IConvertible).ToInt32( fmtr );

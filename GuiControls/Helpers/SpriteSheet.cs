@@ -325,7 +325,7 @@ namespace Stepflow.Gui
 
             public Bitmap getImage( string xpath )
             {
-                return Properties.Resources.ResourceManager.GetObject(
+                return GuiControls.Properties.Resources.ResourceManager.GetObject(
                        xml.SelectSingleNode( xpath + "/@image" ).ToString()
                 ) as Bitmap;
             }

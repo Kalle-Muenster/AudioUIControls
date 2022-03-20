@@ -1,0 +1,144 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0-windows7.0": {
+      "ControlledValues/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/ControlledValues.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ControlledValues.dll": {}
+        }
+      },
+      "GuiControls/0.0.0.1": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "ControlledValues": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/GuiControls.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/GuiControls.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WindowsForms"
+        ]
+      },
+      "MidiControls/0.0.0.1": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v5.0",
+        "compile": {
+          "bin/placeholder/MidiControls.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MidiControls.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WindowsForms"
+        ]
+      }
+    }
+  },
+  "libraries": {
+    "ControlledValues/1.0.0": {
+      "type": "project",
+      "path": "../../ControlledValues/Core5Dll/ControledValues/Stepflow/Stepflow.vcxproj",
+      "msbuildProject": "../../ControlledValues/Core5Dll/ControledValues/Stepflow/Stepflow.vcxproj"
+    },
+    "GuiControls/0.0.0.1": {
+      "type": "project",
+      "path": "../GuiControls/GuiControls50.csproj",
+      "msbuildProject": "../GuiControls/GuiControls50.csproj"
+    },
+    "MidiControls/0.0.0.1": {
+      "type": "project",
+      "path": "../MidiControls/MidiControls50.csproj",
+      "msbuildProject": "../MidiControls/MidiControls50.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0-windows7.0": [
+      "GuiControls >= 0.0.0.1",
+      "MidiControls >= 0.0.0.1"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\kalle\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\TestContainer\\TestContainer.csproj",
+      "projectName": "TestContainer",
+      "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\TestContainer\\TestContainer.csproj",
+      "packagesPath": "C:\\Users\\kalle\\.nuget\\packages\\",
+      "outputPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\TestContainer\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\kalle\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0-windows7.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet": {},
+        "d:\\LIBRARIES": {},
+        "https://www.nuget.org/api/v2/": {}
+      },
+      "frameworks": {
+        "net5.0-windows7.0": {
+          "targetAlias": "net5.0-windows",
+          "projectReferences": {
+            "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj": {
+              "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj"
+            },
+            "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\MidiControls\\MidiControls50.csproj": {
+              "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\MidiControls\\MidiControls50.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0-windows7.0": {
+        "targetAlias": "net5.0-windows",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          },
+          "Microsoft.WindowsDesktop.App.WindowsForms": {
+            "privateAssets": "none"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

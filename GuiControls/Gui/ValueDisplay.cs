@@ -15,6 +15,8 @@ using Stepflow.Gui.Automation;
 using Orientation  = Stepflow.Gui.Orientation;
 using Style        = Stepflow.Gui.Style;
 using Compatibles  = System.Collections.Generic.List<Stepflow.Gui.Valence.FieldDescriptor>;
+using Resources    = GuiControls.Properties.Resources;
+
 #if IMPLEMENT_MIDICONTOL
 using MidiControls;
 using Win32Imports.Midi;
@@ -39,11 +41,11 @@ namespace Stepflow.Gui
 #endif
             Valence.RegisterIntervaluableType<Controlled.Float32>();
             stylers = new StyleSet[] {
-                new StyleSet( Stepflow.Properties.Resources.umrandung,
+                new StyleSet( Resources.umittelung,
                               Color.Gray,Color.Black,Color.LightGray ),
-                new StyleSet( Stepflow.Properties.Resources.hellebarden,
+                new StyleSet( Resources.hellebarden,
                               Color.LightGray,Color.Black,Color.DarkBlue ),
-                new StyleSet( Stepflow.Properties.Resources.umrandunkel,
+                new StyleSet( Resources.umrandunkel,
                               StyleSet.Dark,Color.Lime,Color.CornflowerBlue )
             };
             borders = new Rectangle[] {

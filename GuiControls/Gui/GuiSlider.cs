@@ -19,7 +19,7 @@ using Stepflow.Gui.Helpers;
 using Stepflow.Gui.Automation;
 using Stepflow.Controller;
 
-using Resources = Stepflow.Properties.Resources;
+using Resources = GuiControls.Properties.Resources;
 using Orientation = Stepflow.Gui.Orientation;
 using Style = Stepflow.Gui.Style;
 #if DEBUG
@@ -816,7 +816,7 @@ namespace Stepflow.Gui
 
             source = new IRectangle[3][][][];
             SpriteSheet.Loader loader = new SpriteSheet.Loader(
-                Stepflow.Properties.Resources.slider_complete_xml
+                Resources.slider_complete_xml
                                                                 );
             int elmcount = loader.elmCount();
             source[0] = new IRectangle[elmcount][][];
@@ -840,7 +840,7 @@ namespace Stepflow.Gui
                     for( MipMap m = MipMap.Small; m <= MipMap.Large; ++m )
                     source[1][e][(int)s][(int)m] = loader.getSprite( o, s+".Nipple."+m );
                 }
-            } images[3] = Properties.Resources.slider_leds_png;
+            } images[3] = Resources.slider_leds_png;
             
             TaskAssist<SteadyAction,Action>.Init(60);
             if(!PointerInput.isInitialized() ) {
@@ -1066,6 +1066,8 @@ namespace Stepflow.Gui
         private TouchGesturesHandler<GuiSlider> touche_inter_patsche;
         TouchGesturesHandler<GuiSlider> ITouchGesturedElement<GuiSlider>.handler() { return touche_inter_patsche; }
 
+        // basic touch interface events, directly triggered on touch down/move/lift for each finger
+
         public event FingerTip.TouchDelegate TouchDown {
             add{ getInTouch().handler().events().TouchDown += value; }
             remove{ getInTouch().handler().events().TouchDown -= value; }
@@ -1079,21 +1081,21 @@ namespace Stepflow.Gui
             remove{ getInTouch().handler().events().TouchMove -= value; }
         }
 
-        // higher level events, abstracted from interpreting Downs/Moves/Lifts over time axis...  
+        // higher level events, abstracted from interpreting several Downs/Moves/Lifts (of maybe several fingers) over time axis...  
 
-        public event MultiFinger.TouchDelegate TouchTapped {
+        public event MultiFinger.TouchDelegate TouchTapped { // almost same like 'doubleclick'
             add { getInTouch().handler().events().TouchTapped += value; }
             remove { getInTouch().handler().events().TouchTapped -= value; }
         }
-        public event MultiFinger.TouchDelegate TouchDraged {
+        public event MultiFinger.TouchDelegate TouchDraged { // almost same like 'dragndrop finished' or 'dropped'
             add { getInTouch().handler().events().TouchDraged += value; }
             remove { getInTouch().handler().events().TouchDraged -= value; }
         }
-        public event MultiFinger.TouchDelegate TouchRotate { 
+        public event MultiFinger.TouchDelegate TouchRotate { // apears when more then one fingers (at least two involved) gesturing a rotation on the screen
             add { getInTouch().handler().events().TouchRotate += value; }
             remove { getInTouch().handler().events().TouchRotate -= value; }
         }
-        public event MultiFinger.TouchDelegate TouchResize {
+        public event MultiFinger.TouchDelegate TouchResize { // apears when more then one fingers (at least two involved) gesturing a resize on the screen 
             add { getInTouch().handler().events().TouchResize += value; }
             remove { getInTouch().handler().events().TouchResize -= value; }
         }
