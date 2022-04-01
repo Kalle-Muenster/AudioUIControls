@@ -5,9 +5,10 @@ using System.Runtime.InteropServices;
 using Win32Imports.Touch;
 #if USE_WITH_WF
 using Point = System.Drawing.Point;
-using Rectangle = System.Drawing.Rectangle;
+using Rect = System.Drawing.Rectangle;
 #else
 using Point = System.Windows.Point;
+using Rect = SystemWindows.Rect;
 #endif
 
 
@@ -21,7 +22,191 @@ namespace Stepflow.Gui
         AbsoluteEdges,
         SystemDefault
     }
-    
+
+
+    [StructLayout(LayoutKind.Explicit, Size = 4)]
+    public struct Point32
+    {
+        public static readonly Point32 ZERO = new Point32(0x00000000);
+        public static readonly Point32 EMPTY = new Point32(0xFFFFFFFF);
+
+        [FieldOffset(0)]
+        private UInt32 raw;
+        [FieldOffset(0)]
+        internal Int16 x;
+        [FieldOffset(2)]
+        internal Int16 y;
+
+        public int X
+        {
+            get { return x; }
+            set { x = (short)(value & 0x0000ffff); }
+        }
+
+        public int Y
+        {
+            get { return y; }
+            set { y = (short)value; }
+        }
+
+        internal Point32(UInt32 fromRawParameter) : this()
+        {
+            raw = fromRawParameter;
+        }
+        public Point32(Point fromPoint) : this()
+        {
+            x = (short)fromPoint.X; y = (short)fromPoint.Y;
+        }
+        public Point32(int ix, int yps) : this()
+        {
+            x = (short)ix; y = (short)yps;
+        }
+        public static implicit operator Point64(Point32 cast)
+        {
+            return new Point64(cast.X, cast.Y);
+        }
+
+        public static implicit operator Size(Point32 cast)
+        {
+            return new Size(cast.x, cast.y);
+        }
+        public static Point32 operator +(Point32 This, Point32 That)
+        {
+            return new Point32(This.x + That.x, This.y + That.y);
+        }
+        public static Point32 operator -(Point32 This, Point32 That)
+        {
+            return new Point32(This.x - That.x, This.y - That.y);
+        }
+        public static Point32 operator +(Point32 This, Point That)
+        {
+            return new Point32(This.x + That.X, This.y + That.Y);
+        }
+        public static Point32 operator -(Point32 This, Point That)
+        {
+            return new Point32(This.x - That.Y, This.y - That.Y);
+        }
+        public static Point32 operator *(Point32 This, float scalar)
+        {
+            This.x = (short)(This.x * scalar); This.y = (short)(This.y * scalar); return This;
+        }
+        public static Point32 operator /(Point32 This, short scalar)
+        {
+            This.y /= scalar; This.x /= scalar; return This;
+        }
+        public static PointF64 operator /(Point32 This, Point32 That)
+        {
+            return new PointF64((float)This.x / That.x, (float)This.x / That.x);
+        }
+        public Point32 fliped() { return new Point32(y, x); }
+        public Point32 flip() { x *= -1; x += y; y -= x; x += y; return this; }
+        public Point32 flypst() { return new Point32(x, -y); }
+        public Point32 flixed() { return new Point32(-x, y); }
+        public int Summ() { return x + y; }
+        public static implicit operator Point(Point32 cast)
+        {
+            return new Point(cast.x, cast.y);
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Size = 8)]
+    public struct PointF64
+    {
+        float X;
+        float Y;
+        public PointF64(float x, float y) { X = x; Y = y; }
+        public float Summ() { return X + Y; }
+        public static implicit operator System.Drawing.PointF(PointF64 cast)
+        {
+            return new System.Drawing.PointF(cast.X, cast.Y);
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Size = 8)]
+    public struct Point64
+    {
+        public static readonly Point64 ZERO = (Point64)Point32.ZERO;
+        public static readonly Point64 EMPTY = (Point64)Point32.EMPTY;
+        public int x;
+        public int y;
+        public Point64(int X, int Y)
+        {
+            x = X; y = Y;
+        }
+        public Point64(Point point)
+        {
+            x = point.X; y = point.Y;
+        }
+        public static Point64 operator +(Point64 This, Point64 That)
+        {
+            return new Point64(This.x + That.x, This.y + That.y);
+        }
+        public static Point64 operator -(Point64 This, Point64 That)
+        {
+            return new Point64(This.x - That.x, This.y - That.y);
+        }
+        public static Point64 operator +(Point64 This, Point32 That)
+        {
+            return new Point64(This.x + That.x, This.y + That.y);
+        }
+        public static Point64 operator -(Point64 This, Point32 That)
+        {
+            return new Point64(This.x - That.x, This.y - That.y);
+        }
+        public static Point64 operator /(Point64 This, int divisor)
+        {
+            return new Point64(This.x / divisor, This.y / divisor);
+        }
+        public static Point64 operator /(Point64 This, Point64 That)
+        {
+            return new Point64(This.x / That.x, This.y / That.y);
+        }
+        public static Point64 operator *(Point64 This, Point64 That)
+        {
+            return new Point64(This.x * That.x, This.y * That.y);
+        }
+        public static Point64 operator *(Point64 This, float scalar)
+        {
+            return new Point64((int)(This.x * scalar),
+                                (int)(This.y * scalar));
+        }
+        public override string ToString()
+        {
+            return string.Format(
+                "x:{0} y:{1}", x, y
+            );
+        }
+        public static implicit operator Point64(Point cast)
+        {
+            return new Point64(cast);
+        }
+        public static implicit operator Point(Point64 cast)
+        {
+            return new Point(cast.x, cast.y);
+        }
+        public static explicit operator Size(Point64 cast)
+        {
+            return new Size(cast.x, cast.y);
+        }
+        public static Point64 operator +(Point64 This, Point That)
+        {
+            return new Point64((int)(This.x + That.X), (int)(This.y + That.X));
+        }
+        public static Point64 operator -(Point64 This, Point That)
+        {
+            return new Point64((int)(This.x - That.X), (int)(This.y - That.X));
+        }
+        public static RECT operator +(Rect That, Point64 This)
+        {
+            return new RECT(That.Left + This.x, That.Top + This.y, That.Width, That.Height);
+        }
+        public static RECT operator -(Rect That, Point64 This)
+        {
+            return new RECT(That.Left - This.x, That.Top - This.y, That.Width, That.Height);
+        }
+    }
+
+
     /// <summary> PointPT (struct)
     /// A structure which defines a point in 2D space via two 
     /// individual pointer values, each pointing a distant variables.
@@ -117,7 +302,7 @@ namespace Stepflow.Gui
     {
         IRectangle converted<RectangleData>() where RectangleData : struct, IRectangle;
         IRectangle<RType> cast<RType>() where RType : struct, IRectangle;
-        Rectangle ToRectangle();
+        Rect ToRectangle();
         bool Contains( IRectangle other );
         bool Contains( Point64 point );
         bool Intersect( IRectangle other );
@@ -142,7 +327,7 @@ namespace Stepflow.Gui
         IRectangle<RectangleData>         casted();
         RectangleData                     copied();
         RectangleReference<RectangleData> refere();
-        RectangleData                     FromRectangle( Rectangle from );
+        RectangleData                     FromRectangle( Rect from );
     }
 
     #endregion
@@ -236,11 +421,11 @@ namespace Stepflow.Gui
             return clone;
         }
 
-        public Rectangle ToRectangle()
+        public Rect ToRectangle()
         {
-            return new Rectangle( X, Y, W, H );
+            return new Rect(X, Y, W, H);
         }
-        public static CenterAndScale FromRectangle( Rectangle from )
+        public static CenterAndScale FromRectangle( Rect from )
         {
             CenterAndScale to = CenterAndScale.None;
             to.Scale = new Point32( (Point)from.Size ) / 2;
@@ -248,7 +433,7 @@ namespace Stepflow.Gui
             return to;
         }
 
-        CenterAndScale IRectangle<CenterAndScale>.FromRectangle( Rectangle from )
+        CenterAndScale IRectangle<CenterAndScale>.FromRectangle( Rect from )
         {
             return CenterAndScale.FromRectangle( from );
         }
@@ -344,17 +529,17 @@ namespace Stepflow.Gui
                 return casted() as IRectangle<RType>;
         }
 
-        public Rectangle ToRectangle()
+        public Rect ToRectangle()
         {
-            return new Rectangle( X, Y, W, H );
+            return new Rect(X, Y, W, H);
         }
 
-        public static CornerAndSize FromRectangle( Rectangle from )
+        public static CornerAndSize FromRectangle(Rect from )
         {
             return new CornerAndSize( from.X, from.Y, from.Width, from.Height );
         }
 
-        CornerAndSize IRectangle<CornerAndSize>.FromRectangle( Rectangle from )
+        CornerAndSize IRectangle<CornerAndSize>.FromRectangle(Rect from )
         {
             return CornerAndSize.FromRectangle( from );
         }
@@ -456,12 +641,12 @@ namespace Stepflow.Gui
                 return casted() as IRectangle<RType>;
         }
 
-        public Rectangle ToRectangle()
+        public Rect ToRectangle()
         {
-            return new Rectangle(X,Y,W,H);
+            return new Rect(X, Y, W, H);
         }
 
-        public static AbsoluteEdges FromRectangle( Rectangle from )
+        public static AbsoluteEdges FromRectangle(Rect from )
         {
             AbsoluteEdges to = AbsoluteEdges.None;
             to.Corner = new Point32(from.Location);
@@ -470,7 +655,7 @@ namespace Stepflow.Gui
             return to;
         }
 
-        AbsoluteEdges IRectangle<AbsoluteEdges>.FromRectangle( Rectangle from )
+        AbsoluteEdges IRectangle<AbsoluteEdges>.FromRectangle(Rect from )
         {
             return AbsoluteEdges.FromRectangle( from );
         }
@@ -501,7 +686,7 @@ namespace Stepflow.Gui
         : IRectangle<SystemDefault>
     {
         [FieldOffset(0)]
-        private Rectangle data;
+        private Rect data;
         [FieldOffset(0)]
         private short x;
         [FieldOffset(0)]
@@ -519,17 +704,17 @@ namespace Stepflow.Gui
         [FieldOffset(12)]
         public int H;
 
-        public SystemDefault( Rectangle from ) : this()
+        public SystemDefault(Rect from ) : this()
         {
             data = from;
         }
  
-        public static implicit operator Rectangle( SystemDefault cast )
+        public static implicit operator Rect( SystemDefault cast )
         {
             return cast.data;
         }
 
-        public Rectangle Assign( Rectangle rectangle )
+        public Rect Assign(Rect rectangle )
         {
             return data = rectangle;
         }
@@ -653,7 +838,7 @@ namespace Stepflow.Gui
 
         public IRectangle converted<RectangleData>() where RectangleData : struct, IRectangle
         {
-            return Rectangle<RectangleData>.Create( StorageLayout, data.X, data.Y, data.Width, data.Height );
+            return Rectangle<RectangleData>.Create(StorageLayout, data.X, data.Y, data.Width, data.Height );
         }
 
         public SystemDefault copied()
@@ -661,12 +846,12 @@ namespace Stepflow.Gui
             return new SystemDefault( data );
         }
 
-        public static SystemDefault FromRectangle( Rectangle from )
+        public static SystemDefault FromRectangle(Rect from )
         {
             return new SystemDefault( from );
         }
 
-        SystemDefault IRectangle<SystemDefault>.FromRectangle( Rectangle from )
+        SystemDefault IRectangle<SystemDefault>.FromRectangle(Rect from )
         {
             return SystemDefault.FromRectangle( from );
         }
@@ -681,7 +866,7 @@ namespace Stepflow.Gui
             throw new Exception("cannot create reference to SystemDefault rectangle instance");
         }
 
-        public Rectangle ToRectangle()
+        public Rect ToRectangle()
         {
             return data;
         }
@@ -821,9 +1006,9 @@ namespace Stepflow.Gui
             }
         }
 
-        public Rectangle ToRectangle()
+        public Rect ToRectangle()
         {
-            return new Rectangle( X, Y, W, H );
+            return new Rect(X, Y, W, H);
         }
 
         public bool Contains( IRectangle other )
@@ -848,7 +1033,7 @@ namespace Stepflow.Gui
 
         public RactanglePointerType resolve()
         {
-            return (RactanglePointerType)Rect64.Create<RactanglePointerType>( CompoundA.X, CompoundA.Y, CompoundB.X, CompoundB.Y );
+            return (RactanglePointerType)Rectangle.Create<RactanglePointerType>( CompoundA.X, CompoundA.Y, CompoundB.X, CompoundB.Y );
         }
 
         public IRectanglePtrs<RactanglePointerType> refereTo( ref RactanglePointerType that )
@@ -1076,7 +1261,7 @@ namespace Stepflow.Gui
     #region Static Helper classes
     // for helping with Construction and with Conversion between diferent storage models, etc...  
 
-    public class Rect64
+    public class Rectangle
     {    
         public static IRectangle Create<Layout>( Point a, Point b )
             where Layout : IRectangle // struct, IRectangleValues, IRectangleCompounds
@@ -1190,7 +1375,7 @@ namespace Stepflow.Gui
         } }
     }
 
-    public class Rectangle<rType> : Rect64 where rType : IRectangle
+    public class Rectangle<rType> : Rectangle where rType : IRectangle
     {
         public const uint LRTB = (uint)StorageLayout.AbsoluteEdges;
         public const uint XYWH = (uint)StorageLayout.CornerAndSizes;
@@ -1233,7 +1418,7 @@ namespace Stepflow.Gui
             default: return null; }
         }
 
-        public static IRectangle FromRectangle( Rectangle from )
+        public static IRectangle FromRectangle(Rect from )
         {
             if( !typeof(rType).BaseType.IsAbstract ) {
                 return Create( StorageLayout.CornerAndSizes, from.X, from.Y, from.Width, from.Height ); 
@@ -1258,7 +1443,7 @@ namespace Stepflow.Gui
             } else if ( rType == typeof(AbsoluteEdgesPointers) ) {
                 return AbsoluteEdgesPointers.Zero;
             } else {
-                return new SystemDefault( Rectangle.Empty );
+                return new SystemDefault(Rect.Empty );
             }
         }
 
