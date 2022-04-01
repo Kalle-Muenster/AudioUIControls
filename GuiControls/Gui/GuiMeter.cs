@@ -12,14 +12,13 @@ using Stepflow.Gui.Automation;
 using Stepflow.Gui.Helpers;
 using Orientation = Stepflow.Gui.Orientation;
 using Style       = Stepflow.Gui.Style;
-using Point32 = Win32Imports.Touch.Point32;
-using Resources = GuiControls.Properties.Resources;
+using Point32     = Stepflow.Gui.Point32;
+using Resources   = GuiControls.Properties.Resources;
 
 #if   USE_WITH_WF
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms.Layout;
-using Rectangle = System.Drawing.Rectangle;
 using Point = System.Drawing.Point;
 using Rect  = System.Drawing.Rectangle;
 using RectF = System.Drawing.RectangleF;
@@ -49,7 +48,7 @@ namespace Stepflow.Gui
         private const  uint LEVEL = 0;
         private const  uint CLIPP = 0x00000004;
         private static Bitmap[]      images;
-        private static Rectangle[][] sources;
+        private static Rect[][] sources;
         private static Point         scale;
         private Pen    line = new Pen(Color.FromArgb(255,64,64,64),5);
          
@@ -124,20 +123,20 @@ namespace Stepflow.Gui
             images[2] = Resources.meter_V;
 
             TaskAssist<SteadyAction,Action>.Init( 60 );
-            sources = new Rectangle[3][] {
-                      new Rectangle[9],
-                      new Rectangle[5],
-                      new Rectangle[5]
+            sources = new Rect[3][] {
+                      new Rect[9],
+                      new Rect[5],
+                      new Rect[5]
             };
             for ( int x = 0, i = 0; x < images[0].Width; x = ++i * 64 ) {
-                sources[0][i] = new Rectangle(x, 0, 64, 64);
-                sources[0][i + 3] = new Rectangle(x, 64, 64, 64);
-                sources[0][i + 6] = new Rectangle(x, 128, 64, 64);
+                sources[0][i] = new Rect(x, 0, 64, 64);
+                sources[0][i + 3] = new Rect(x, 64, 64, 64);
+                sources[0][i + 6] = new Rect(x, 128, 64, 64);
             }
             for ( int y = 0, i = 0; y < images[1].Height; y = ++i * 32 )
-                sources[1][i] = new Rectangle(0, y, images[1].Width, 30);
+                sources[1][i] = new Rect(0, y, images[1].Width, 30);
             for ( int x = 0, i = 0; x < images[2].Width; x = ++i * 32 )
-                sources[2][i] = new Rectangle(x, 0, 30, images[2].Height);
+                sources[2][i] = new Rect(x, 0, 30, images[2].Height);
         }
 
         private int             deckelGroup;
@@ -538,14 +537,14 @@ namespace Stepflow.Gui
                  : background;
         }
 
-        private Rectangle levelChart( uint mode, float prop )
+        private Rect levelChart( uint mode, float prop )
         {
             uint chartSelect = (uint)(prop * 3)+3;
             chartSelect = chartSelect >= 6 ? 5 : chartSelect;
             return sources[0][ 3 * (mode / CLIPP) + chartSelect ]; 
         }
 
-        private Rectangle deckelFrame()
+        private Rect deckelFrame()
         {
             return sources[ deckelGroup ][ channels+(style-1) ];
         }
@@ -577,7 +576,7 @@ namespace Stepflow.Gui
             }
         }
 
-        private void paintRondael( Graphics g, Rectangle area, float propval )
+        private void paintRondael( Graphics g, Rect area, float propval )
         {
             int degrees = PixelRange;
             PointF pivot = new PointF(
@@ -610,7 +609,7 @@ namespace Stepflow.Gui
 
         protected unsafe override void OnPaint( PaintEventArgs g )
         {
-            Rectangle rect = Bounds;
+            Rect rect = Bounds;
             rect.Location = Point.Empty;
             CenterAndScale area = CenterAndScale.FromRectangle( rect );
             bool drawBorder = Style == Style.Flat;

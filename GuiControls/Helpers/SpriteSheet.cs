@@ -39,7 +39,7 @@ namespace Stepflow.Gui
             Color       color { get; set; }
             ImageAttributes attributes { get; }
             void Draw( Graphics g, IRectangle dst );
-            void Draw( Graphics g, Rectangle dst );
+            void Draw( Graphics g, System.Drawing.Rectangle dst );
         }
 
         public class IndexBasedSprite : ISprite
@@ -66,7 +66,7 @@ namespace Stepflow.Gui
                 idC = sourceFrame;
             }
 
-            virtual public void Draw( Graphics g, Rectangle dstRec )
+            virtual public void Draw( Graphics g, System.Drawing.Rectangle dstRec )
             {
                 if ( sprite().attributes == null ) {
                     g.DrawImage( sprite().image, dstRec, frame.ToRectangle(), GraphicsUnit.Pixel );
@@ -106,7 +106,7 @@ namespace Stepflow.Gui
                 rec = (SystemDefault)sourceFrame.cast<SystemDefault>();
             }
 
-            virtual public void Draw( Graphics g, Rectangle dstRec )
+            virtual public void Draw( Graphics g, System.Drawing.Rectangle dstRec )
             {
                 g.DrawImage( image, dstRec, rec.ToRectangle(), GraphicsUnit.Pixel );
             }
@@ -169,7 +169,7 @@ namespace Stepflow.Gui
             {
                 Draw( g, dstRec.ToRectangle() );
             }
-            public override void Draw( Graphics g, Rectangle dst )
+            public override void Draw( Graphics g, System.Drawing.Rectangle dst )
             {
                 if( colordirty ) updateMatrices();
                 g.DrawImage( image, dst, rec.X, rec.Y, rec.W, rec.H, GraphicsUnit.Pixel, attributes );

@@ -27,8 +27,8 @@ using Std = Consola.StdStream;
 #endif
 using Rectangle = System.Drawing.Rectangle;
 using R = Win32Imports.Touch.RECT;
-using P = Win32Imports.Touch.Point64;
-using p = Win32Imports.Touch.Point32;
+using P = Stepflow.Gui.Point64;
+using p = Stepflow.Gui.Point32;
 using Win32Imports.Touch;
 
 
@@ -520,7 +520,7 @@ namespace Stepflow.Gui
 
         private void paintRondael( Graphics g )
         {
-            Rectangle a = Nuppsi.Bounds;
+            System.Drawing.Rectangle a = Nuppsi.Bounds;
             float  angle = (Inverted ? (1.0f-Proportion) : Proportion) * PixelRange
                          - (Cycled ? 0 : 135);
  

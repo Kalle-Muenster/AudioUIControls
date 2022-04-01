@@ -11,7 +11,7 @@ using Stepflow.Controller;
 using Stepflow.Helpers;
 using System.Xml;
 using System.Xml.XPath;
-using Point32 = Win32Imports.Touch.Point32;
+using Point32 = Stepflow.Gui.Point32;
 using Win32Imports.Touch;
 using System.Collections;
 using Resources = GuiControls.Properties.Resources;

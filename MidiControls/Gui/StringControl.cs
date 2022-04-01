@@ -182,7 +182,7 @@ namespace Midi
                     return CornerAndSize.FromRectangle( RectangleToScreen( Bounds ) );
                 }
 
-                public Win32Imports.Touch.Point64 ScreenLocation()
+                public Point64 ScreenLocation()
                 {
                     return PointToScreen( Location );
                 }

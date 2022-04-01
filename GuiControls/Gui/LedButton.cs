@@ -74,7 +74,7 @@ namespace Stepflow.Gui
         private ButtonValenceField joints;
 
         private byte               highest;
-        private Rectangle          leDrect;
+        private System.Drawing.Rectangle          leDrect;
         private LED[]              led = new LED[MaxNumState];
         private bool               glimme = false;
         private int                tackte = 0;

@@ -31,7 +31,7 @@ namespace Stepflow.Midi
         , IMidiControlElement<MidiInOut>
     {
         private static readonly StyleSet[]  stylers;
-        private static readonly Rectangle[] borders;
+        private static readonly System.Drawing.Rectangle[] borders;
         private const string    format = "###0.0##";
         private static Compatibles      compatibles;
 
@@ -50,9 +50,9 @@ namespace Stepflow.Midi
                 new StyleSet( Resources.umrandunkel,
                               StyleSet.Dark,Color.Lime,Color.CornflowerBlue )
             };
-            borders = new Rectangle[] {
-                new Rectangle(0,0,10,64), new Rectangle(10,0,492,10),
-                new Rectangle(502,0,10,64), new Rectangle(10,54,492,10)
+            borders = new System.Drawing.Rectangle[] {
+                new System.Drawing.Rectangle(0,0,10,64), new System.Drawing.Rectangle(10,0,492,10),
+                new System.Drawing.Rectangle(502,0,10,64), new System.Drawing.Rectangle(10,54,492,10)
             };
 #if DEBUG
             Consola.StdStream.Init( Consola.CreationFlags.TryConsole );
@@ -454,7 +454,7 @@ namespace Stepflow.Midi
                 txt_value.Text = CreateText();
                 input = true;
             }
-            Rectangle area =  Bounds;
+            System.Drawing.Rectangle area =  Bounds;
             area.Location = Point.Empty;
             area.Width = frame;
             e.Graphics.DrawImage( stylers[style].image, area,
