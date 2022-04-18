@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -12,13 +12,14 @@ using Stepflow.Gui.Automation;
 using Stepflow.Gui.Helpers;
 using Orientation = Stepflow.Gui.Orientation;
 using Style       = Stepflow.Gui.Style;
-using Point32     = Stepflow.Gui.Point32;
-using Resources   = GuiControls.Properties.Resources;
+using Point32 = TaskAssist.Geomety.Point32;
+using Resources = GuiControls.Properties.Resources;
 
 #if   USE_WITH_WF
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms.Layout;
+using Rectangle = System.Drawing.Rectangle;
 using Point = System.Drawing.Point;
 using Rect  = System.Drawing.Rectangle;
 using RectF = System.Drawing.RectangleF;
@@ -40,72 +41,70 @@ namespace Stepflow.Gui
         Level, Dampf
     }
 
-    public partial class GuiMeter 
+    public partial class GuiMeter
         : UserControl
         , IInterValuable<Controlled.Float32>
-        , ITaskAsistableVehicle<SteadyAction>
+        , ITaskAsistableVehicle<Action,Action>
     {
-        private const  uint LEVEL = 0;
-        private const  uint CLIPP = 0x00000004;
-        private static Bitmap[]      images;
-        private static Rect[][] sources;
-        private static Point         scale;
-        private Pen    line = new Pen(Color.FromArgb(255,64,64,64),5);
-         
-        protected TaskAssist<SteadyAction,Action> dampfTackter;
-        public event ValueChangeDelegate<float>   LevelChanged;
-        public event ValueChangeDelegate<float>   LevelClipped;
-        public event ValueChangeDelegate<float>   LevelRegular;
+        private const uint LEVEL = 0;
+        private const uint CLIPP = 0x00000004;
+        private static Bitmap[] images;
+        private static Rectangle[][] sources;
+        private static Point scale;
+        private Pen line = new Pen(Color.FromArgb(255, 64, 64, 64), 5);
 
-        
-        protected Controlled.Float32                  dampf;
-        protected object                              joint;
-        protected Controlled.Float32                  value;
-        private   Matrix                              rotat;
-        private   ValenceBondMenu<Controlled.Float32> menue;
+        protected TaskAssist<SteadyAction, Action, Action> dampfTackter;
+        public event ValueChangeDelegate<float> LevelChanged;
+        public event ValueChangeDelegate<float> LevelClipped;
+        public event ValueChangeDelegate<float> LevelRegular;
 
 
-        protected ValenceField<Controlled.Float32,vEt> getJoints<vEt>() where vEt : struct {
-            if( joint == null ) { joint = new ValenceField<Controlled.Float32,vEt>(this); }
-            return (joint as ValenceField<Controlled.Float32,vEt>);
+        protected Controlled.Float32 dampf;
+        protected object joint;
+        protected Controlled.Float32 value;
+        private Matrix rotat;
+        private ValenceBondMenu<Controlled.Float32> menue;
+
+
+        protected ValenceField<Controlled.Float32, vEt> getJoints<vEt>() where vEt : struct {
+            if (joint == null) { joint = new ValenceField<Controlled.Float32, vEt>(this); }
+            return (joint as ValenceField<Controlled.Float32, vEt>);
         }
-        
+
         Action IInterValuable.getInvalidationTrigger() { return levelUpdate; }
         virtual public IControllerValenceField<Controlled.Float32> valence() { return getJoints<MeterValence>().field(); }
-        virtual public IControllerValenceField<Controlled.Float32> valence( Enum which ) { return getJoints<MeterValence>().field( which ); }
+        virtual public IControllerValenceField<Controlled.Float32> valence(Enum which) { return getJoints<MeterValence>().field(which); }
         IControllerValenceField IInterValuable.valence<cT>() { return getJoints<MeterValence>().field(); }
-        IControllerValenceField IInterValuable.valence<cT>( Enum which ) { return getJoints<MeterValence>().field(which); }
+        IControllerValenceField IInterValuable.valence<cT>(Enum which) { return getJoints<MeterValence>().field(which); }
         void IInterValuable.callOnInvalidated(InvalidateEventArgs e) { OnInvalidated(e); }
 
-        public ITaskAsistableVehicle<SteadyAction> task()
-        {
-            return this;
+
+        public ITaskAsistableVehicle<Action,Action> task() { return this; }
+
+        ITaskAssistor<Action,Action> ITaskAsistableVehicle<Action,Action>.assist {
+            get { return dampfTackter; }
+            set { dampfTackter = value as TaskAssist<SteadyAction,Action,Action>; }
         }
 
-        public ITaskAssistor<SteadyAction> assist()
-        {
-            return dampfTackter;
-        }
-
-        int ITaskAsistableVehicle<SteadyAction>.StartAssist()
+        int IAsistableVehicle<IActionDriver<Action, ILapFinish<Action>, Action>, ILapFinish<Action>>.StartAssist()
         {
 #if DEBUG
-            int dampfi = dampfTackter.GetAssistence( dampfTackter.action );
-            Consola.StdStream.Out.WriteLine( "TaskAssist: {0} dampfTackters registered", dampfi );
+            int dampfi = task().assist.GetAssistence( dampfTackter.action );
+            Consola.StdStream.Out.WriteLine("TaskAssist: {0} dampfTackters assisting!", dampfi);
             return dampfi;
 #else
-            return dampfTackter.GetAssistence( dampfTackter.action );
+            return task().assist.GetAssistence( dampfTackter.action );
 #endif
         }
 
-        int ITaskAsistableVehicle<SteadyAction>.StoptAssist()
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist()
         {
 #if DEBUG
-            int dampfi = dampfTackter.ReleaseAssist( dampfTackter.action );
-            Consola.StdStream.Out.WriteLine( "TaskAssist: dampfTackter {0} released assistence", dampfi );
+            int dampfi = task().assist.ReleaseAssist( dampfTackter.action );
+            Consola.StdStream.Out.WriteLine("TaskAssist: dampfTackter {0} released assistence", dampfi);
             return dampfi;
 #else
-            return dampfTackter.ReleaseAssist( dampfTackter.action );
+            return task().assist.ReleaseAssist( dampfTackter.action );
 #endif
         }
 
@@ -122,21 +121,21 @@ namespace Stepflow.Gui
             images[1] = Resources.meter_H;
             images[2] = Resources.meter_V;
 
-            TaskAssist<SteadyAction,Action>.Init( 60 );
-            sources = new Rect[3][] {
-                      new Rect[9],
-                      new Rect[5],
-                      new Rect[5]
+            TaskAssist<SteadyAction,Action,Action>.Init( 60 );
+            sources = new Rectangle[3][] {
+                      new Rectangle[9],
+                      new Rectangle[5],
+                      new Rectangle[5]
             };
             for ( int x = 0, i = 0; x < images[0].Width; x = ++i * 64 ) {
-                sources[0][i] = new Rect(x, 0, 64, 64);
-                sources[0][i + 3] = new Rect(x, 64, 64, 64);
-                sources[0][i + 6] = new Rect(x, 128, 64, 64);
+                sources[0][i] = new Rectangle(x, 0, 64, 64);
+                sources[0][i + 3] = new Rectangle(x, 64, 64, 64);
+                sources[0][i + 6] = new Rectangle(x, 128, 64, 64);
             }
             for ( int y = 0, i = 0; y < images[1].Height; y = ++i * 32 )
-                sources[1][i] = new Rect(0, y, images[1].Width, 30);
+                sources[1][i] = new Rectangle(0, y, images[1].Width, 30);
             for ( int x = 0, i = 0; x < images[2].Width; x = ++i * 32 )
-                sources[2][i] = new Rect(x, 0, 30, images[2].Height);
+                sources[2][i] = new Rectangle(x, 0, 30, images[2].Height);
         }
 
         private int             deckelGroup;
@@ -481,7 +480,7 @@ namespace Stepflow.Gui
             style = 0;
             deckelGroup = 2;
             deckelImage = images[deckelGroup];
-            dampfTackter = new TaskAssist<SteadyAction,Action>( this, OnDampfTackt, 60 );
+            dampfTackter = new TaskAssist<SteadyAction,Action,Action>( this, OnDampfTackt, 60 );
             waitSafe = false;
             line.SetLineCap( LineCap.Round,LineCap.Round, DashCap.Round );
             line.LineJoin = LineJoin.Round;
@@ -537,14 +536,14 @@ namespace Stepflow.Gui
                  : background;
         }
 
-        private Rect levelChart( uint mode, float prop )
+        private Rectangle levelChart( uint mode, float prop )
         {
             uint chartSelect = (uint)(prop * 3)+3;
             chartSelect = chartSelect >= 6 ? 5 : chartSelect;
             return sources[0][ 3 * (mode / CLIPP) + chartSelect ]; 
         }
 
-        private Rect deckelFrame()
+        private Rectangle deckelFrame()
         {
             return sources[ deckelGroup ][ channels+(style-1) ];
         }
@@ -576,7 +575,7 @@ namespace Stepflow.Gui
             }
         }
 
-        private void paintRondael( Graphics g, Rect area, float propval )
+        private void paintRondael( Graphics g, Rectangle area, float propval )
         {
             int degrees = PixelRange;
             PointF pivot = new PointF(
@@ -609,7 +608,7 @@ namespace Stepflow.Gui
 
         protected unsafe override void OnPaint( PaintEventArgs g )
         {
-            Rect rect = Bounds;
+            Rectangle rect = Bounds;
             rect.Location = Point.Empty;
             CenterAndScale area = CenterAndScale.FromRectangle( rect );
             bool drawBorder = Style == Style.Flat;

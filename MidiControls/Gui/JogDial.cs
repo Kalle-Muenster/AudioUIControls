@@ -34,7 +34,7 @@ namespace Midi
         : UserControl
         , IInterValuable<Controlled.Float32>
         , IMidiControlElement<MidiInOut>
-        , ITaskAsistableVehicle<SteadyAction>
+        , ITaskAsistableVehicle<Action,Action>
     {
         public const JogDialValence Absolute = JogDialValence.Absolute;
         public const JogDialValence Relative = JogDialValence.Relative;
@@ -83,7 +83,7 @@ namespace Midi
         private bool       canStop;
         private Direction  lastDir;
         private MidiInOut     midiIO = null;
-        private TaskAssist<SteadyAction,Action> propellor;
+        private TaskAssist<SteadyAction,Action,Action> propellor;
 
 //#if DEBUG
 //        private System.Windows.Forms.Label lbl_position;
@@ -133,7 +133,7 @@ namespace Midi
                 rectFromXmlSheet(xpath,"Right"), rectFromXmlSheet(xpath,"Bottom")
             };
 
-            TaskAssist<SteadyAction,Action>.Init( PropellorSpeed );
+            TaskAssist<SteadyAction,Action,Action>.Init( PropellorSpeed );
             Resources.ResourceManager.ReleaseAllResources();
         }                                                    
 
@@ -424,7 +424,7 @@ namespace Midi
             glimmer.SetStyle( Style );
             glimmer.Pre = 0.075f;
 
-            propellor     = new TaskAssist<SteadyAction,Action>( this, WheelPropellor, PropellorSpeed );
+            propellor     = new TaskAssist<SteadyAction,Action,Action>( this, WheelPropellor, PropellorSpeed );
             MausPropellor = true;
             MidiPropellor = false;
 
@@ -666,11 +666,6 @@ namespace Midi
             } else {
                 if( SlopeCase = slopefunction() ) {
                     slopetime += (uint)propellor.driver.Speed;
-//#if DEBUG
-//                    slopetext = "slope: " + slopetime.ToString();
-//                } else {
-//                    slopetext = "slope done: " + slopetime.ToString();
-//#endif
                 }
             }
         }
@@ -698,10 +693,10 @@ namespace Midi
 #endregion
 
 #region TaskAssistence Interface 
-        public ITaskAsistableVehicle<SteadyAction> task() { return this; }
-        public ITaskAssistor<SteadyAction> assist() { return propellor; }
-        int ITaskAsistableVehicle<SteadyAction>.StartAssist() { return propellor.GetAssistence( propellor.action ); }
-        int ITaskAsistableVehicle<SteadyAction>.StoptAssist() { return propellor.ReleaseAssist( propellor.action ); }
+        public ITaskAsistableVehicle<Action,Action> task() { return this; }
+        public ITaskAssistor<Action, Action> assist { get { return propellor; } set { propellor = value as TaskAssist<SteadyAction, Action, Action>; } }
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StartAssist() { return propellor.assist.GetAssistence( propellor.action ); }
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist() { return propellor.assist.ReleaseAssist( propellor.action ); }
 #endregion
 
 #region Midi Interface

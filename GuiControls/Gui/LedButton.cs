@@ -23,7 +23,7 @@ namespace Stepflow.Gui
     public partial class LedButton
         : UserControl
         , IInterValuable<Controlled.Int8>
-        , ITaskAsistableVehicle<SteadyAction>
+        , ITaskAsistableVehicle<Action,Action>
     {
         public const LedButtonValence StateField = LedButtonValence.State;
         public const LedButtonValence ChainField = LedButtonValence.Chain;
@@ -79,33 +79,33 @@ namespace Stepflow.Gui
         private bool               glimme = false;
         private int                tackte = 0;
 
-#region Impl: ITaskAssistable
-        private TaskAssist<SteadyAction,Action>           assistence;
-        public ITaskAsistableVehicle<SteadyAction> task() { return this; }
-        ITaskAssistor<SteadyAction> ITaskAsistableVehicle<SteadyAction>.assist() { return assistence; }
-        int ITaskAsistableVehicle<SteadyAction>.StartAssist()
+        #region Impl: ITaskAssistable
+
+        public ITaskAsistableVehicle<Action,Action> task() { return this; }
+        ITaskAssistor<Action, Action> ITaskAsistableVehicle<Action, Action>.assist { get; set; }
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StartAssist()
         {
            #if DEBUG
-            int placement = assistence.GetAssistence( assistence.action );  
+            int placement = task().assist.GetAssistence( task().assist.action );  
             Consola.StdStream.Out.WriteLine( "DampfDruck now at {0} cylinders", placement );
             return placement;
-           #else
-            return assistence.GetAssistence( assistence.action );   
-           #endif
+#else
+            return task().assist.GetAssistence( task().assist.action );   
+#endif
         }
-        int ITaskAsistableVehicle<SteadyAction>.StoptAssist()
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist()
         {
            #if DEBUG
-            int placement = assistence.ReleaseAssist( assistence.action );
+            int placement = task().assist.ReleaseAssist( task().assist.action );
             Consola.StdStream.Out.WriteLine( "DampfStopt! no cylinders anymore", placement );
             return placement;
-           #else 
-            return assistence.ReleaseAssist( assistence.action );
-           #endif
+#else
+            return task().assist.ReleaseAssist( task().assist.action );
+#endif
         }
-#endregion
+        #endregion
 
-#region Impl: IInterValuable
+        #region Impl: IInterValuable
         private ValenceBondMenu<Controlled.Int8> mnu_bonds;
         private void stateUpdate() { State = States[state.VAL]; }
         protected IContainer getConnector() { return components; }
@@ -206,7 +206,7 @@ namespace Stepflow.Gui
                                          Resources.button_hover_Flat,
                                          Resources.LedButton_Lite,
                                          Resources.LedButton_Dark };
-            TaskAssist<SteadyAction,Action>.Init( 60 );
+            TaskAssist<SteadyAction,Action,Action>.Init( 60 );
         }
 
         public LedButton()
@@ -255,7 +255,7 @@ namespace Stepflow.Gui
             Enabled = true;
             Visible = true;
             clicked = false;
-            assistence = new TaskAssist<SteadyAction,Action>( this, ImTackt, 60 );
+            task().assist = new TaskAssist<SteadyAction,Action,Action>( this, ImTackt, 60 );
 
             InitializeComponent();
 

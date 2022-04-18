@@ -13,6 +13,7 @@ using Stepflow.Gui;
 using Stepflow.Gui.Automation;
 using Stepflow.Controller;
 using Stepflow.TaskAssist;
+using Point64 = TaskAssist.Geomety.Point64;
 using System.Windows.Input;
 using Stepflow.Midi.ControlHelpers;
 using Orientation = Stepflow.Gui.Orientation;
@@ -30,10 +31,7 @@ namespace Midi
         : UserControl
         , IInterValuable<Controlled.Float32>
         , IMidiControlElement<MidiOutput>
-     //   , ITouchGesturedElement<StringControl>
     {
-    //    private PointerInput touchpointer;
-
         public class SlideBar 
             : MidiMeter, ITouchGesturedElement<SlideBar> //, ITouchGestutred
         {
@@ -100,7 +98,7 @@ namespace Midi
                 (valence() as ValenceField<Controlled.Float32,Valence>).SetControllerArray(
                     new Controlled.Float32[] { value, tone } );
                 InitMeter();
-                dampfTackter = new TaskAssist<SteadyAction,Action>( this, stringDing.taskAssist, 60 );
+                dampfTackter = new TaskAssist<SteadyAction,Action,Action>( this, stringDing.taskAssist, 60 );
                 IContainer connector = InitConnector();
                 base.RightToLeft = RightToLeft.Yes;
                 directionalOrientation = (int)DirectionalOrientation.Up;
@@ -447,8 +445,8 @@ public ITouchableElementEvents<ITouchComponent> events()
             public Controlled.Float32 detunated;
             public Controlled.Float32 amplitude;
             
-            public StringControl   Instrument;
-            public int             outchannel;
+            public StringControl      Instrument;
+            public int                outchannel;
 
             private float       marker;
             public readonly int index;
@@ -905,7 +903,7 @@ public ITouchableElementEvents<ITouchComponent> events()
         static StringControl()
         {
             Valence.RegisterIntervaluableType<Controlled.Float32>();
-            TaskAssist<SteadyAction,Action>.Init( 60 );
+            TaskAssist<SteadyAction,Action,Action>.Init( 60 );
         }
 
 
@@ -998,11 +996,11 @@ public ITouchableElementEvents<ITouchComponent> events()
                     if(value == StringVariant.Zupf) {
                         plectrum.ThresholdForFastMovement = 2400f;
                         plectrum.AttachSideChain( IntPtr.Zero );
-                        plectrum.task().assist().driver.Round -= Driver_Round;
+                        (plectrum.task().assist.driver as SteadyAction).Round -= Driver_Round;
                     } else {
                         plectrum.ThresholdForFastMovement = 0.4f;
                         plectrum.AttachSideChain( ref currentAmplitude );
-                        plectrum.task().assist().driver.Round += Driver_Round;
+                        (plectrum.task().assist.driver as SteadyAction).Round += Driver_Round;
                     } variant = value;
                     layoutStrings();
                 } }

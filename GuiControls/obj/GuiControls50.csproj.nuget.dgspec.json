@@ -1,14 +1,14 @@
 {
   "format": 1,
   "restore": {
-    "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj": {}
+    "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\GuiControls\\GuiControls50.csproj": {}
   },
   "projects": {
-    "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj": {
+    "C:\\WORKSPACE\\PROJECTS\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj": {
       "restore": {
-        "projectUniqueName": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj",
+        "projectUniqueName": "C:\\WORKSPACE\\PROJECTS\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj",
         "projectName": "ControlledValues",
-        "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj",
+        "projectPath": "C:\\WORKSPACE\\PROJECTS\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj",
         "frameworks": {
           "native": {
             "projectReferences": {}
@@ -19,18 +19,17 @@
         "native": {}
       }
     },
-    "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj": {
+    "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\GuiControls\\GuiControls50.csproj": {
       "version": "0.0.0.1",
       "restore": {
-        "projectUniqueName": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj",
+        "projectUniqueName": "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\GuiControls\\GuiControls50.csproj",
         "projectName": "GuiControls",
-        "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\GuiControls50.csproj",
+        "projectPath": "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\GuiControls\\GuiControls50.csproj",
         "packagesPath": "C:\\Users\\kalle\\.nuget\\packages\\",
-        "outputPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\GuiControls\\obj\\",
+        "outputPath": "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\GuiControls\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
           "C:\\Users\\kalle\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -42,16 +41,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet": {},
-          "d:\\LIBRARIES": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net5.0-windows7.0": {
             "targetAlias": "net5.0-windows",
             "projectReferences": {
-              "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj": {
-                "projectPath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj"
+              "C:\\WORKSPACE\\PROJECTS\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj": {
+                "projectPath": "C:\\WORKSPACE\\PROJECTS\\ControlledValues\\Core5Dll\\ControledValues\\Stepflow\\Stepflow.vcxproj"
               }
             }
           }
@@ -83,7 +80,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

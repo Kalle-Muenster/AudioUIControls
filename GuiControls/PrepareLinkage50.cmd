@@ -3,7 +3,7 @@ set _ProDir_=%~dp0
 set _arch_=%~1
 set _conf_=%~2
 
-set MOTORSPORT=c:\WORKSPACE\PROJECTS\GITSPACE\MotorSports\bin\5.0\%_arch_%\%_conf_%\net5.0
+set MOTORSPORT=c:\WORKSPACE\PROJECTS\MotorSports\bin\5.0\%_arch_%\%_conf_%\net5.0
 
 echo copying linkage for "%_arch_%" archtecture into the build's linkage folder...>build.log
 cd "%_ProDir_%linkage"

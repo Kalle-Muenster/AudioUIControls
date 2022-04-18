@@ -40,10 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GITSPACE\ControlledValues\Core5Dll\ControledValues\Stepflow\Stepflow.vcxproj">
-      <Private>true</Private>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
+    <ProjectReference Include="..\..\ControlledValues\Core5Dll\ControledValues\Stepflow\Stepflow.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,9 +49,11 @@
     </Reference>
     <Reference Include="Int24Types">
       <HintPath>linkage\Int24Types.dll</HintPath>
+      <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="TaskAssist">
       <HintPath>linkage\TaskAssist.dll</HintPath>
+      <Private>true</Private>
     </Reference>
   </ItemGroup>
 

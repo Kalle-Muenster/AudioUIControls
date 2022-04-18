@@ -16,6 +16,7 @@ using Stepflow.Helpers;
 using Stepflow.Gui.Helpers;
 
 using Win32Imports.Touch;
+using TaskAssist.Geomety;
 
 namespace Stepflow.Gui
 {
@@ -350,9 +351,9 @@ namespace Stepflow.Gui
             {
                 string xpath = makeXPath( element, name, ElmType.array ).ToString();
                 Size img_size = getImage( xpath ).Size;
-                int box = int.Parse( xml.SelectSingleNode(xpath+"/@box").ToString() );
                 int count = int.Parse( xml.SelectSingleNode(xpath+"/@count").ToString() );
                 char dir = xml.SelectSingleNode(xpath+"/@dir").ToString()[0];
+                int box = int.Parse( xml.SelectSingleNode(xpath+"/@box").ToString() );
                 CornerAndSize rect = getValues( xpath );
                 Point32 origin = rect.Corner;
                 IRectangle[] load = new IRectangle[count];

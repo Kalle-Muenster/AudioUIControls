@@ -1,4 +1,4 @@
-﻿//#define IMPLEMENT_AS_MIDI_CONTROL
+//#define IMPLEMENT_AS_MIDI_CONTROL
 
 using System;
 using System.Linq;
@@ -26,9 +26,9 @@ using Style = Stepflow.Gui.Style;
 using Std = Consola.StdStream;
 #endif
 using Rectangle = System.Drawing.Rectangle;
-using R = Win32Imports.Touch.RECT;
-using P = Stepflow.Gui.Point64;
-using p = Stepflow.Gui.Point32;
+using R = TaskAssist.Geomety.RECT;
+using P = TaskAssist.Geomety.Point64;
+using p = TaskAssist.Geomety.Point32;
 using Win32Imports.Touch;
 
 
@@ -38,7 +38,7 @@ namespace Stepflow.Gui
         : UserControl
         , IInterValuable<Controlled.Float32>
         , ITouchGesturedElement<GuiSlider>
-        , ITaskAsistableVehicle<SteadyAction>
+        , ITaskAsistableVehicle<Action,Action>
     {
         public enum InteractionMode { Linear, XFactor, Directional, YpsFactor }
         public enum DefaultMarkers { Minimum = 0, Center = 1, Maximum = 2 }
@@ -67,7 +67,7 @@ namespace Stepflow.Gui
         private float                                         fastmove;
         private int                                           lastMouse;
         private LedGlimmer                                    glimmer;
-        protected TaskAssist<SteadyAction,Action>             taskassist; 
+        protected TaskAssist<SteadyAction,Action,Action>      taskassist; 
 
         private ValenceBondMenu<Controlled.Float32>           mnu_valene;
         ToolStripItemCollection IInterValuable.getMenuHook() { return mnu_context.Items; }
@@ -478,7 +478,7 @@ namespace Stepflow.Gui
 
         private IRectangle leDrect() {
             CenterAndScale ledrect = CenterAndScale.FromRectangle( Nuppsi.Bounds );
-            ledrect.Scale -= new Point32( mipmap + mipmap, mipmap + mipmap );
+            ledrect.Scale -= new p( mipmap + mipmap, mipmap + mipmap );
             if ( Style == Style.Flat ) {
                 ledrect.Scale.x = ledrect.Scale.y = (short)(
                     ( ledrect.Scale.x < ledrect.Scale.y
@@ -492,7 +492,7 @@ namespace Stepflow.Gui
             switch( Orientation ) {
                 case Orientation.Rondeal: {
                     draw = Rectangle<CenterAndScale>.Create(StorageLayout.CornerAndSizes,0,0,Width,Height);
-                    draw.Scale -= new Point32( Width / 16, Width / 16 );
+                    draw.Scale -= new p( Width / 16, Width / 16 );
                     bgimg.GetSprite( 0 ).Draw( g, draw );
                 } break;
                 case Orientation.Horizontal: {
@@ -520,7 +520,7 @@ namespace Stepflow.Gui
 
         private void paintRondael( Graphics g )
         {
-            System.Drawing.Rectangle a = Nuppsi.Bounds;
+            Rectangle a = Nuppsi.Bounds;
             float  angle = (Inverted ? (1.0f-Proportion) : Proportion) * PixelRange
                          - (Cycled ? 0 : 135);
  
@@ -842,7 +842,7 @@ namespace Stepflow.Gui
                 }
             } images[3] = Resources.slider_leds_png;
             
-            TaskAssist<SteadyAction,Action>.Init(60);
+            TaskAssist<SteadyAction,Action,Action>.Init(60);
             if(!PointerInput.isInitialized() ) {
                 PointerInput.AutoRegistration = AutoRegistration.Enabled;
             }
@@ -910,7 +910,7 @@ namespace Stepflow.Gui
             }
             Nuppsi.MouseDown += Nuppsi_MouseDown;
             Nuppsi.MouseUp += Nuppsi_MouseUp;
-            taskassist = new TaskAssist<SteadyAction,Action>( this, flashPoint, 60 );
+            taskassist = new TaskAssist<SteadyAction,Action,Action>( this, flashPoint, 60 );
 
             Load += AdjustSpriteColor;
         }
@@ -1116,7 +1116,7 @@ namespace Stepflow.Gui
         virtual public void OnTouchRotate( MultiFinger tip )
         {}
 
-        public Point64 ScreenLocation()
+        public P ScreenLocation()
         {
             return PointToScreen( Location );
         }
@@ -1156,24 +1156,25 @@ namespace Stepflow.Gui
                 #endregion
 
 
-        public ITaskAsistableVehicle<SteadyAction> task()
+        public ITaskAsistableVehicle<Action,Action> task()
         {
             return this;
         }
 
-        ITaskAssistor<SteadyAction> ITaskAsistableVehicle<SteadyAction>.assist()
+        int IAsistableVehicle<IActionDriver<Action, ILapFinish<Action>, Action>, ILapFinish<Action>>.StartAssist()
         {
-            return taskassist;
+            return task().assist.GetAssistence( taskassist.action );
         }
 
-        int ITaskAsistableVehicle<SteadyAction>.StartAssist()
+        int IAsistableVehicle<IActionDriver<Action, ILapFinish<Action>, Action>, ILapFinish<Action>>.StoptAssist()
         {
-            return taskassist.GetAssistence( taskassist.action );
+            return task().assist.ReleaseAssist( taskassist.action );
         }
 
-        int ITaskAsistableVehicle<SteadyAction>.StoptAssist()
+        ITaskAssistor<Action,Action> ITaskAsistableVehicle<Action,Action>.assist
         {
-            return taskassist.ReleaseAssist( taskassist.action );
+            get { return taskassist; }
+            set { taskassist = value as TaskAssist<SteadyAction,Action,Action>; }
         }
     }
 }

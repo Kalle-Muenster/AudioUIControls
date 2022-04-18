@@ -15,7 +15,7 @@ using Stepflow;
 using Stepflow.Gui.Helpers;
 
 using Win32Imports;
-using Win32Imports.Touch;
+using TaskAssist.Geomety;
 using PointerAction = Win32Imports.Touch.PointerAction;
 using System.Runtime.InteropServices;
 #if DEBUG
@@ -318,25 +318,25 @@ namespace Stepflow.Gui
             control.OnTouchMove( tip );
             TouchMove?.Invoke(control,tip);
 
-            // check if the actually registerd finger tip maybe slides off from an actual hands ongoing gesture 
-            // far away enough to make clear it cannot belong to a single hands gestured interaction and so rather
-            // should be handled as a starting drag/drop operation a user seemingly just had begun performing it
+            // check if the actually registerd finger tip maybe slides off from an actual hands ongoing gesture. 
+            // ...far away enough to make clear it cannot belong to a single, one-handed interaction gesture, and which
+            // rather should be handled as start for a drag/drop operation the user seemingly just begun performing it
             if ( tip.HasFlags( IsTouching.Here|IsTouching.There ) ) {
                 // and if so, invoke the implementing control element to let generate a drag or a slide event
                 control.OnTouchDraged( hand );
                 TouchDraged?.Invoke( control, hand );
             }
-            // check if more then one fingers belong to maybe one same hand which could perform a gesture actually  
+            // check if more then one fingers belong to maybe one same hand which could perform a one-handed gesture actually  
             if ( tip.HasFlags( IsTouching.SubPrime ) ) {
                 if ( hand.GetResizing() != 0 ) {
                     // if so, if maybe distance between fingers in- or de-creases rapidly, make it invoking a resize event
                     control.OnTouchResize( hand );
-                    TouchResize?.Invoke(control, hand );
+                    TouchResize?.Invoke( control, hand );
                 }
                 if ( hand.GetRotation() != 0 ) {
                     // and/or if diagonals between fingers rapidly change their rotation angle, make it invoking a screew event
                     control.OnTouchRotate( hand );
-                    TouchRotate?.Invoke(control, hand );
+                    TouchRotate?.Invoke( control, hand );
                 }
             }
         }
@@ -345,9 +345,9 @@ namespace Stepflow.Gui
             // invoke removing the finger tip from the implementing control element and make it generating a touch lift event
             control.OnTouchLift( tip );
             TouchLift?.Invoke( control, tip );
-            // check if the just lifted finger tip maybe was part of any kind of higher level gestured operation like dragging or sizeing 
+            // check if the just lifted finger tip maybe was part of any kind of higher level gesture operation like dragging or sizeing 
             if ( tip.HasFlags( IsTouching.Here|IsTouching.There ) ) {
-                // and make the control element to generate some event for signaling a maby ongoing 'drag' so now turns into a 'drop' now  
+                // and make the control element to generate some event for signaling a maby ongoing 'drag' just turned into a 'drop' - plop!
                 hand.Discard();
                 control.OnTouchDraged( hand );
                 TouchDraged?.Invoke( control, hand );

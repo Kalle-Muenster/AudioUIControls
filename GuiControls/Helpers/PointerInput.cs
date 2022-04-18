@@ -38,16 +38,27 @@ namespace Stepflow.Gui
 
     [Flags]
     public enum IsTouching : ushort {
-        // when a fingertip just arrived and was'nt recognized any before. (within this state, it's yet unclear if the tip maybe is moving already or, if it's pointing to a fixed position actually)     
+        // When a fingertip just arrived and at all was'nt recognized before.
+        // - within this state, it's yet unclear if the tip already is moving
+        //   maybe or, if it's pointing to a fixed position and not moving at all)     
         TouchDown = 0x0000,
-        TheScreen = 0x0001, // this could apply for all touches not passable further on to controlls which could handle (e.g. when touched areas don't implement any ITouchable interface)  
+        // This could apply for all touches not passable further on to control elements
+        // which could handle these (like when the touched area actually does not implement the ITouchable interface)  
+        TheScreen = 0x0001, 
         TrackKept = 0x0002,
         AnElement = 0x0004,
-        Here      = 0x0008, //  area where an actual ongoing primar hand operation seems taking place  
-        
+
+        // The area (or the 'group of finger tips') where an actual ongoing primar hand operation is taking place 
+        Here = 0x0008,
+
+
         // abstract identifiers for 'fingertips' 
-       
-        FourthSub = 0x0010, // drop in helper for identifying a fourth finger on a second hand (where cannot be used that ThumbSub bit- due to this would signal a FULL hand as well as also 4 fingers down. - So any 'There' location touches can use FourthSub to signal 4 fingers down 'There' with still existing possibility of extending to a full hand if a 10'th finger may follow
+
+        // drop in helper for identifying a fourth finger on a second hand (where cannot be used that ThumbSub bit- due to
+        // that bit would signal a FULL hand as well as also 4 fingers down. - So any 'There' location touches then can use
+        // the FourthSub bit for signaling '4 fingers down There' with still existing possibility later extending the gesture
+        // to a full hand if maybe later a 10'th finger follows
+        FourthSub = 0x0010, 
         FirstSub  = 0x0020,
         SecondSub = 0x0040,
         ThirdSub  = 0x0080,
@@ -57,7 +68,8 @@ namespace Stepflow.Gui
 
         //unter erster hand
         SubPrime   = FirstSub|SecondSub|ThirdSub|ThumbSub,
-        SubHere    = SubPrime|Here, // an additional new touch down is determined being additional finnger of the same one hand, for modifying that hands ongoing operation 
+        // bit mask which can be used fore checking if an additional new touch down is determined being additional finger of the same one hand, for modifying that hands ongoing operation 
+        SubHere = SubPrime|Here, 
         
         //unter anderer hand
         There     = 0x1000,  // , ...when touches appear too far away from an already recognized group of fingers of a first hand, 

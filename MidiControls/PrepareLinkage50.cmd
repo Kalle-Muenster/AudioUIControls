@@ -3,7 +3,7 @@ set _ProDir_=%~dp0
 set _arch_=%~1
 set _conf_=%~2
 
-set GUICONTROLS=c:\WORKSPACE\PROJECTS\GITSPACE\MidiGui\GuiControls\bin\%_arch_%\%_conf_%\net5.0-windows
+set GUICONTROLS=c:\WORKSPACE\PROJECTS\MidiGui\GuiControls\bin\%_arch_%\%_conf_%\net5.0-windows
 
 echo copying linkage for "%_arch_%" archtecture into the build's linkage folder...>build.log
 copy /Y /B "%GUICONTROLS%\*.*" "%_ProDir_%linkage" >>build.log

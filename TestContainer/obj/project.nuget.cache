@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "R/+B6/00yv4nSo92c1StF3mQGCgP6/D5RtOvxjQovmBEHhqH+O48r9n4GdJxjgV1EqipsPDK7PWNdwHXBtVxNQ==",
+  "dgSpecHash": "e0b3nNhCydNGkbh3OxwBJ39qFTzf6oKDbJaOwQE2jaZnCChFhANCIRfGUw1HQU6BhPElh3chSBk7cs5lvwSlUg==",
   "success": true,
-  "projectFilePath": "C:\\WORKSPACE\\PROJECTS\\GITSPACE\\MidiGUI\\TestContainer\\TestContainer.csproj",
+  "projectFilePath": "C:\\WORKSPACE\\PROJECTS\\MidiGUI\\TestContainer\\TestContainer.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
