@@ -654,7 +654,7 @@ public ITouchableElementEvents<ITouchComponent> events()
                 elementar.Style = Style.Flat;
                 elementar.ForeColor = Color.CornflowerBlue;
 
-                elementar.touchimpl.events().TouchDown += OnStringTap;
+                elementar.touchimpl.outerer().TouchDown += OnStringTap;
                 elementar.Paint += OnStringPaint;
          
                 oscilator.Active = true;

@@ -24,23 +24,19 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>DEBUG;TRACE;USE_WITH_WF</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USE_WITH_WF;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>bin\x64\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DefineConstants>TRACE;USE_WITH_WF</DefineConstants>
+    <DefineConstants>TRACE;USE_WITH_WF;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>bin\x64\Release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="linkage\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\ControlledValues\Core5Dll\ControledValues\Stepflow\Stepflow.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>

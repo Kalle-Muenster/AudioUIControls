@@ -200,7 +200,7 @@ namespace Stepflow.Gui
 
         public ITouchableElement element()
         {
-            return screen().instance().Element as ITouchableElement;
+            return screen().trigger().Element as ITouchableElement;
         }
 
         public ITouchDispatchTrigger screen()
@@ -208,7 +208,7 @@ namespace Stepflow.Gui
             return this;
         }
 
-        public ITouchTrigger<ITouchDispatchTrigger> trigger()
+        public ITouchTrigger<ITouchDispatchTrigger> dispatch()
         {
             return this;
         }
@@ -218,7 +218,7 @@ namespace Stepflow.Gui
             return this;
         }
 
-        ITouchDispatchTrigger ITouchTrigger<ITouchDispatchTrigger>.instance()
+        ITouchDispatchTrigger ITouchTrigger<ITouchDispatchTrigger>.trigger()
         {
             return screen();
         }

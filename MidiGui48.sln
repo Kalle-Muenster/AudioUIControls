@@ -1,16 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiControls", "GuiControls\GuiControls48.csproj", "{681014C1-B3F7-403E-80A7-44C7F9132AFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuiControls48", "GuiControls\GuiControls48.csproj", "{681014C1-B3F7-403E-80A7-44C7F9132AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiControls", "MidiControls\MidiControls48.csproj", "{81C51CA6-5C81-47A0-81AD-4379BD9C3460}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MidiControls48", "MidiControls\MidiControls48.csproj", "{81C51CA6-5C81-47A0-81AD-4379BD9C3460}"
 	ProjectSection(ProjectDependencies) = postProject
 		{681014C1-B3F7-403E-80A7-44C7F9132AFD} = {681014C1-B3F7-403E-80A7-44C7F9132AFD}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ControlledValues", "..\ControlledValues\DotNetDLL\ControlledValues\ControlledValues\ControlledValues.vcxproj", "{FE259FEC-3043-4289-B4EB-A4FBD0577180}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,40 +102,6 @@ Global
 		{81C51CA6-5C81-47A0-81AD-4379BD9C3460}.Release|x64.Build.0 = Release|x64
 		{81C51CA6-5C81-47A0-81AD-4379BD9C3460}.Release|x86.ActiveCfg = Release|x86
 		{81C51CA6-5C81-47A0-81AD-4379BD9C3460}.Release|x86.Build.0 = Release|x86
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|Any CPU.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|Any CPU.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|x64.ActiveCfg = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|x64.Build.0 = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|x86.ActiveCfg = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_Core3|x86.Build.0 = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|Any CPU.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|Any CPU.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|x64.ActiveCfg = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|x64.Build.0 = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|x86.ActiveCfg = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug_v120|x86.Build.0 = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug|x64.ActiveCfg = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug|x64.Build.0 = Debug|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug|x86.ActiveCfg = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Debug|x86.Build.0 = Debug|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|Any CPU.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|Any CPU.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|x64.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|x64.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|x86.ActiveCfg = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_Core3|x86.Build.0 = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|Any CPU.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|Any CPU.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|x64.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|x64.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|x86.ActiveCfg = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release_v120|x86.Build.0 = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release|Any CPU.ActiveCfg = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release|x64.ActiveCfg = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release|x64.Build.0 = Release|x64
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release|x86.ActiveCfg = Release|Win32
-		{FE259FEC-3043-4289-B4EB-A4FBD0577180}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

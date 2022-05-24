@@ -1069,35 +1069,35 @@ namespace Stepflow.Gui
         // basic touch interface events, directly triggered on touch down/move/lift for each finger
 
         public event FingerTip.TouchDelegate TouchDown {
-            add{ getInTouch().handler().events().TouchDown += value; }
-            remove{ getInTouch().handler().events().TouchDown -= value; }
+            add{ getInTouch().handler().outerer().TouchDown += value; }
+            remove{ getInTouch().handler().outerer().TouchDown -= value; }
         }
         public event FingerTip.TouchDelegate TouchLift {
-            add{ getInTouch().handler().events().TouchLift += value; }
-            remove{ getInTouch().handler().events().TouchLift -= value; }
+            add{ getInTouch().handler().outerer().TouchLift += value; }
+            remove{ getInTouch().handler().outerer().TouchLift -= value; }
         }
         public event FingerTip.TouchDelegate TouchMove {
-            add{ getInTouch().handler().events().TouchMove += value; }
-            remove{ getInTouch().handler().events().TouchMove -= value; }
+            add{ getInTouch().handler().outerer().TouchMove += value; }
+            remove{ getInTouch().handler().outerer().TouchMove -= value; }
         }
 
         // higher level events, abstracted from interpreting several Downs/Moves/Lifts (of maybe several fingers) over time axis...  
 
         public event MultiFinger.TouchDelegate TouchTapped { // almost same like 'doubleclick'
-            add { getInTouch().handler().events().TouchTapped += value; }
-            remove { getInTouch().handler().events().TouchTapped -= value; }
+            add { getInTouch().handler().outerer().TouchTapped += value; }
+            remove { getInTouch().handler().outerer().TouchTapped -= value; }
         }
         public event MultiFinger.TouchDelegate TouchDraged { // almost same like 'dragndrop finished' or 'dropped'
-            add { getInTouch().handler().events().TouchDraged += value; }
-            remove { getInTouch().handler().events().TouchDraged -= value; }
+            add { getInTouch().handler().outerer().TouchDraged += value; }
+            remove { getInTouch().handler().outerer().TouchDraged -= value; }
         }
         public event MultiFinger.TouchDelegate TouchRotate { // apears when more then one fingers (at least two involved) gesturing a rotation on the screen
-            add { getInTouch().handler().events().TouchRotate += value; }
-            remove { getInTouch().handler().events().TouchRotate -= value; }
+            add { getInTouch().handler().outerer().TouchRotate += value; }
+            remove { getInTouch().handler().outerer().TouchRotate -= value; }
         }
         public event MultiFinger.TouchDelegate TouchResize { // apears when more then one fingers (at least two involved) gesturing a resize on the screen 
-            add { getInTouch().handler().events().TouchResize += value; }
-            remove { getInTouch().handler().events().TouchResize -= value; }
+            add { getInTouch().handler().outerer().TouchResize += value; }
+            remove { getInTouch().handler().outerer().TouchResize -= value; }
         }
 
 

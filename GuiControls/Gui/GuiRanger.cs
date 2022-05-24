@@ -1123,33 +1123,33 @@ namespace Stepflow.Gui
         }
 
         public event FingerTip.TouchDelegate TouchDown {
-            add { touchhandler.events().TouchDown += value; }
-            remove { touchhandler.events().TouchDown -= value; }
+            add { touchhandler.outerer().TouchDown += value; }
+            remove { touchhandler.outerer().TouchDown -= value; }
         }
         public event FingerTip.TouchDelegate TouchMove {
-            add { touchhandler.events().TouchMove += value; }
-            remove { touchhandler.events().TouchMove -= value; }
+            add { touchhandler.outerer().TouchMove += value; }
+            remove { touchhandler.outerer().TouchMove -= value; }
         }
         public event FingerTip.TouchDelegate TouchLift {
-            add { touchhandler.events().TouchLift += value; }
-            remove { touchhandler.events().TouchLift -= value; }
+            add { touchhandler.outerer().TouchLift += value; }
+            remove { touchhandler.outerer().TouchLift -= value; }
         }
 
         public event MultiFinger.TouchDelegate TouchTapped {
-            add { touchhandler.events().TouchTapped += value; }
-            remove { touchhandler.events().TouchTapped -= value; }
+            add { touchhandler.outerer().TouchTapped += value; }
+            remove { touchhandler.outerer().TouchTapped -= value; }
         }
         public event MultiFinger.TouchDelegate TouchDraged {
-            add { touchhandler.events().TouchDraged += value; }
-            remove { touchhandler.events().TouchDraged -= value; }
+            add { touchhandler.outerer().TouchDraged += value; }
+            remove { touchhandler.outerer().TouchDraged -= value; }
         }
         public event MultiFinger.TouchDelegate TouchResize {
-            add { touchhandler.events().TouchResize += value; }
-            remove { touchhandler.events().TouchResize -= value; }
+            add { touchhandler.outerer().TouchResize += value; }
+            remove { touchhandler.outerer().TouchResize -= value; }
         }
         public event MultiFinger.TouchDelegate TouchRotate {
-            add { touchhandler.events().TouchRotate += value; }
-            remove { touchhandler.events().TouchRotate -= value; }
+            add { touchhandler.outerer().TouchRotate += value; }
+            remove { touchhandler.outerer().TouchRotate -= value; }
         }
 
         public void OnTouchTapped( MultiFinger tip )
