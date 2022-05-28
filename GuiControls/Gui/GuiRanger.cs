@@ -1114,10 +1114,6 @@ namespace Stepflow.Gui
             return touchhandler;
         }
 
-        public ITouchEventTrigger touch() {
-            return touchhandler;
-        }
-
         public bool IsTouched {
             get { return touchhandler.IsTouched; }
         }
@@ -1186,7 +1182,7 @@ namespace Stepflow.Gui
         }
 
         IRectangle ITouchableElement.ScreenRectangle() {
-            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch().Bounds ) );
+            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch.Bounds ) );
         }
 
         ITouchDispatchTrigger ITouchable.screen() {
@@ -1200,7 +1196,11 @@ namespace Stepflow.Gui
         Control ITouchable.Element {
             get { return this; }
         }
-#endregion
+
+        public ITouchEventTrigger touch {
+            get { return touchhandler; }
+        }
+        #endregion
 
     }
 }

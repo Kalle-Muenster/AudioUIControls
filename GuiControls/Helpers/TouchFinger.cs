@@ -109,10 +109,10 @@ namespace Stepflow.Gui
 
         public void KeepTrack( ITouchableElement trackKeeper )
         {
-            TouchMessages touchfunc = new TouchMessages( trackKeeper.touch().Move );
+            TouchMessages touchfunc = new TouchMessages( trackKeeper.touch.Move );
             if( !(Move.GetInvocationList() as ICollection<Delegate>).Contains( touchfunc ) ) {
-                Move += trackKeeper.touch().Move;
-                Lift += trackKeeper.touch().Lift;
+                Move += trackKeeper.touch.Move;
+                Lift += trackKeeper.touch.Lift;
             } info |= IsTouching.TrackKept;
         }
 
@@ -133,14 +133,14 @@ namespace Stepflow.Gui
             //if( reporter == element.Element ) return true;
             reporter = element.Element;
             if( info.HasFlag( IsTouching.TrackKept ) ){
-                Lift += element.touch().Lift;
-                Move += element.touch().Move;
+                Lift += element.touch.Lift;
+                Move += element.touch.Move;
             } else {
-                Lift = element.touch().Lift;
-                Move = element.touch().Move;
+                Lift = element.touch.Lift;
+                Move = element.touch.Move;
             } translat += element.ScreenRectangle().Corner;
-            element.touch().Down( this );
-            return element.touch().hasFinger( this.Id );
+            element.touch.Down( this );
+            return element.touch.hasFinger( this.Id );
         }
 
         public Point64 Position { get { return location - translat; } }

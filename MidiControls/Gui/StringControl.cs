@@ -185,9 +185,9 @@ namespace Midi
                     return PointToScreen( Location );
                 }
 
-                ITouchEventTrigger ITouchableElement.touch()
+                ITouchEventTrigger ITouchableElement.touch
                 {
-                    return touchimpl;
+                    get { return touchimpl; }
                 }
 
                 public ITouchDispatchTrigger screen()

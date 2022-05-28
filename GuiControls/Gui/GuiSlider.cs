@@ -389,7 +389,7 @@ namespace Stepflow.Gui
                 }
             } else {
                 FingerTip e = evarg as FingerTip;
-                if( touch().hasFinger( e.Id ) ) {
+                if( touch.hasFinger( e.Id ) ) {
                     this.TouchMove -= Nuppsi_Move;
 #if DEBUG
                     Consola.StdStream.Out.WriteLine("FaderRelease");
@@ -402,32 +402,32 @@ namespace Stepflow.Gui
 
 
         private P l1,l2;
-        private void GuiSlider_TouchDown( object sender, FingerTip touch )
+        private void GuiSlider_TouchDown( object sender, FingerTip tip )
         {
-            if( touch.HasFlags( IsTouching.FirstSub ) ) {
+            if( tip.HasFlags( IsTouching.FirstSub ) ) {
                 if( Orientation != Orientation.Rondeal ) {
                     mnu_context.Show();
                 } else {
-                    l1 = touch.Position;
-                    l2 = touch.NextHere.Position;
+                    l1 = tip.Position;
+                    l2 = tip.NextHere.Position;
                 }
             } TouchMove += GuiSlider_TouchMove;
         }
 
-        private void GuiSlider_TouchLift( object sender, FingerTip touch )
+        private void GuiSlider_TouchLift( object sender, FingerTip tip )
         {
-            if( !touch.HasFlags( IsTouching.TrackKept ) )
+            if( !tip.HasFlags( IsTouching.TrackKept ) )
                 this.TouchMove -= GuiSlider_TouchMove;
         }
 
-        private void GuiSlider_TouchMove( object sender, FingerTip touch )
+        private void GuiSlider_TouchMove( object sender, FingerTip tip )
         {
             float range = 0;
             switch( Orientation ) {
                 case Orientation.Rondeal:
-                    if( touch.Count == 2 ) {
-                        P p1 = touch.Position;
-                        P p2 = touch.NextHere.Position;
+                    if( tip.Count == 2 ) {
+                        P p1 = tip.Position;
+                        P p2 = tip.NextHere.Position;
                         P pC = p1+((p2-p1)*0.5f);
                         p mv = new p(p1-l1);
                         float mC = 0;
@@ -461,13 +461,13 @@ namespace Stepflow.Gui
                     break;
                 case Orientation.Horizontal:
                     range = Inverted
-                          ? 1.0f-((float)touch.Position.x / PixelRange)
-                          : (float)touch.Position.x / PixelRange;
+                          ? 1.0f-((float)tip.Position.x / PixelRange)
+                          : (float)tip.Position.x / PixelRange;
                     break;
                 case Orientation.Vertical:
                     range = Inverted
-                          ? 1.0f-((float)touch.Position.y / PixelRange)
-                          : (float)touch.Position.y / PixelRange;
+                          ? 1.0f-((float)tip.Position.y / PixelRange)
+                          : (float)tip.Position.y / PixelRange;
                     break;
             } Proportion = range;
         }
@@ -1123,17 +1123,17 @@ namespace Stepflow.Gui
 
         public IRectangle ScreenRectangle()
         {
-            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch().Bounds ) );
+            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch.Bounds ) );
         }
 
-        public ITouchEventTrigger touch()
+        public ITouchEventTrigger touch
         {
-            return (this as ITouchGesturedElement<GuiSlider>).handler();
+            get { return (this as ITouchGesturedElement<GuiSlider>).handler(); }
         }
 
         public ITouchDispatchTrigger screen()
         {
-            return touch().screen();
+            return touch.screen();
         }
 
         public ITouchableElement element()
@@ -1152,7 +1152,7 @@ namespace Stepflow.Gui
 
         public Control Element { get { return this; } }
 
-        public bool IsTouched { get { return touch().IsTouched; } }
+        public bool IsTouched { get { return touch.IsTouched; } }
                 #endregion
 
 
