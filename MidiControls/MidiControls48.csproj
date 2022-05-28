@@ -72,13 +72,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Consola">
-      <HintPath>linkage\Consola.dll</HintPath>
+      <HintPath>..\..\Consola\bin\dot48\x64\Debug\Consola.dll</HintPath>
     </Reference>
     <Reference Include="ControlledValues">
-      <HintPath>linkage\ControlledValues.dll</HintPath>
+      <HintPath>..\..\ControlledValues\bin\dot48\x64\Debug\ControlledValues.dll</HintPath>
     </Reference>
     <Reference Include="Int24Types">
-      <HintPath>linkage\Int24Types.dll</HintPath>
+      <HintPath>..\..\Int24Types\bin\dot48\x64\Debug\Int24Types.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,7 +90,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TaskAssist">
-      <HintPath>linkage\TaskAssist.dll</HintPath>
+      <HintPath>..\..\Motorsports\bin\dot48\x64\Debug\TaskAssist.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -228,7 +228,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)PrepareLinkage48.cmd" "$(PlatformName)" "$(ConfigurationName)"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

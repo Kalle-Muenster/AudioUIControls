@@ -32,13 +32,16 @@
 
   <ItemGroup>
     <Reference Include="Consola">
-      <HintPath>..\GuiControls\linkage\Consola.dll</HintPath>
+      <HintPath>$(ConsolaBinRoot)\$(PlatformTarget)\$(Configuration)\Consola.dll</HintPath>
+    </Reference>
+    <Reference Include="ControlledValues">
+      <HintPath>$(ControlledValuesBinRoot)\$(PlatformTarget)\$(Configuration)\ControlledValues.dll</HintPath>
     </Reference>
     <Reference Include="Int24Types">
-      <HintPath>..\GuiControls\linkage\Int24Types.dll</HintPath>
+      <HintPath>$(Int24TypesBinRoot)\$(PlatformTarget)\$(Configuration)\Int24Types.dll</HintPath>
     </Reference>
     <Reference Include="TaskAssist">
-      <HintPath>..\GuiControls\linkage\TaskAssist.dll</HintPath>
+      <HintPath>$(MotorsportBinRoot)\$(PlatformTarget)\$(Configuration)\TaskAssist.dll</HintPath>
     </Reference>
   </ItemGroup>
 

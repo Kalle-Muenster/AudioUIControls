@@ -33,12 +33,16 @@ set WaveFileHandlingBinRoot=c:\WORKSPACE\PROJECTS\GITSPACE\AudioDataHandling\bin
 
 :: Set parameters and solution files
 if "%DotNetVersionString%"=="dot48" call %_root_%\Args "%~1" "%~2" "%~3" "%~4" MidiGui48.sln
-if "%DotNetVersionString%"=="core5" call %_root_%\Args "%~1" "%~2" "%~3" "%~4" MidiGui50.sln TestGUI50.sln
+if "%DotNetVersionString%"=="core5" call %_root_%\Args "%~1" "%~2" "%~3" "%~4" MidiGui50.sln
 
 :: Do the Build
 cd %_here_%
 call MsBuild %_target_% %_args_%
 cd %_call_%
+
+if "%DotNetVersionString%"=="dot48" (
+echo @UserControlTestContainer.exe "%_build_%\MidiControls.dll">"%_build_%\TestContainer.cmd"
+)
 
 :: Cleanup Environment
 call %_root_%\Args ParameterCleanUp

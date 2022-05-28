@@ -14,38 +14,42 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DefineConstants>TRACE;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>bin\x86\Release</OutputPath>
+    <OutputPath>..\bin\core5\x86\Release</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DefineConstants>DEBUG;TRACE;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>bin\x86\Debug</OutputPath>
+    <OutputPath>..\bin\core5\x86\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefineConstants>TRACE;DEBUG;USE_WITH_WF;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>bin\x64\Debug</OutputPath>
+    <OutputPath>..\bin\core5\x64\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DefineConstants>TRACE;USE_WITH_WF;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>bin\x64\Release</OutputPath>
+    <OutputPath>..\bin\core5\x64\Release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="Consola">
       <HintPath>$(ConsolaBinRoot)\$(PlatformTarget)\$(Configuration)\Consola.dll</HintPath>
     </Reference>
+    <Reference Include="ControlledValues">
+      <HintPath>$(ControlledValuesBinRoot)\$(PlatformTarget)\$(Configuration)\ControlledValues.dll</HintPath>
+    </Reference>
     <Reference Include="Int24Types">
       <HintPath>$(Int24TypesBinRoot)\$(PlatformTarget)\$(Configuration)\Int24Types.dll</HintPath>
-      <CopyLocal>True</CopyLocal>
     </Reference>
     <Reference Include="TaskAssist">
       <HintPath>$(MotorsportBinRoot)\$(PlatformTarget)\$(Configuration)\TaskAssist.dll</HintPath>
-      <Private>true</Private>
+    </Reference>
+    <Reference Include="WaveFileHandling">
+      <HintPath>$(WaveLibBinRoot)\$(PlatformTarget)\$(Configuration)\WaveFileHandling.dll</HintPath>
     </Reference>
   </ItemGroup>
 

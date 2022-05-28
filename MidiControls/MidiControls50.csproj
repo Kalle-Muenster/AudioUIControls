@@ -14,25 +14,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <DefineConstants>TRACE;DEBUG;SEPARATED_MIDI_IO;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>..\bin\x86\Debug</OutputPath>
+    <OutputPath>..\bin\core5\x86\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefineConstants>TRACE;DEBUG;SEPARATED_MIDI_IO;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>..\bin\x64\Debug</OutputPath>
+    <OutputPath>..\bin\core5\x64\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DefineConstants>TRACE;SEPARATED_MIDI_IO;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>..\bin\x86\Release</OutputPath>
+    <OutputPath>..\bin\core5\x86\Release</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DefineConstants>TRACE;SEPARATED_MIDI_IO;USE_WITH_WF</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>..\bin\x64\Release</OutputPath>
+    <OutputPath>..\bin\core5\x64\Release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,19 +41,22 @@
 
   <ItemGroup>
     <Reference Include="Consola">
-      <HintPath>linkage\Consola.dll</HintPath>
+      <HintPath>$(ConsolaBinRoot)\$(PlatformTarget)\$(Configuration)\Consola.dll</HintPath>
     </Reference>
     <Reference Include="ControlledValues">
-      <HintPath>linkage\ControlledValues.dll</HintPath>
-    </Reference>
-    <Reference Include="GuiControls">
-      <HintPath>linkage\GuiControls.dll</HintPath>
+      <HintPath>$(ControlledValuesBinRoot)\$(PlatformTarget)\$(Configuration)\ControlledValues.dll</HintPath>
     </Reference>
     <Reference Include="Int24Types">
-      <HintPath>linkage\Int24Types.dll</HintPath>
+      <HintPath>$(Int24TypesBinRoot)\$(PlatformTarget)\$(Configuration)\Int24Types.dll</HintPath>
     </Reference>
     <Reference Include="TaskAssist">
-      <HintPath>linkage\TaskAssist.dll</HintPath>
+      <HintPath>$(MotorsportBinRoot)\$(PlatformTarget)\$(Configuration)\TaskAssist.dll</HintPath>
+    </Reference>
+    <Reference Include="WaveFileHandling">
+      <HintPath>$(WaveLibBinRoot)\$(PlatformTarget)\$(Configuration)\WaveFileHandling.dll</HintPath>
+    </Reference>
+    <Reference Include="GuiControls">
+      <HintPath>..\bin\core5\$(PlatformTarget)\$(Configuration)\GuiControls.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -71,9 +74,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(ProjectDir)PrepareLinkage50.cmd&quot; &quot;$(PlatformName)&quot; &quot;$(ConfigurationName)&quot;" />
-  </Target>
 
 </Project>
