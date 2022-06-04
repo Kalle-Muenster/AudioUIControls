@@ -218,7 +218,7 @@ namespace Stepflow.Gui
             } return self;
         }
 
-        public FingerTip[] InvolvedTouches()
+        public FingerTip[] GetFingerArray()
         {
             int count = this.Count;
             FingerTip[] touches = new FingerTip[count];
