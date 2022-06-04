@@ -48,9 +48,6 @@
     <Reference Include="TaskAssist">
       <HintPath>$(MotorsportBinRoot)\$(PlatformTarget)\$(Configuration)\TaskAssist.dll</HintPath>
     </Reference>
-    <Reference Include="WaveFileHandling">
-      <HintPath>$(WaveLibBinRoot)\$(PlatformTarget)\$(Configuration)\WaveFileHandling.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

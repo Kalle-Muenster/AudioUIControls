@@ -167,7 +167,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Win32Import\Win32PointerDevices.cs" />
-    <Compile Include="Win32Import\Win32SystemMetrics.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
