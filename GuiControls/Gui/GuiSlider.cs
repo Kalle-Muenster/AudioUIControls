@@ -1066,38 +1066,47 @@ namespace Stepflow.Gui
         private TouchGesturesHandler<GuiSlider> touche_inter_patsche;
         TouchGesturesHandler<GuiSlider> ITouchGesturedElement<GuiSlider>.handler() { return touche_inter_patsche; }
 
-        // basic touch interface events, directly triggered on touch down/move/lift for each finger
+        // basic touch interface events, directly triggered on touch down/move/lift for each finger (similar to mouse down/up/move events)
 
         public event FingerTip.TouchDelegate TouchDown {
-            add{ getInTouch().handler().outerer().TouchDown += value; }
-            remove{ getInTouch().handler().outerer().TouchDown -= value; }
+            add{ touche_inter_patsche.events().TouchDown += value; }
+            remove{ touche_inter_patsche.events().TouchDown -= value; }
         }
         public event FingerTip.TouchDelegate TouchLift {
-            add{ getInTouch().handler().outerer().TouchLift += value; }
-            remove{ getInTouch().handler().outerer().TouchLift -= value; }
+            add{ touche_inter_patsche.events().TouchLift += value; }
+            remove{ touche_inter_patsche.events().TouchLift -= value; }
         }
         public event FingerTip.TouchDelegate TouchMove {
-            add{ getInTouch().handler().outerer().TouchMove += value; }
-            remove{ getInTouch().handler().outerer().TouchMove -= value; }
+            add{ touche_inter_patsche.events().TouchMove += value; }
+            remove{ touche_inter_patsche.events().TouchMove -= value; }
         }
 
-        // higher level events, abstracted from interpreting several Downs/Moves/Lifts (of maybe several fingers) over time axis...  
+        // higher level events, abstracted from interpreting several Downs/Moves/Lifts (of maybe several fingers) over time axis...  (similar to mouse click/double/drag events )
 
-        public event MultiFinger.TouchDelegate TouchTapped { // almost same like 'doubleclick'
-            add { getInTouch().handler().outerer().TouchTapped += value; }
-            remove { getInTouch().handler().outerer().TouchTapped -= value; }
+        public event FingerTip.TouchDelegate TouchTapped {
+            add { touche_inter_patsche.events().TouchTapped += value; }
+            remove { touche_inter_patsche.events().TouchTapped -= value; }
         }
+        public event FingerTip.TouchDelegate TouchDupple {
+            add { touche_inter_patsche.events().TouchDupple += value; }
+            remove { touche_inter_patsche.events().TouchDupple -= value; }
+        }
+                public event FingerTip.TouchDelegate TouchTrippl {
+            add { touche_inter_patsche.events().TouchTrippl += value; }
+            remove { touche_inter_patsche.events().TouchTrippl -= value; }
+        }
+
         public event MultiFinger.TouchDelegate TouchDraged { // almost same like 'dragndrop finished' or 'dropped'
-            add { getInTouch().handler().outerer().TouchDraged += value; }
-            remove { getInTouch().handler().outerer().TouchDraged -= value; }
+            add { touche_inter_patsche.events().TouchDraged += value; }
+            remove { touche_inter_patsche.events().TouchDraged -= value; }
         }
         public event MultiFinger.TouchDelegate TouchRotate { // apears when more then one fingers (at least two involved) gesturing a rotation on the screen
-            add { getInTouch().handler().outerer().TouchRotate += value; }
-            remove { getInTouch().handler().outerer().TouchRotate -= value; }
+            add { touche_inter_patsche.events().TouchRotate += value; }
+            remove { touche_inter_patsche.events().TouchRotate -= value; }
         }
         public event MultiFinger.TouchDelegate TouchResize { // apears when more then one fingers (at least two involved) gesturing a resize on the screen 
-            add { getInTouch().handler().outerer().TouchResize += value; }
-            remove { getInTouch().handler().outerer().TouchResize -= value; }
+            add { touche_inter_patsche.events().TouchResize += value; }
+            remove { touche_inter_patsche.events().TouchResize -= value; }
         }
 
 
@@ -1107,8 +1116,14 @@ namespace Stepflow.Gui
         {}
         public virtual void OnTouchLift( FingerTip tip )
         {}
-        virtual public void OnTouchTapped( MultiFinger tip )
+
+        virtual public void OnTouchDupple( FingerTip tipple )
         {}
+        virtual public void OnTouchTapped( FingerTip tapple )
+        {}
+        virtual public void OnTouchTrippl( FingerTip triple )
+        {}
+
         virtual public void OnTouchDraged( MultiFinger tip )
         {}
         virtual public void OnTouchResize( MultiFinger tip )
