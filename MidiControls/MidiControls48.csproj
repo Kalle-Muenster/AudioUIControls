@@ -145,12 +145,7 @@
     <Compile Include="Win32Imports\Win32MidiIO.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="PrepareLinkage48.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="linkage\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Gui\JogDial.resx">
       <DependentUpon>JogDial.cs</DependentUpon>
