@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using Stepflow;
 using Stepflow.Gui;
 using Stepflow.TaskAssist;
+using Stepflow.Gui.Geometry;
 using Stepflow.Gui.Helpers;
 using Stepflow.Gui.Automation;
 using Stepflow.Controller;
@@ -26,9 +27,9 @@ using Style = Stepflow.Gui.Style;
 using Std = Consola.StdStream;
 #endif
 using Rectangle = System.Drawing.Rectangle;
-using R = TaskAssist.Geomety.RECT;
-using P = TaskAssist.Geomety.Point64;
-using p = TaskAssist.Geomety.Point32;
+using R = Stepflow.Gui.Geometry.RECT;
+using P = Stepflow.Gui.Geometry.Point64;
+using p = Stepflow.Gui.Geometry.Point32;
 using Win32Imports.Touch;
 
 

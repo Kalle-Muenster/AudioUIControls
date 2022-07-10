@@ -15,6 +15,7 @@ using Stepflow;
 using Stepflow.TaskAssist;
 using Stepflow.Gui;
 using Stepflow.Gui.Helpers;
+using Stepflow.Gui.Geometry;
 using Stepflow.Gui.Automation;
 using Stepflow.Controller;
 using MidiControls.Properties;
@@ -22,6 +23,7 @@ using Midi = Win32Imports.Midi;
 using Stepflow.Midi.ControlHelpers;
 using Message = Win32Imports.Midi.Message;
 using Rectangle = System.Drawing.Rectangle;
+
 
 namespace Stepflow {
 namespace Midi

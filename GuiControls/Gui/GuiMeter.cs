@@ -5,14 +5,15 @@ using System.Drawing;
 using System.Data;
 
 using Stepflow;
-using Stepflow.Controller;
 using Stepflow.TaskAssist;
+using Stepflow.Controller;
 using Stepflow.Gui;
-using Stepflow.Gui.Automation;
 using Stepflow.Gui.Helpers;
+using Stepflow.Gui.Geometry;
+using Stepflow.Gui.Automation;
 using Orientation = Stepflow.Gui.Orientation;
 using Style       = Stepflow.Gui.Style;
-using Point32 = TaskAssist.Geomety.Point32;
+using Point32 = Stepflow.Gui.Geometry.Point32;
 using Resources = GuiControls.Properties.Resources;
 
 #if   USE_WITH_WF

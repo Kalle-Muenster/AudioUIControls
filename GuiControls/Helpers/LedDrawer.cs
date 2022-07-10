@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Stepflow.Gui.Geometry;
 
 #if USE_WITH_WF
 using System.Windows.Forms;

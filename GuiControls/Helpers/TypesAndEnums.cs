@@ -40,9 +40,9 @@ namespace System
             return (value as IConvertible).ToUInt64( fmtr );
         }
 
-        public static Stepflow.Gui.IRectangle ToIRectangle( this Rectangle rectangle )
+        public static Stepflow.Gui.Geometry.IRectangle ToIRectangle( this Rectangle rectangle )
         {
-            return new Stepflow.Gui.SystemDefault( rectangle );
+            return new Stepflow.Gui.Geometry.SystemDefault( rectangle );
         }
 
     /*    public static Int24 ToInt24( this IConvertible value )

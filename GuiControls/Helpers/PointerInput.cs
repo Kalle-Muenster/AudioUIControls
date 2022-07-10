@@ -11,6 +11,7 @@ using Win32Imports.Touch;
 using PointerAction = Win32Imports.Touch.PointerAction;
 using System.Runtime.InteropServices;
 using Stepflow.Gui.Helpers;
+using Stepflow.Gui.Geometry;
 #if DEBUG
 using Consola;
 #endif
