@@ -12,18 +12,17 @@ goto END
 )
 
 if "%DotNetVersionString%"=="core5" (
-set ConsolaProject=C:\WORKSPACE\PROJECTS\GITSPACE\Consola\ConsolaCore5
-set Int24TypesProject=C:\WORKSPACE\PROJECTS\GITSPACE\Int24Types\core5
-set ControllerProject=C:\WORKSPACE\PROJECTS\GITSPACE\ControlledValues\Core5Dll
-set TaskAssistProject=c:\WORKSPACE\PROJECTS\GITSPACE\Motorsports
-set WaveLibProject=c:\WORKSPACE\PROJECTS\GITSPACE\AudioDataHandling\dll\%DotNetVersionString%
+set ConsolaProject=.\..\Consola\ConsolaCore5
+set Int24TypesProject=.\..\Int24Types\core5
+set ControllerProject=.\..\ControlledValues\Core5Dll
+set TaskAssistProject=.\..\TaskAssist-Motorsport
 ) else (
-set ConsolaProject=C:\WORKSPACE\PROJECTS\GITSPACE\Consola\ConsolaDot48
-set Int24TypesProject=C:\WORKSPACE\PROJECTS\GITSPACE\Int24Types\dot48
-set ControllerProject=C:\WORKSPACE\PROJECTS\GITSPACE\ControlledValues\DotnetDll
-set TaskAssistProject=c:\WORKSPACE\PROJECTS\GITSPACE\Motorsports
-set WaveLibProject=c:\WORKSPACE\PROJECTS\GITSPACE\AudioDataHandling\dll\%DotNetVersionString%
+set ConsolaProject=.\..\Consola\ConsolaDot48
+set Int24TypesProject=.\..\Int24Types\dot48
+set ControllerProject=.\..\ControlledValues\DotnetDll
+set TaskAssistProject=.\..\TaskAssist-Motorsport
 )
+set WaveLibProject=.\..\AudioDataHandling\dll\%DotNetVersionString%
 
 set ARCH=%~1
 set CONF=%~2
