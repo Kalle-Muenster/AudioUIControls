@@ -15,12 +15,12 @@ if "%DotNetVersionString%"=="core5" (
 set ConsolaProject=.\..\Consola\ConsolaCore5
 set Int24TypesProject=.\..\Int24Types\core5
 set ControllerProject=.\..\ControlledValues\Core5Dll
-set TaskAssistProject=.\..\TaskAssist-Motorsport
+set TaskAssistProject=.\..\Motorsport-Taskassist
 ) else (
 set ConsolaProject=.\..\Consola\ConsolaDot48
 set Int24TypesProject=.\..\Int24Types\dot48
 set ControllerProject=.\..\ControlledValues\DotnetDll
-set TaskAssistProject=.\..\TaskAssist-Motorsport
+set TaskAssistProject=.\..\Motorsport-Taskassist
 )
 set WaveLibProject=.\..\AudioDataHandling\dll\%DotNetVersionString%
 
