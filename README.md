@@ -10,4 +10,6 @@ Set of control elements which 'out of the box' support MIDI automation
 - ControlledValues *https://github.com/Kalle-Muenster/ControlledValues*
 
 
-a small preebuild runnable demo can be found in https://github.com/Kalle-Muenster/AudioUIControls/bin/core5/x64/Debug/net5.0-windows/
+a small preebuild runnable demo can be found here:
+
+https://github.com/Kalle-Muenster/AudioUIControls/tree/main/bin/core5/x64/Debug/net5.0-windows
