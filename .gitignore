@@ -1,8 +1,9 @@
+bin/
 *.vs/
 *obj/
 *.vc.db
 *x64/
+*Debug/
 *x86/
 *Release/
-*Debug/
 *.svn/
