@@ -155,9 +155,11 @@ namespace Stepflow.Gui
 
         public static AutoRegistration  AutoRegistration {
             get { return registration; }
-            set { registration = value;
-                if( value == AutoRegistration.Enabled ) {
-                    RegisterWithMainWindow();
+            set { if( value == AutoRegistration.Enabled ) {
+                    if( registration != value ) {
+                        registration = value;
+                        RegisterWithMainWindow();
+                    }
                 }
             }
         }
