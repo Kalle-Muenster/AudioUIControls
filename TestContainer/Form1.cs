@@ -28,6 +28,7 @@ namespace TestContainer
 
         private string             Staged;
         private List<Control>      Instances;
+        private Action             destruct;
 
         private void Connect( Control staged )
         {
@@ -168,6 +169,7 @@ namespace TestContainer
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             LedButton button = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiButton() : new LedButton();
             button.Location = new Point(200, 200);
             button.Size = new Size(64, 64);
@@ -175,11 +177,13 @@ namespace TestContainer
             button.AutoText = true;
             button.Style = Style.Dark;
             button.Tag = 1;
-            Connect(button);
+            Connect( button );
+            destruct = () => { button.Dispose(); };
         }
 
         private void mnu_GuiSlider_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             GuiSlider dings = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiSlider() : new GuiSlider();
             dings.Location = new Point(200, 200);
             dings.Size = new Size(64, 64);
@@ -189,10 +193,12 @@ namespace TestContainer
             dings.LedColor = LED.Pink;
             dings.Tag = 1;
             Connect( dings );
+            destruct = () => { dings.Dispose(); };
         }
 
         private void mnu_GuiMeter_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             GuiMeter dings = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiMeter() : new GuiMeter();
             dings.Location = new Point(200, 200);
             dings.Size = new Size(64,256);
@@ -201,34 +207,41 @@ namespace TestContainer
             dings.Damped = true;
             dings.Tag = 1;
             Connect( dings );
+            destruct = () => { dings.Dispose(); };
         }
 
         private void mnu_JogDial_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             JogDial dings = new JogDial();
             dings.Location = new Point(120,120);
             dings.Size = new Size(384,384);
             dings.Style = Style.Dark;
             dings.Tag = 1;
             Connect( dings );
+            destruct = () => { dings.Dispose(); };
         }
 
         private void mnu_StringControl_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             StringControl dings = new StringControl();
             dings.Location = new Point(150,150);
             dings.Size = new Size(768,256);
             dings.Tag = 1;
-            Connect(dings);
+            Connect( dings );
+            destruct = () => { dings.Dispose(); };
         }
 
         private void mnu_DuiRangeControl_Click(object sender, EventArgs e)
         {
+            destruct?.Invoke();
             GuiRanger dings = new GuiRanger();
             dings.Location = new Point(100, 300);
             dings.Size = new Size(512, 128);
             dings.Tag = 1;
-            Connect(dings);
+            Connect( dings );
+            destruct = () => { dings.Dispose(); };
         }
     }
 }

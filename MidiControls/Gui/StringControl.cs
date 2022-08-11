@@ -45,7 +45,7 @@ namespace Stepflow
 
                 private String             saite;
                 private Controlled.Float32 tone;
-                public  FingerTip          press;
+            //    public  FingerTip          press;
 
                 public IResonator resonator {
                     get { return saite; }
@@ -66,8 +66,8 @@ namespace Stepflow
                     set {
                         tone.VAL = value;
                         valence(Tuning).SetDirty(
-                             ValenceFieldState.Flags.VAL);
-                        ToneChanged?.Invoke(this, tone.VAL);
+                             ValenceFieldState.Flags.VAL );
+                        ToneChanged?.Invoke( this, tone.VAL );
                         Invalidate();
                     }
                 }
@@ -89,7 +89,7 @@ namespace Stepflow
                     saite = stringDing;
                     midiIn = new MidiInput();
                     tone = new Controlled.Float32();
-                    press = null;
+                    //press = null;
                     touchimpl = new TouchGesturesHandler<SlideBar>(this);
                     Parent = instrument.steg.Panel2;
                     tone.SetUp(minFrq, maxFrq, 0, minFrq, ControlMode.Element);
@@ -117,7 +117,7 @@ namespace Stepflow
 
                     if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
                         if( PointerInput.Dispatcher == null ) {
-                            PointerInput.Initialized += TouchInputReady;
+                            PointerInput.Initialized += (this as ITouchableElement).TouchInputReady;
                         } else PointerInput.Dispatcher.RegisterTouchableElement(this);
                     }
                 }
@@ -140,10 +140,10 @@ namespace Stepflow
 
                 public TouchGesturesHandler<SlideBar> touchimpl { get; set; }
 
-                private void TouchInputReady(PointerInput inst)
+                void ITouchableElement.TouchInputReady( PointerInput inst )
                 {
-                    PointerInput.Initialized -= TouchInputReady;
-                    inst.RegisterTouchableElement(this);
+                    PointerInput.Initialized -= (this as ITouchableElement).TouchInputReady;
+                    inst.RegisterTouchableElement( this );
                 }
 
                 public event FingerTip.TouchDelegate   TouchDown { add { touchimpl.events().TouchDown += value;} remove { touchimpl.events().TouchDown -= value; } }
@@ -293,7 +293,7 @@ namespace Stepflow
                 }
 
                 bool ITouchable.IsTouched {
-                    get { return press != null; }
+                    get { return touchimpl.IsTouched; }
                 }
 
                 public ITouchableElement element {
@@ -427,17 +427,18 @@ namespace Stepflow
                 private void OnStringSlide(object sender, FingerTip e)
                 {
                     float newdetune = 0;
+                    Point64 pos = e.Position;
                     switch( Instrument.Orientation ) {
                         case Orientation.Horizontal:
-                            TapPosition = e.X;
+                            TapPosition = pos.x;
 #pragma warning disable CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
-                            newdetune = detunated.MOV + (float)(e.Y - elementar.press.Y) * 0.1f;
+                            newdetune = detunated.MOV + (float)( pos.y - (elementar.Height/2)) * 0.1f;
 #pragma warning restore CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
                             break;
                         case Orientation.Vertical:
-                            TapPosition = e.Y;
+                            TapPosition = pos.y;
 #pragma warning disable CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
-                            newdetune = detunated.MOV + (float)(e.X - elementar.press.X) * 0.1f;
+                            newdetune = detunated.MOV + (float)( pos.x - (elementar.Width/2)) * 0.1f;
 #pragma warning restore CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
                             break;
                     }

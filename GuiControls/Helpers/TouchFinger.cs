@@ -28,10 +28,15 @@ namespace Stepflow.Gui
         public FingerTip       NextHere;
         public TouchMessages   Move;
         public TouchMessages   Lift;
-        
 
-        public  int            X { get { return location.x - translat.x; } }
-        public  int            Y { get { return location.y - translat.y; } }
+
+        public int X { get { return location.x - translat.x; } }
+        public int Y { get { return location.y - translat.y; } }
+        public Point64 Position { get { return location - translat; } }
+        //public int X { get { return reporter.PointToClient( location ).X; } }
+        //public int Y { get { return reporter.PointToClient( location ).Y; } }
+        //public Point64 Position { get { return reporter.PointToClient( location ); } }
+        public Point64 Origin   { get { return location; } }
 
         public Control Reporter {
             get { return reporter; }
@@ -42,8 +47,8 @@ namespace Stepflow.Gui
                             TouchMessages liftHandler,
                             Control reportingElement )  {
             location = touchAction.pos;
-            translat = new Point32( reportingElement.PointToScreen(reportingElement.Location) );
             reporter = reportingElement;
+            translat = new Point32( reportingElement.PointToScreen( Point.Empty ) ); //  reportingElement.Location ) );
             Id = touchAction.pid;
             Move = moveHandler;
             Lift = liftHandler;
@@ -119,16 +124,16 @@ namespace Stepflow.Gui
         public bool TryPass( ITouchableElement element )
         {
             IRectangle bounds = element.ScreenRectangle();
-            if ( bounds.Contains( Origin ) ) {
-                if ( Interact( element ) ) {
-                    SetOffset( bounds.Corner );
+            if ( bounds.Contains( location ) ) {
+                if ( Interact( element, bounds ) ) {
+                   // SetOffset( bounds.Corner );
                     info |= IsTouching.AnElement;
                     return true;
                 }
             } return false;
         }
 
-        public bool Interact( ITouchableElement element )
+        public bool Interact( ITouchableElement element, IRectangle bounds )
         {
             //if( reporter == element.Element ) return true;
             reporter = element.Element;
@@ -138,22 +143,20 @@ namespace Stepflow.Gui
             } else {
                 Lift = element.touch.Lift;
                 Move = element.touch.Move;
-            } translat += element.ScreenRectangle().Corner;
+            } translat = bounds.Corner;
             element.touch.Down( this );
             return element.touch.hasFinger( this.Id );
         }
 
-        public Point64 Position { get { return location - translat; } }
-        public Point64 Origin { get { return location; } }
         public bool HasFlags( IsTouching allThese ) {
             return ( info & allThese) == allThese;
         }
         public bool AnyFlags( IsTouching anyOfThese ) {
-            return (info & anyOfThese) != 0;
+            return ( info & anyOfThese ) != 0;
         }
         
         public bool HasFinger( ushort id ) {
-            return (Prime.multiple & id) == id;
+            return ( Prime.multiple & id ) == id;
         }
 
         public TimeSpan TimeDown {

@@ -47,10 +47,10 @@
             this.Nuppsi.Cursor = System.Windows.Forms.Cursors.VSplit;
             this.Nuppsi.ErrorImage = null;
             this.Nuppsi.InitialImage = null;
-            this.Nuppsi.Location = new System.Drawing.Point(118, 0);
+            this.Nuppsi.Location = new System.Drawing.Point(138, 0);
             this.Nuppsi.Margin = new System.Windows.Forms.Padding(0);
             this.Nuppsi.Name = "Nuppsi";
-            this.Nuppsi.Size = new System.Drawing.Size(20, 32);
+            this.Nuppsi.Size = new System.Drawing.Size(23, 37);
             this.Nuppsi.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.Nuppsi.TabIndex = 0;
             this.Nuppsi.TabStop = false;
@@ -91,18 +91,17 @@
             // 
             // GuiSlider
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ContextMenuStrip = this.mnu_context;
             this.Controls.Add(this.Nuppsi);
-            this.Cursor = System.Windows.Forms.Cursors.Default;
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.MinimumSize = new System.Drawing.Size(3, 3);
+            this.MinimumSize = new System.Drawing.Size(4, 3);
             this.Name = "GuiSlider";
-            this.Size = new System.Drawing.Size(256, 32);
+            this.Size = new System.Drawing.Size(299, 37);
             ((System.ComponentModel.ISupportInitialize)(this.Nuppsi)).EndInit();
             this.mnu_context.ResumeLayout(false);
             this.ResumeLayout(false);

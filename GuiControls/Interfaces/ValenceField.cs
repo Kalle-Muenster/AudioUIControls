@@ -253,7 +253,7 @@ namespace Stepflow {
 
             // free this controller from any other variables maybe joined with any of this controllers variables 
             public void Free() { unsafe {
-                ControllerType ctrldVal = (ControllerType)controllers[ current ]; 
+                ControllerBase ctrldVal = controllers[ current ]; 
                 ulong[] actualValues = new ulong[4] {
                     *(ulong*)ctrldVal.GetPointer(ControllerVariable.VAL).ToPointer(),
                     *(ulong*)ctrldVal.GetPointer(ControllerVariable.MIN).ToPointer(),

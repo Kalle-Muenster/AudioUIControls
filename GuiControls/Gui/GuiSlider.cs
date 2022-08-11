@@ -51,10 +51,6 @@ namespace Stepflow.Gui
         public event ValueChangeDelegate<float> ReleasedKnob;
         public event MarkerPassedDelegate       MarkerPassed;
         public event ValueChangeDelegate<float> ValueChanged;
-  
-        //public event MultiFinger.TouchDelegate Tapped;
-        //public event MultiFinger.TouchDelegate Draged;
-        //public event MultiFinger.TouchDelegate Rotate;
 
         private static Bitmap[]                               images;
         private static IRectangle[][][][]                     source;
@@ -905,13 +901,16 @@ namespace Stepflow.Gui
 
             if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
                 if( PointerInput.Dispatcher == null ) {
-                    PointerInput.Initialized += TouchInputReady; 
+                    PointerInput.Initialized += (this as ITouchableElement).TouchInputReady; 
                 } else
                     PointerInput.Dispatcher.RegisterTouchableElement( this );
             }
             Nuppsi.MouseDown += Nuppsi_MouseDown;
             Nuppsi.MouseUp += Nuppsi_MouseUp;
             taskassist = new TaskAssist<SteadyAction,Action,Action>( this, flashPoint, 60 );
+
+            TouchDown += GuiSlider_TouchDown;
+            TouchLift += GuiSlider_TouchLift;
 
             Load += AdjustSpriteColor;
         }
@@ -942,9 +941,9 @@ namespace Stepflow.Gui
             } Invalidate();
         }
 
-        private void TouchInputReady( PointerInput inst )
+        void ITouchableElement.TouchInputReady( PointerInput inst )
         {
-            PointerInput.Initialized -= TouchInputReady;
+            PointerInput.Initialized -= touch.element().TouchInputReady;
             inst.RegisterTouchableElement( this );
         }
 
@@ -1134,12 +1133,12 @@ namespace Stepflow.Gui
 
         public P ScreenLocation()
         {
-            return PointToScreen( Location );
+            return PointToScreen( Point.Empty );
         }
 
         public IRectangle ScreenRectangle()
         {
-            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch.Bounds ) );
+            return AbsoluteEdges.FromRectangle( RectangleToScreen( new Rectangle( 0, 0, Width, Height ) ) );
         }
 
         public ITouchEventTrigger touch

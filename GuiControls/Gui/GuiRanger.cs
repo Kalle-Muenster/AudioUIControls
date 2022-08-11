@@ -666,7 +666,7 @@ namespace Stepflow.Gui
             touchhandler = new TouchGesturesHandler<GuiRanger>( this );
             if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
                 if( PointerInput.Dispatcher == null ) {
-                    PointerInput.Initialized += TouchInputReady;
+                    PointerInput.Initialized += (this as ITouchableElement).TouchInputReady;
                 } else
                     PointerInput.Dispatcher.RegisterTouchableElement( this );
             }
@@ -1111,7 +1111,7 @@ namespace Stepflow.Gui
         }
 
         private TouchGesturesHandler<GuiRanger> touchhandler;
-                TouchGesturesHandler<GuiRanger> ITouchGesturedElement<GuiRanger>.handler() {
+        TouchGesturesHandler<GuiRanger> ITouchGesturedElement<GuiRanger>.handler() {
             return touchhandler;
         }
 
@@ -1186,18 +1186,18 @@ namespace Stepflow.Gui
         public void OnTouchLift(FingerTip tip)
         {}
 
-        private void TouchInputReady( PointerInput inst )
+        void ITouchableElement.TouchInputReady( PointerInput inst )
         {
-            PointerInput.Initialized -= TouchInputReady;
+            PointerInput.Initialized -= touch.element().TouchInputReady;
             inst.RegisterTouchableElement( this );
         }
 
         Point64 ITouchableElement.ScreenLocation() {
-            return PointToScreen( Location );
+            return PointToScreen( Point.Empty );
         }
 
         IRectangle ITouchableElement.ScreenRectangle() {
-            return AbsoluteEdges.FromRectangle( RectangleToScreen( touch.Bounds ) );
+            return AbsoluteEdges.FromRectangle( RectangleToScreen( new Rectangle(0,0,Width,Height) ) );
         }
 
         ITouchDispatchTrigger ITouchable.screen() {

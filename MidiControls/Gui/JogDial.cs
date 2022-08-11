@@ -37,6 +37,7 @@ namespace Midi
         , IInterValuable<Controlled.Float32>
         , IMidiControlElement<MidiInOut>
         , ITaskAsistableVehicle<Action,Action>
+        , ITouchGesturedElement<JogDial>
     {
         public const JogDialValence Absolute = JogDialValence.Absolute;
         public const JogDialValence Relative = JogDialValence.Relative;
@@ -66,9 +67,8 @@ namespace Midi
         public event DirectionHasChanged WheelReverse;
         public event DirectionHasChanged TurningStopt;
 
-        private      MouseEventDelegator SlopeDown;
-
-        private PointerInput touchinput;
+        private MouseEventDelegator           SlopeDown;
+        private TouchGesturesHandler<JogDial> touchinput;
         
         private Controlled.Float32 flow;
         private Controlled.Float32 pos;
@@ -137,6 +137,10 @@ namespace Midi
 
             TaskAssist<SteadyAction,Action,Action>.Init( PropellorSpeed );
             Resources.ResourceManager.ReleaseAllResources();
+
+            if( !PointerInput.isInitialized() ) {
+                PointerInput.AutoRegistration = AutoRegistration.Enabled;
+            }
         }                                                    
 
 
@@ -240,12 +244,16 @@ namespace Midi
             set { if( value != interaction ) {
                     if( quadrants != null ) {
                         if ( quadrants == false ) {
-                            Wheel.MouseMove -= Wheel_DirectionalInteraction;
-                            Wheel.MouseMove += Wheel_VierQuadrantenInteraction;
+                            Wheel.MouseMove -= Wheel_DirectionalMouseMove;
+                            Wheel.MouseMove += Wheel_VierQuadrantenMouseMove;
+                            TouchMove -= Wheel_DirectionalTouchMove;
+                            TouchMove += Wheel_VierQuadrantenTouchMove;
                             quadrants = true;
                         } else {
-                            Wheel.MouseMove -= Wheel_VierQuadrantenInteraction;
-                            Wheel.MouseMove += Wheel_DirectionalInteraction;
+                            Wheel.MouseMove -= Wheel_VierQuadrantenMouseMove;
+                            Wheel.MouseMove += Wheel_DirectionalMouseMove;
+                            TouchMove -= Wheel_VierQuadrantenTouchMove;
+                            TouchMove += Wheel_DirectionalTouchMove;
                             quadrants = false;
                         }
                     } interaction = value;
@@ -386,6 +394,7 @@ namespace Midi
             Consola.StdStream.Out.WriteLine( "Midi note C2: {0} Hz", Frequency.fromMidiNote( Win32Imports.Midi.Note.C2) );
 #endif */
 
+            touchinput = new TouchGesturesHandler<JogDial>( this );
             interaction = InteractionMode.FlowByQuadrants;
             InitializeComponent();
             midi().binding.InitializeComponent( this, components, Invalidate );
@@ -430,10 +439,134 @@ namespace Midi
             MausPropellor = true;
             MidiPropellor = false;
 
+            if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
+                if( PointerInput.Dispatcher == null ) {
+                    PointerInput.Initialized += ( this as ITouchableElement ).TouchInputReady;
+                } else
+                    PointerInput.Dispatcher.RegisterTouchableElement( this );
+            }
+
             Width = Height = 256;
             Invalidate( true );
         }
 
+            public event MultiFinger.TouchDelegate TouchDraged {
+                add { touchinput.events().TouchDraged += value; }
+                remove { touchinput.events().TouchDraged -=value; }
+            }
+
+            public event MultiFinger.TouchDelegate TouchResize {
+                add { touchinput.events().TouchResize += value; }
+                remove { touchinput.events().TouchResize -=value; }
+            }
+
+            public event MultiFinger.TouchDelegate TouchRotate {
+                add { touchinput.events().TouchRotate += value; }
+                remove { touchinput.events().TouchRotate -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchTapped {
+                add { touchinput.events().TouchTapped += value; }
+                remove { touchinput.events().TouchTapped -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchDupple {
+                add { touchinput.events().TouchDupple += value; }
+                remove { touchinput.events().TouchDupple -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchTrippl {
+                add { touchinput.events().TouchTrippl += value; }
+                remove { touchinput.events().TouchTrippl -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchDown {
+                add { touchinput.events().TouchDown += value; }
+                remove { touchinput.events().TouchDown -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchLift {
+                add { touchinput.events().TouchLift += value; }
+                remove { touchinput.events().TouchLift -= value; }
+            }
+
+            public event FingerTip.TouchDelegate TouchMove {
+                add { touchinput.events().TouchMove += value; }
+                remove { touchinput.events().TouchMove -= value; }
+            }
+
+            public ITouchEventTrigger touch { get { return touchinput; } }
+
+            Control ITouchable.Element { get { return this; } }
+
+            public bool IsTouched { get { return touchinput.IsTouched; } }
+
+            TouchGesturesHandler<JogDial> ITouchGesturedElement<JogDial>.handler() {
+                return touchinput;
+            }
+
+            void ITouchGestutred.OnTouchDraged( MultiFinger tip )
+            {}
+
+            void ITouchGestutred.OnTouchResize( MultiFinger tip )
+            {}
+
+            void ITouchGestutred.OnTouchRotate( MultiFinger tip )
+            {}
+
+            void ITouchSelectable.OnTouchTapped( FingerTip tip )
+            {}
+
+            void ITouchSelectable.OnTouchDupple( FingerTip tip )
+            {}
+
+            void ITouchSelectable.OnTouchTrippl( FingerTip tip )
+            {}
+
+            void IBasicTouchable.OnTouchDown( FingerTip tip )
+            {
+                Wheel_StartInteract( tip.Position );
+            }
+
+            void IBasicTouchable.OnTouchMove( FingerTip tip )
+            {}
+
+            void IBasicTouchable.OnTouchLift( FingerTip tip )
+            {
+                tip.KeepTrack( this );
+                softrelease = 5;
+                WheelRelease?.Invoke( this, new ValueChangeArgs<float>(pos) );
+                slopecase = false;
+                SlopeCase = true;
+            }
+
+            Point64 ITouchableElement.ScreenLocation()
+            {
+                return PointToScreen( Point.Empty );
+            }
+
+            IRectangle ITouchableElement.ScreenRectangle()
+            {
+                return AbsoluteEdges.FromRectangle( RectangleToScreen(new Rectangle(0, 0, Width, Height)) );
+            }
+
+            void ITouchableElement.TouchInputReady( PointerInput touchdevice )
+            {
+                PointerInput.Initialized -= touch.element().TouchInputReady;
+                touchdevice.RegisterTouchableElement( this );
+            }
+
+            ITouchDispatchTrigger ITouchable.screen()
+            {
+                return touch.screen();
+            }
+
+            ITouchableElement ITouchable.element()
+            {
+                return this;
+            }
+
+            /*
             private void Touchinput_TouchFingerLift( FingerTip touch )
             {
                 Slope_MouseMove(this, new MouseEventArgs((MouseButtons)touch.Id,1,touch.X,touch.Y,1));
@@ -448,12 +581,14 @@ namespace Midi
             {
                 touch.SetHandler( Touchinput_TouchFingerMove, Touchinput_TouchFingerLift ); 
             }
-
+            */
             public new void Dispose()
-        {
-            Valence.UnRegisterIntervaluableElement( this );
-            base.Dispose();
-        }
+            {
+                Valence.UnRegisterIntervaluableElement( this );
+                PointerInput.Dispatcher.UnRegisterTouchableElement( this );
+                base.Dispose();
+            }
+
 
         private void MidiIn_PortChanged( object sender, int newPortId )
         {
@@ -480,10 +615,7 @@ namespace Midi
 
         protected override void OnPaint( PaintEventArgs e )
         { base.OnPaint(e);
-//#if DEBUG
-//            lbl_position.Text = positText;
-//            lbl_motion.Text = slopetext;
-//#endif
+
             float angle = pos.VAL;
             GraphicsState pushed = e.Graphics.Save();
               if( Style == Style.Flat ) {      
@@ -548,30 +680,36 @@ namespace Midi
             return m; 
         }
 
+
+        private void Wheel_StartInteract( Point touchpoint )
+        {
+            if( ( quadrants = interaction == InteractionMode.FlowByQuadrants ).Value ) {
+                Wheel.MouseMove += Wheel_VierQuadrantenMouseMove;
+                TouchMove += Wheel_VierQuadrantenTouchMove;
+                lastMouse = touchpoint;
+            } else {
+                angleOffset = touchPointAngle( touchpoint ) - Position;
+                Wheel.MouseMove += Wheel_DirectionalMouseMove;
+                TouchMove += Wheel_DirectionalTouchMove;
+            }
+            Wheel.MouseLeave += Wheel_MouseLeave;
+            if( ( !useracces ) && slopecase ) {
+                SlopeCase = true;
+            } else {
+                slopecase = false;
+                useracces = true;
+                slopetime = 0;
+                task().StoptAssist();
+            }
+            WheelTouched?.Invoke( this, new ValueChangeArgs<float>(pos) );
+            flow.VAL = 0;
+            valence( Relative ).SetDirty( ValenceFieldState.Flags.VAL );
+        }
+
         private void Wheel_MouseDown( object sender, MouseEventArgs e )
         {
             if( e.Button == MouseButtons.Left ) {
-                if( (quadrants = interaction == InteractionMode.FlowByQuadrants).Value ) {
-                    Wheel.MouseMove += Wheel_VierQuadrantenInteraction;
-                    lastMouse = e.Location;
-                } else {
-                    angleOffset = touchPointAngle( e.Location ) - Position;
-                    Wheel.MouseMove += Wheel_DirectionalInteraction;
-                } Wheel.MouseLeave += Wheel_MouseLeave;
-//#if DEBUG
-//                slopetext = "useracces";
-//#endif
-                if( (!useracces) && slopecase ) {
-                    SlopeCase = true;
-                } else {
-                    slopecase = false;
-                    useracces = true;
-                    slopetime = 0;
-                    task().StoptAssist();
-                }
-                WheelTouched?.Invoke( this, new ValueChangeArgs<float>( pos ) );
-                flow.VAL = 0;
-                valence( Relative ).SetDirty( ValenceFieldState.Flags.VAL );
+                Wheel_StartInteract( e.Location );
             }
         }
 
@@ -586,31 +724,53 @@ namespace Midi
             }
         }
 
-        private void Wheel_VierQuadrantenInteraction( object sender, MouseEventArgs e )
+        private void Wheel_VierQuadrantenMouseMove( object sender, MouseEventArgs e )
         {
-            if ( softrelease > 0 ) {
-                if(--softrelease == 0) {
-                    Wheel.MouseMove -= Wheel_VierQuadrantenInteraction;                 
+            Wheel_VierQuadrantenInteraction( e.Location );
+        }
+
+        private void Wheel_VierQuadrantenTouchMove( object sender, FingerTip e )
+        {
+            Wheel_VierQuadrantenInteraction( e.Position );
+        }
+
+        private void Wheel_VierQuadrantenInteraction( Point touchpoint )
+        {
+            if( softrelease > 0 ) {
+                if( --softrelease == 0 ) {
+                    Wheel.MouseMove -= Wheel_VierQuadrantenMouseMove;
+                    TouchMove -= Wheel_VierQuadrantenTouchMove;
                     useracces = false;
                     quadrants = null;
                 }
-                Movement = touchPointQuads( e.Location ) / scaleFactor;
+                Movement = touchPointQuads(touchpoint) / scaleFactor;
             } else {
-                Position += touchPointQuads( e.Location );
+                Position += touchPointQuads(touchpoint);
             }
         }
 
-        private void Wheel_DirectionalInteraction( object sender, MouseEventArgs e )
+
+        private void Wheel_DirectionalMouseMove( object sender, MouseEventArgs e )
+        {
+            Wheel_DirectionalInteraction( e.Location );
+        }
+        private void Wheel_DirectionalTouchMove( object sender, FingerTip e )
+        {
+            Wheel_DirectionalInteraction( e.Position );
+        }
+
+        private void Wheel_DirectionalInteraction( Point touchpoint )
         {
             if ( softrelease > 0 ) {
                 if ( --softrelease > 0 ) {
-                    Wheel.MouseMove -= Wheel_DirectionalInteraction;               
+                    Wheel.MouseMove -= Wheel_DirectionalMouseMove;
+                    TouchMove -= Wheel_DirectionalTouchMove;   
                     useracces = false;
                     quadrants = null;
                 }
-                Movement = touchPointQuads( e.Location ) / scaleFactor;
+                Movement = touchPointQuads( touchpoint ) / scaleFactor;
             } else {
-                Position = touchPointAngle( e.Location ) - angleOffset;
+                Position = touchPointAngle( touchpoint ) - angleOffset;
             }
         }
 
@@ -646,10 +806,10 @@ namespace Midi
         private bool MidiPropellor, MausPropellor;
         private void WheelPropellor()
         {
-            if(MausPropellor) {
-                Slope_MouseMove(propellor, null);
+            if( MausPropellor ) {
+                Slope_MouseMove( propellor, null );
             } else if ( MidiPropellor ) {
-                CheckMidiMovement(propellor, null);
+                CheckMidiMovement( propellor, null );
             }
         }
         
@@ -657,10 +817,13 @@ namespace Midi
         {
             if ( softrelease > 0 ) {
                 if(--softrelease <= 0) {
-                    if( interaction == InteractionMode.FlowByQuadrants )
-                        Wheel.MouseMove -= Wheel_VierQuadrantenInteraction;
-                    else
-                        Wheel.MouseMove -= Wheel_DirectionalInteraction;
+                    if( interaction == InteractionMode.FlowByQuadrants ) {
+                        Wheel.MouseMove -= Wheel_VierQuadrantenMouseMove;
+                        TouchMove -= Wheel_VierQuadrantenTouchMove;
+                    } else {
+                        Wheel.MouseMove -= Wheel_DirectionalMouseMove;
+                        TouchMove -= Wheel_DirectionalTouchMove;
+                    }
                     Wheel.MouseLeave -= Wheel_MouseLeave;
                     useracces = false;
                     quadrants = null;
@@ -723,13 +886,15 @@ namespace Midi
         void IMidiControlElement<MidiInOut>.OnIncommingMidiControl( object sender, Message value ) {
             this.MidiValue = new Win32Imports.Midi.Value((short)value.Value);
         }
+
         MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu {
             get; set;
         }
         MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu {
             get; set;
         }
-#endregion
 
-    };
-}}
+            #endregion
+
+        }
+    }}

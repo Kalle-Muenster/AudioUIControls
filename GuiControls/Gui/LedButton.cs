@@ -17,6 +17,7 @@ using ButtonValenceField = Stepflow.Gui.ValenceField<
         Stepflow.Controlled.Int8,
         Stepflow.Gui.LedButtonValence
     >;
+using Stepflow.Gui.Geometry;
 
 namespace Stepflow.Gui
 {
@@ -24,6 +25,7 @@ namespace Stepflow.Gui
         : UserControl
         , IInterValuable<Controlled.Int8>
         , ITaskAsistableVehicle<Action,Action>
+        , IBasicTouchableElement<LedButton>
     {
         public const LedButtonValence StateField = LedButtonValence.State;
         public const LedButtonValence ChainField = LedButtonValence.Chain;
@@ -207,6 +209,10 @@ namespace Stepflow.Gui
                                          Resources.LedButton_Lite,
                                          Resources.LedButton_Dark };
             TaskAssist<SteadyAction,Action,Action>.Init( 60 );
+
+            if( !PointerInput.isInitialized() ) {
+                PointerInput.AutoRegistration = AutoRegistration.Enabled;
+            }
         }
 
         public LedButton()
@@ -256,6 +262,8 @@ namespace Stepflow.Gui
             Visible = true;
             clicked = false;
             task().assist = new TaskAssist<SteadyAction,Action,Action>( this, ImTackt, 60 );
+            touche_inter_patsche = new BasicTouchHandler<LedButton>( this );
+
 
             InitializeComponent();
 
@@ -265,11 +273,22 @@ namespace Stepflow.Gui
 
             SideChain = 0.95f;
             mnu_bonds = new ValenceBondMenu<Controlled.Int8>( this, getConnector() );
+
+            if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
+                if( PointerInput.Dispatcher == null ) {
+                    PointerInput.Initialized += (this as ITouchableElement).TouchInputReady;
+                } else
+                    PointerInput.Dispatcher.RegisterTouchableElement(this);
+            }
+
         }
+
+
 
         public new void Dispose()
         {
             Valence.UnRegisterIntervaluableElement( this );
+            PointerInput.Dispatcher.UnRegisterTouchableElement( this );
             base.Dispose();
         }
 
@@ -591,5 +610,83 @@ namespace Stepflow.Gui
             hovered = false;
             Invalidate();
         }
+
+
+        #region ITouchable
+
+        private BasicTouchHandler<LedButton> touche_inter_patsche;
+
+        public ITouchEventTrigger touch {
+            get { return touche_inter_patsche; }
+        }
+
+        Control ITouchable.Element {
+            get { return this; }
+        }
+
+        bool ITouchable.IsTouched {
+            get { return touche_inter_patsche.IsTouched; }
+        }
+
+        void ITouchableElement.TouchInputReady( PointerInput touchdevice )
+        {
+            PointerInput.Initialized -= touch.element().TouchInputReady;
+            touchdevice.RegisterTouchableElement(this);
+        }
+
+        event FingerTip.TouchDelegate IBasicTouchable.TouchDown {
+            add { touche_inter_patsche.events().TouchDown += value; }
+            remove { touche_inter_patsche.events().TouchDown -= value; }
+        }
+
+        event FingerTip.TouchDelegate IBasicTouchable.TouchLift {
+            add { touche_inter_patsche.events().TouchLift += value; }
+            remove { touche_inter_patsche.events().TouchLift -= value; }
+        }
+
+        event FingerTip.TouchDelegate IBasicTouchable.TouchMove {
+            add { touche_inter_patsche.events().TouchMove += value; }
+            remove { touche_inter_patsche.events().TouchMove -= value; }
+        }
+
+
+        BasicTouchHandler<LedButton> IBasicTouchableElement<LedButton>.handler()
+        {
+            return touche_inter_patsche;
+        }
+
+        void IBasicTouchable.OnTouchDown( FingerTip tip ) {
+            processButtonPressed();
+        }
+
+        void IBasicTouchable.OnTouchMove( FingerTip tip )
+        {}
+
+        void IBasicTouchable.OnTouchLift( FingerTip tip ) {
+            processButtonReleased();
+        }
+
+        Point64 ITouchableElement.ScreenLocation()
+        {
+            return PointToScreen( Point.Empty );
+        }
+
+        IRectangle ITouchableElement.ScreenRectangle()
+        {
+            return AbsoluteEdges.FromRectangle( RectangleToScreen(new Rectangle(0, 0, Width, Height)) );
+        }
+
+        ITouchDispatchTrigger ITouchable.screen()
+        {
+            return touche_inter_patsche.screen();
+        }
+
+        ITouchableElement ITouchable.element()
+        {
+            return this;
+        }
+
+        #endregion
+
     }
 }

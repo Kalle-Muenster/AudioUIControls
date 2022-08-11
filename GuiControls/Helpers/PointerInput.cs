@@ -266,8 +266,8 @@ namespace Stepflow.Gui
             while( elms.MoveNext() ) {
                 IRectangle area = elms.Current.ScreenRectangle();
                 if( area.Contains( touch.Origin ) ) {
-                    if( touch.Interact( elms.Current ) ) {
-                        touch.SetOffset( area.Corner );
+                    if( touch.Interact( elms.Current, area ) ) {
+                        //touch.SetOffset( area.Corner );
                         break;
                     }
                 }
