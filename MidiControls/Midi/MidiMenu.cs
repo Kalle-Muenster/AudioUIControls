@@ -13,9 +13,9 @@ namespace Stepflow.Midi
     public class MidiInputMenu<MidiClass> where MidiClass : ImportWraper
     {
         public IMidiControlElement<MidiClass> element;
-        public ContextMenuStrip               midiIn_mnu;
+        public  ContextMenuStrip              midiIn_mnu;
         private ToolStripMenuItem             ContextMenuHook;
-        public ToolStripMenuItem              midiIn_mnu_binding_mnu;
+        public  ToolStripMenuItem             midiIn_mnu_binding_mnu;
         private ToolStripComboBox             midiIn_mnu_input_port;
         private ToolStripSeparator            midiIn_mnu_seperator1;
         private ToolStripMenuItem             midiIn_mnu_binding_learn;
@@ -39,10 +39,17 @@ namespace Stepflow.Midi
             }
         }
 
-        private void OnLearnClick(object sender, EventArgs e)
+        private void OnLearnClick( object sender, EventArgs e )
         {
-            (element.midi().binding as In).RemoveAnyFilters();
-            midiIn_mnu_binding_learn.Checked = true;
+            if( midiIn_mnu_binding_learn.Checked ) {
+                if ( element.binding is In ) {
+                    (element.binding as In).RemoveAnyFilters();
+                    (element.binding as MidiInput).setLearnung();
+                } else if (element.binding is Thru ) {
+                    (element.binding as Thru).RemoveAnyFilters();
+                    (element.binding as MidiInOut).setLearnung();
+                }
+            }
         }
 
         private void OnSetClick( object sender, EventArgs e )
@@ -58,12 +65,12 @@ namespace Stepflow.Midi
             midiIn_mnu.Close();
         }
 
-        private void OnCancelClick(object sender, EventArgs e)
+        private void OnCancelClick( object sender, EventArgs e )
         {
             midiIn_mnu.Close();
         }
 
-        private void midiIn_mnu_binding_Input_config_SelectedIndexChanged(object sender, EventArgs e)
+        private void midiIn_mnu_binding_Input_config_SelectedIndexChanged( object sender, EventArgs e )
         {
             ToolStripComboBox config = sender as ToolStripComboBox;
             config.Tag = config.SelectedIndex;
@@ -72,10 +79,10 @@ namespace Stepflow.Midi
         private void midiIn_mnu_input_port_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ( element.binding is MidiInOut )
-                (element.binding as MidiInOut).triggerPortChange(AutomationDirection.Input, sender, (element.binding as Thru).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
+                (element.binding as MidiInOut).triggerPortChange( AutomationDirection.Input, sender, (element.binding as Thru).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
             else
             if ( element.binding is MidiInput )
-                (element.binding as MidiInput).triggerPortChange(AutomationDirection.Input, sender, (element.binding as In).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
+                (element.binding as MidiInput).triggerPortChange( AutomationDirection.Input, sender, (element.binding as In).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
         }
 
         public MidiInputMenu( IMidiControlElement<MidiClass> parent,

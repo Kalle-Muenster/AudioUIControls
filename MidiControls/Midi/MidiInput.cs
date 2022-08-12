@@ -23,7 +23,7 @@ namespace Stepflow.Gui.Automation
         private MidiController     controll;
         private Queue<Message>     incoming;
         private volatile bool      learning;
-        private volatile string    learnedInput;
+        private string             learnedInput;
         private Action             invalidator;
         private IMidiControlElement<MidiInput> element;
 
@@ -32,6 +32,16 @@ namespace Stepflow.Gui.Automation
         {
             if( direction == AutomationDirection.Input )
                 InpPortChanged?.Invoke(sender, newPort);
+        }
+
+        internal void setLearnung()
+        {
+            learning = true;
+        }
+
+        bool IAutomationControlable<Message>.messageAvailable()
+        {
+            return incoming.Count > 0;
         }
 
         public void InitializeComponent( IAutomat parent, IContainer parentConnector, Action parentInvalidator )
@@ -108,8 +118,9 @@ namespace Stepflow.Gui.Automation
                 automation().invalidation();
             } else { Message.TYPE type = midiData.Type;
                 if ( type < Message.TYPE.SYSEX && type != Message.TYPE.PROG_CHANGE ) {
-                    learnedInput = string.Format("{0}~{1}", (midiData.Channel+1).ToString(), midiData.Number);
                     learning = false;
+                    learnedInput = string.Format( "{0}~{1}", (midiData.Channel+1).ToString(), midiData.Number );
+                    automation().invalidation();
                 }
             }  
         }
@@ -122,15 +133,18 @@ namespace Stepflow.Gui.Automation
             } else {
                 incoming.Clear();
             }
-            //if ( learnedInput != null ) {
-            //    if ( !midi_mnu.Visible )
-            //        midi_mnu.Show();
-            //    string[] chanNum = learnedInput.Split('~');
-            //    midi_mnu_binding_channel.Text = chanNum[0];
-            //    midi_mnu_binding_control.Text = chanNum[1];
-            //    midi_mnu_binding_learn.Checked = false;
-            //    learnedInput = null;
-            //}
+            if ( learnedInput != null ) {
+                string[] chanNum = learnedInput.Split('~');
+                learnedInput = null;
+                if( element.inputMenu.midiIn_mnu.Visible )
+                    element.inputMenu.midiIn_mnu.Close();
+
+                AutomationlayerAddressat learnedbinding = new AutomationlayerAddressat(
+                    short.Parse(chanNum[0]), short.Parse(chanNum[1])
+                );
+
+                RegisterAsMesssageListener( learnedbinding );
+            }
         }
 
         public string getName()
@@ -140,8 +154,8 @@ namespace Stepflow.Gui.Automation
 
         public AutomationlayerAddressat GetAutomationBindingDescriptor( int descriptiionChannal )
         {
-            return new AutomationlayerAddressat( (byte)MessageFilter.Chan,(byte)MessageFilter.loTy,
-                                                 (byte)MessageFilter.from,(byte)MidiInPortID );
+            return new AutomationlayerAddressat( (byte)MessageFilter.Chan, (byte)MessageFilter.loTy,
+                                                 (byte)MessageFilter.from, (byte)MidiInPortID );
         }
     }
 }

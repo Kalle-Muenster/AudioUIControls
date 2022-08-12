@@ -321,14 +321,13 @@ namespace Stepflow.Gui
             set { unsafe { *(bool*)clamp.ToPointer() = value; } }
         }
 
-        private bool damp = false;
+        private sbyte damp = 0;
         public bool Damped {
-            get { return damp; }
-            set { if (value != damp) {
-                    if( value ) task().StartAssist();
-                    else task().StoptAssist();
-                    damp = value;
-                } 
+            get { return damp != 0; }
+            set { if ( value ) { 
+                    if( damp <= 0 ) { 
+                        task().StartAssist(); damp = 1; }
+                } else{ task().StoptAssist(); damp = 0; }
             }
         }
 
@@ -350,12 +349,13 @@ namespace Stepflow.Gui
         }
 
         public float Level {
-            get { return damp ? dampf : value; }
-            set { this.value.VAL = value;
-                  valence().SetDirty( ValenceFieldState.Flags.VAL );
-                  TriggerEvents();
-                if( damp ) task().StartAssist();
-                else Invalidate();
+            get { return Damped ? dampf : value; }
+            set { if( this.value != value ) {
+                    this.value.VAL = value;
+                    valence().SetDirty( ValenceFieldState.Flags.VAL );
+                    TriggerEvents();
+                    if( damp < 0 ) Damped = true;
+                } Invalidate();
             }
         }
 
@@ -386,18 +386,18 @@ namespace Stepflow.Gui
         public ValueChangeDelegate<float> proportionalDelegate() {
             return ProportionalChange;
         }
-        void ChangeLevel(object sender,ValueChangeArgs<float> newLevel) {
+        void ChangeLevel( object sender, ValueChangeArgs<float> newLevel ) {
             Level = newLevel;
         }
-        void ProportionalChange(object sender,ValueChangeArgs<float> newProportion) {
+        void ProportionalChange( object sender, ValueChangeArgs<float> newProportion ) {
             Proportion = newProportion;
         }
         private void WrapController( Controlled.Float32 control )
         {
             this.value = control;
             dampf.SetPin( (int)ValueFollow.TARGET, value.GetTarget() );
-            dampf.LetPoint(ControllerVariable.MIN, value.GetPointer(ControllerVariable.MIN));
-            dampf.LetPoint(ControllerVariable.MAX, value.GetPointer(ControllerVariable.MAX));
+            dampf.LetPoint( ControllerVariable.MIN, value.GetPointer(ControllerVariable.MIN) );
+            dampf.LetPoint( ControllerVariable.MAX, value.GetPointer(ControllerVariable.MAX) );
         }
 
         protected void InitValue()
@@ -415,10 +415,10 @@ namespace Stepflow.Gui
             value.Active = true;
 
             dampf = new Controlled.Float32();
-            dampf.SetUp(0, 1000, 100, 0, ControlMode.Follow);
+            dampf.SetUp( 0, 1000, 100, 0, ControlMode.Follow );
             dampf.SetPin( (int)ValueFollow.TARGET, value.GetTarget() );
-            dampf.LetPoint(ControllerVariable.MIN, value.GetPointer(ControllerVariable.MIN));
-            dampf.LetPoint(ControllerVariable.MAX, value.GetPointer(ControllerVariable.MAX));
+            dampf.LetPoint( ControllerVariable.MIN, value.GetPointer(ControllerVariable.MIN) );
+            dampf.LetPoint( ControllerVariable.MAX, value.GetPointer(ControllerVariable.MAX) );
             unsafe { *(float*)dampf.GetPin( ValueFollow.DIRECT ).ToPointer() = 750; }
             dampf.SetCheckAtGet();
             dampf.Active = false;
@@ -429,12 +429,13 @@ namespace Stepflow.Gui
             dampf.Check();
             if( dampf.VAL == value.VAL ) {
                 task().StoptAssist();
+                damp = (sbyte)(damp > 0 ? -1 : damp);
             } Invalidate();
         }
 
         protected GuiMeter( bool executeConstructor )
         { 
-            damp = false;
+            damp = 0;
             accentMode = RondealDirection.CounterClock; 
             if(!executeConstructor)
                return;
@@ -468,7 +469,7 @@ namespace Stepflow.Gui
         }
         protected void InitMeter()
         {
-            damp = false;
+            damp = 0;
             accentMode = RondealDirection.CounterClock; 
             rotat      = new Matrix();
             levelColor = new SolidBrush(Color.Lime);
@@ -483,7 +484,7 @@ namespace Stepflow.Gui
             deckelImage = images[deckelGroup];
             dampfTackter = new TaskAssist<SteadyAction,Action,Action>( this, OnDampfTackt, 60 );
             waitSafe = false;
-            line.SetLineCap( LineCap.Round,LineCap.Round, DashCap.Round );
+            line.SetLineCap( LineCap.Round, LineCap.Round, DashCap.Round );
             line.LineJoin = LineJoin.Round;
         }
 
@@ -539,14 +540,14 @@ namespace Stepflow.Gui
 
         private Rectangle levelChart( uint mode, float prop )
         {
-            uint chartSelect = (uint)(prop * 3)+3;
+            uint chartSelect = (uint)(prop * 3) + 3;
             chartSelect = chartSelect >= 6 ? 5 : chartSelect;
             return sources[0][ 3 * (mode / CLIPP) + chartSelect ]; 
         }
 
         private Rectangle deckelFrame()
         {
-            return sources[ deckelGroup ][ channels+(style-1) ];
+            return sources[ deckelGroup ][ channels + (style-1) ];
         }
 
         protected override void OnForeColorChanged( EventArgs e )

@@ -63,12 +63,13 @@
             this.mnu_markerCenter,
             this.mnu_markerBelow});
             this.mnu_context.Name = "contextMenuStrip1";
-            this.mnu_context.Size = new System.Drawing.Size(137, 70);
+            this.mnu_context.Size = new System.Drawing.Size(181, 92);
+            this.mnu_context.Opened += new System.EventHandler(this.mnu_context_Opened);
             // 
             // mnu_markerAbove
             // 
             this.mnu_markerAbove.Name = "mnu_markerAbove";
-            this.mnu_markerAbove.Size = new System.Drawing.Size(136, 22);
+            this.mnu_markerAbove.Size = new System.Drawing.Size(180, 22);
             this.mnu_markerAbove.Tag = "2";
             this.mnu_markerAbove.Text = "Next Above";
             this.mnu_markerAbove.Click += new System.EventHandler(this.OnToolStripMenuItemClick);
@@ -76,7 +77,7 @@
             // mnu_markerCenter
             // 
             this.mnu_markerCenter.Name = "mnu_markerCenter";
-            this.mnu_markerCenter.Size = new System.Drawing.Size(136, 22);
+            this.mnu_markerCenter.Size = new System.Drawing.Size(180, 22);
             this.mnu_markerCenter.Tag = "1";
             this.mnu_markerCenter.Text = "Center";
             this.mnu_markerCenter.Click += new System.EventHandler(this.OnToolStripMenuItemClick);
@@ -84,7 +85,7 @@
             // mnu_markerBelow
             // 
             this.mnu_markerBelow.Name = "mnu_markerBelow";
-            this.mnu_markerBelow.Size = new System.Drawing.Size(136, 22);
+            this.mnu_markerBelow.Size = new System.Drawing.Size(180, 22);
             this.mnu_markerBelow.Tag = "0";
             this.mnu_markerBelow.Text = "Next Below";
             this.mnu_markerBelow.Click += new System.EventHandler(this.OnToolStripMenuItemClick);

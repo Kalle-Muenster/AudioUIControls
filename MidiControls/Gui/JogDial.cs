@@ -585,7 +585,7 @@ namespace Midi
             public new void Dispose()
             {
                 Valence.UnRegisterIntervaluableElement( this );
-                PointerInput.Dispatcher.UnRegisterTouchableElement( this );
+                PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
                 base.Dispose();
             }
 

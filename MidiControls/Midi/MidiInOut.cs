@@ -34,6 +34,15 @@ namespace Stepflow.Gui.Automation
 #if USE_WITH_WF
         private Action invalidator;
 
+        internal void setLearnung() {
+            learning = true;
+        }
+
+        bool IAutomationControlable<Message>.messageAvailable()
+        {
+            return incoming.Count > 0;
+        }
+
         internal void triggerPortChange( AutomationDirection direction, object sender, int newPort ) {
             switch( direction ) {
                 case AutomationDirection.Input: InpPortChanged?.Invoke(sender, new ValueChangeArgs<int>( newPort ) ); break;
@@ -176,9 +185,10 @@ namespace Stepflow.Gui.Automation
             } else {
                 Message.TYPE type = message.Type;
                 if ( type < Message.TYPE.SYSEX && type != Message.TYPE.PROG_CHANGE ) {
+                    learning = false;
                     learnedInput = string.Format( "{0}~{1}", ( message.Channel+1 ).ToString(),
                                     message.Number.ToString() );
-                    learning = false;
+                    automation().invalidation();
                 }
             }
         }
@@ -196,15 +206,18 @@ namespace Stepflow.Gui.Automation
                 incoming.Clear();
             }
 
-            //if( learnedInput != null ) {
-            //    if(!midiIn_mnu.Visible )
-            //        midiIn_mnu.Show();
-            //    string[] chanNum = learnedInput.Split('~');
-            //    midiIn_mnu_binding_channel.Text = chanNum[0];
-            //    midiIn_mnu_binding_control.Text = chanNum[1];
-            //    midiIn_mnu_binding_learn.Checked = false;
-            //    learnedInput = null;
-            //}
+            if( learnedInput != null ) {
+                string[] chanNum = learnedInput.Split('~');
+                learnedInput = null;
+                if( element.inputMenu.midiIn_mnu.Visible )
+                    element.inputMenu.midiIn_mnu.Close();
+
+                AutomationlayerAddressat learnedbinding = new AutomationlayerAddressat(
+                    short.Parse( chanNum[0] ), short.Parse( chanNum[1] )
+                );
+
+                automation().RegisterAsMesssageListener( learnedbinding );
+            }
         }
 
         public string getName()

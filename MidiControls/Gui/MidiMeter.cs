@@ -68,15 +68,32 @@ namespace Midi
             (this as IInterValuable).getMenuHook().Add( new ValenceBondMenu<Controlled.Float32>( this, connector ) );
 
             InitMidi( connector );
+            messageReadCount = 0;
+        }
+
+        private int  messageReadCount = 0;
+        private void readMessageQueue()
+        {
+            bool read = midi().binding.automation().messageAvailable();
+            if( !read ) read = ( --messageReadCount > 0 );
+            else messageReadCount = 10;
+            if ( read ) midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
+            else task().assist.ReleaseAssist( readMessageQueue );
+            if ( read ) Invalidate();
+        }
+
+        private void emptyMessageQueue()
+        {
+            if( messageReadCount == 0 ) {
+                task().assist.GetAssistence( readMessageQueue );
+            } messageReadCount = 10;
         }
 
         protected void InitMidi( IContainer connector )
         {
-            midi().binding.InitializeComponent( this, connector, Invalidate );
-       //     (this as IInterValuable).getMenuHook().Add( midi().binding.midi_mnu_binding_mnu);
+            midi().binding.InitializeComponent( this, connector, emptyMessageQueue );
             midi().binding.automation().AutomationEvent += midiDelegate();
-            Paint += midi().binding.automation().ProcessMessageQueue;
-        //    midi().binding.midi_mnu.AutoClose = false;
+            //Paint += midi().binding.automation().ProcessMessageQueue;
         }
 
     }

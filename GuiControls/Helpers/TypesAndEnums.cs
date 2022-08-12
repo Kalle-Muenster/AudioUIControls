@@ -44,21 +44,6 @@ namespace System
         {
             return new Stepflow.Gui.Geometry.SystemDefault( rectangle );
         }
-
-    /*    public static Int24 ToInt24( this IConvertible value )
-        {
-            int test = value.ToInt32( fmtr );
-            if( test < Int24.MinValue || test > Int24.MaxValue ) {
-                throw new InvalidCastException( "must fit Int24 type range", (int)Stepflow.TypeCode.Int24 );
-            } else return new Int24( test );
-        }
-        public static UInt24 ToUInt24( this IConvertible value )
-        {
-            uint test = value.ToUInt32( fmtr );
-            if ( test < UInt24.MinValue || test > UInt24.MaxValue ) {
-                throw new InvalidCastException( "must fit UInt24 type range", (int)Stepflow.TypeCode.UInt24 );
-            } else return new UInt24( test );
-        }  */
     }
 }
 

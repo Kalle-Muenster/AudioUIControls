@@ -181,6 +181,12 @@ namespace Stepflow
                 /// this controll elements bound automation targets or sources</returns>
                 AutomationlayerAddressat GetAutomationBindingDescriptor( int channel );
 
+                /// <summary>messageAvailable()
+                /// Are any automation messages available in the message queue actually? 
+                /// </summary><returns>'true' if there are one or more messages available.
+                /// 'false' if there are no incoming messages available actually.</returns>
+                bool messageAvailable();
+
                 void incommingMessagQueue( MessageType message );
 
                 /// <summary>ProcessMessageQueue(sender,eventargs):

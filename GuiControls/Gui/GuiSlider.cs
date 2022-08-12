@@ -301,8 +301,7 @@ namespace Stepflow.Gui
                 case 0: Value = NextMarkerBelow(value).Value; break;
                 case 1: Proportion = 0.5f; break;
                 case 2: Value = NextMarkerAbove(value).Value; break;
-            } Nuppsi.MouseMove -= Nuppsi_Move;
-            value.Active = true;
+            } value.Active = true;
             NuppsiUpdate();
         }
 
@@ -922,7 +921,7 @@ namespace Stepflow.Gui
             bgimg.SetColor( Color.White );
             nippl.SetColor( Color.White );
             Load -= AdjustSpriteColor;
-            Invalidate(true);
+            Invalidate( true );
         }
 
         public override Color BackColor {
@@ -950,7 +949,7 @@ namespace Stepflow.Gui
         public new void Dispose()
         {
             Valence.UnRegisterIntervaluableElement( this );
-            PointerInput.Dispatcher.UnRegisterTouchableElement( this );
+            PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
             base.Dispose();
         }
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -1184,6 +1183,12 @@ namespace Stepflow.Gui
         int IAsistableVehicle<IActionDriver<Action, ILapFinish<Action>, Action>, ILapFinish<Action>>.StoptAssist()
         {
             return task().assist.ReleaseAssist( taskassist.action );
+        }
+
+        private void mnu_context_Opened( object sender, EventArgs e )
+        {
+            Nuppsi.MouseMove -= Nuppsi_Move;
+              this.TouchMove -= Nuppsi_Move;
         }
 
         ITaskAssistor<Action,Action> ITaskAsistableVehicle<Action,Action>.assist
