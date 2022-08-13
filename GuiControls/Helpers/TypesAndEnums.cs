@@ -144,7 +144,7 @@ namespace Stepflow.Gui
 
     public enum UnitsType
     {
-        CUSTOM, Hz, Db, V, A, sec, Per
+        CUSTOM, Hz, Db, V, Px, l, m, A, sec, Per
     };
 
     public enum UnitScale

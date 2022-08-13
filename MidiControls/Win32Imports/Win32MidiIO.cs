@@ -393,9 +393,18 @@ namespace Win32Imports
                 if( resolution > 127 ) return asControlMessage( channel );
                 else return new Message( Message.TYPE.CTRL_CHANGE, channel, number, LoByte );
             }
-            public Message asNotationMessage( int channel, Note note, bool on )
+            public Message asNotationMessage( int channel, Note note )
             {
-                return new Message((byte)((byte)(on?Message.TYPE.NOTE_ON:Message.TYPE.NOTE_OFF)+(channel-1)), (byte)note, LoByte);
+                return asNotationMessage( channel, note, false );
+            }
+            public Message asNotationMessage( int channel, Note note, bool presure )
+            {
+                byte tybyte = (byte)( (byte)( presure 
+                            ? Message.TYPE.POLY_PRESSURE 
+                                          : LoByte != 0
+                            ? Message.TYPE.NOTE_ON : Message.TYPE.NOTE_OFF
+                            ) + (channel-1) ); 
+                return new Message( tybyte, (byte)note, LoByte );
             }
             
         };

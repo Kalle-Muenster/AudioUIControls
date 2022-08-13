@@ -29,8 +29,6 @@ namespace TestContainer
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.controllsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,19 +47,21 @@ namespace TestContainer
             this.sld_set_height = new Stepflow.Gui.GuiSlider();
             this.val_set_width = new Stepflow.Gui.ValueDisplay();
             this.val_set_height = new Stepflow.Gui.ValueDisplay();
-            this.lbl_set_width = new System.Windows.Forms.Label();
-            this.lbl_set_height = new System.Windows.Forms.Label();
             this.btn_set_style = new Stepflow.Gui.LedButton();
-            this.lbl_element_Val = new System.Windows.Forms.Label();
             this.val_element_Val = new Stepflow.Gui.ValueDisplay();
-            this.lbl_element_Min = new System.Windows.Forms.Label();
             this.val_element_Min = new Stepflow.Gui.ValueDisplay();
-            this.lbl_element_Max = new System.Windows.Forms.Label();
             this.val_element_Max = new Stepflow.Gui.ValueDisplay();
             this.btn_set_Orientation = new Stepflow.Gui.LedButton();
             this.btn_set_Led = new Stepflow.Gui.LedButton();
+            this.lbl_set_width = new System.Windows.Forms.Label();
+            this.lbl_set_height = new System.Windows.Forms.Label();
+            this.lbl_element_Val = new System.Windows.Forms.Label();
+            this.lbl_element_Min = new System.Windows.Forms.Label();
+            this.lbl_element_Max = new System.Windows.Forms.Label();
             this.lbl_set_Orientation = new System.Windows.Forms.Label();
             this.lbl_set_Led = new System.Windows.Forms.Label();
+            this.midiComboBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.midiComboBoxToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,7 +89,9 @@ namespace TestContainer
             this.midiValueToolStripMenuItem,
             this.jogDialToolStripMenuItem,
             this.laGuitarraToolStripMenuItem,
-            this.midiStringSetToolStripMenuItem});
+            this.midiComboBoxToolStripMenuItem,
+            this.midiStringSetToolStripMenuItem,
+            this.midiComboBoxToolStripMenuItem1});
             this.controllsToolStripMenuItem.Name = "controllsToolStripMenuItem";
             this.controllsToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.controllsToolStripMenuItem.Text = "Controlls";
@@ -97,94 +99,96 @@ namespace TestContainer
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
             this.toolStripMenuItem1.Text = "GuiButton";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // guiSliderToolStripMenuItem
             // 
             this.guiSliderToolStripMenuItem.Name = "guiSliderToolStripMenuItem";
-            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiSliderToolStripMenuItem.Text = "GuiSlider";
             this.guiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // guiMeterToolStripMenuItem
             // 
             this.guiMeterToolStripMenuItem.Name = "guiMeterToolStripMenuItem";
-            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiMeterToolStripMenuItem.Text = "GuiMeter";
             this.guiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // guiRangerToolStripMenuItem
             // 
             this.guiRangerToolStripMenuItem.Name = "guiRangerToolStripMenuItem";
-            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiRangerToolStripMenuItem.Text = "GuiRanger";
-            this.guiRangerToolStripMenuItem.Click += new System.EventHandler(this.mnu_DuiRangeControl_Click);
+            this.guiRangerToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiRangeControl_Click);
             // 
             // guiValueToolStripMenuItem
             // 
             this.guiValueToolStripMenuItem.Name = "guiValueToolStripMenuItem";
-            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiValueToolStripMenuItem.Text = "GuiValue";
+            this.guiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // midiButtonToolStripMenuItem
             // 
             this.midiButtonToolStripMenuItem.Name = "midiButtonToolStripMenuItem";
-            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiButtonToolStripMenuItem.Text = "MidiButton";
-            this.midiButtonToolStripMenuItem.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.midiButtonToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // midiSliderToolStripMenuItem
             // 
             this.midiSliderToolStripMenuItem.Name = "midiSliderToolStripMenuItem";
-            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiSliderToolStripMenuItem.Text = "MidiSlider";
             this.midiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // midiMeterToolStripMenuItem
             // 
             this.midiMeterToolStripMenuItem.Name = "midiMeterToolStripMenuItem";
-            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiMeterToolStripMenuItem.Text = "MidiMeter";
             this.midiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // midiValueToolStripMenuItem
             // 
             this.midiValueToolStripMenuItem.Name = "midiValueToolStripMenuItem";
-            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiValueToolStripMenuItem.Text = "MidiValue";
+            this.midiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // jogDialToolStripMenuItem
             // 
             this.jogDialToolStripMenuItem.Name = "jogDialToolStripMenuItem";
-            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.jogDialToolStripMenuItem.Text = "JogDial";
             this.jogDialToolStripMenuItem.Click += new System.EventHandler(this.mnu_JogDial_Click);
             // 
             // laGuitarraToolStripMenuItem
             // 
             this.laGuitarraToolStripMenuItem.Name = "laGuitarraToolStripMenuItem";
-            this.laGuitarraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.laGuitarraToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.laGuitarraToolStripMenuItem.Text = "MidiString";
             // 
             // midiStringSetToolStripMenuItem
             // 
             this.midiStringSetToolStripMenuItem.Name = "midiStringSetToolStripMenuItem";
-            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiStringSetToolStripMenuItem.Text = "StringControl";
             this.midiStringSetToolStripMenuItem.Click += new System.EventHandler(this.mnu_StringControl_Click);
             // 
             // sld_set_width
             // 
-            this.sld_set_width.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.sld_set_width.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_width.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.sld_set_width.Behavior = Stepflow.Gui.MixAndFeel.Acurate;
             this.sld_set_width.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sld_set_width.Clamped = true;
             this.sld_set_width.Cursor = System.Windows.Forms.Cursors.Default;
             this.sld_set_width.Cycled = false;
-            this.sld_set_width.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.sld_set_width.ForeColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_width.Interaction = Stepflow.Gui.GuiSlider.InteractionMode.Linear;
             this.sld_set_width.Inverted = false;
             this.sld_set_width.LedColor = Stepflow.Gui.LED.Mint;
@@ -208,14 +212,14 @@ namespace TestContainer
             // 
             // sld_set_height
             // 
-            this.sld_set_height.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.sld_set_height.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_height.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.sld_set_height.Behavior = Stepflow.Gui.MixAndFeel.Acurate;
             this.sld_set_height.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sld_set_height.Clamped = true;
             this.sld_set_height.Cursor = System.Windows.Forms.Cursors.Default;
             this.sld_set_height.Cycled = false;
-            this.sld_set_height.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.sld_set_height.ForeColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_height.Interaction = Stepflow.Gui.GuiSlider.InteractionMode.Linear;
             this.sld_set_height.Inverted = true;
             this.sld_set_height.LedColor = Stepflow.Gui.LED.Mint;
@@ -239,7 +243,7 @@ namespace TestContainer
             // 
             // val_set_width
             // 
-            this.val_set_width.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.val_set_width.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
             this.val_set_width.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.val_set_width.CanChangeUnits = true;
             this.val_set_width.CanScaleUnits = true;
@@ -261,7 +265,7 @@ namespace TestContainer
             // 
             // val_set_height
             // 
-            this.val_set_height.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.val_set_height.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
             this.val_set_height.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.val_set_height.CanChangeUnits = true;
             this.val_set_height.CanScaleUnits = true;
@@ -305,37 +309,27 @@ namespace TestContainer
             // 
             this.btn_set_style.AutoText = false;
             this.btn_set_style.BackColor = System.Drawing.SystemColors.Control;
-            this.btn_set_style.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_set_style.BackgroundImage")));
+            this.btn_set_style.BackgroundImage = ( (System.Drawing.Image)( GuiControls.Properties.Resources.kein_bild ) );
             this.btn_set_style.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_style.CausesValidation = false;
             this.btn_set_style.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btn_set_style.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.btn_set_style.LedLevel = 1F;
-            this.btn_set_style.LedValue = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.btn_set_style.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.btn_set_style.Location = new System.Drawing.Point(11, 39);
             this.btn_set_style.Margin = new System.Windows.Forms.Padding(2);
             this.btn_set_style.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
             this.btn_set_style.Name = "btn_set_style";
-            this.btn_set_style.NumberOfStates = ((byte)(2));
+            this.btn_set_style.NumberOfStates = ( (byte)( 2 ) );
             this.btn_set_style.SideChain = 0.95F;
             this.btn_set_style.Size = new System.Drawing.Size(76, 73);
             this.btn_set_style.State = Stepflow.Gui.LedButton.Default.OFF;
             this.btn_set_style.Style = Stepflow.Gui.Style.Dark;
             this.btn_set_style.TabIndex = 7;
             // 
-            // lbl_element_Val
-            // 
-            this.lbl_element_Val.AutoSize = true;
-            this.lbl_element_Val.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_element_Val.Location = new System.Drawing.Point(948, 286);
-            this.lbl_element_Val.Name = "lbl_element_Val";
-            this.lbl_element_Val.Size = new System.Drawing.Size(35, 15);
-            this.lbl_element_Val.TabIndex = 9;
-            this.lbl_element_Val.Text = "Value";
-            // 
             // val_element_Val
             // 
-            this.val_element_Val.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.val_element_Val.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
             this.val_element_Val.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.val_element_Val.CanChangeUnits = true;
             this.val_element_Val.CanScaleUnits = true;
@@ -355,6 +349,16 @@ namespace TestContainer
             this.val_element_Val.Units = Stepflow.Gui.UnitsType.Per;
             this.val_element_Val.Value = 0F;
             // 
+            // lbl_element_Val
+            // 
+            this.lbl_element_Val.AutoSize = true;
+            this.lbl_element_Val.ForeColor = System.Drawing.Color.Wheat;
+            this.lbl_element_Val.Location = new System.Drawing.Point(948, 286);
+            this.lbl_element_Val.Name = "lbl_element_Val";
+            this.lbl_element_Val.Size = new System.Drawing.Size(35, 15);
+            this.lbl_element_Val.TabIndex = 9;
+            this.lbl_element_Val.Text = "Value";
+            // 
             // lbl_element_Min
             // 
             this.lbl_element_Min.AutoSize = true;
@@ -367,7 +371,7 @@ namespace TestContainer
             // 
             // val_element_Min
             // 
-            this.val_element_Min.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.val_element_Min.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
             this.val_element_Min.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.val_element_Min.CanChangeUnits = true;
             this.val_element_Min.CanScaleUnits = true;
@@ -399,7 +403,7 @@ namespace TestContainer
             // 
             // val_element_Max
             // 
-            this.val_element_Max.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.val_element_Max.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
             this.val_element_Max.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.val_element_Max.CanChangeUnits = true;
             this.val_element_Max.CanScaleUnits = true;
@@ -423,18 +427,17 @@ namespace TestContainer
             // 
             this.btn_set_Orientation.AutoText = false;
             this.btn_set_Orientation.BackColor = System.Drawing.SystemColors.Control;
-            this.btn_set_Orientation.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_set_Orientation.BackgroundImage")));
             this.btn_set_Orientation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_Orientation.CausesValidation = false;
             this.btn_set_Orientation.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btn_set_Orientation.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.btn_set_Orientation.LedLevel = 1F;
-            this.btn_set_Orientation.LedValue = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.btn_set_Orientation.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.btn_set_Orientation.Location = new System.Drawing.Point(948, 794);
             this.btn_set_Orientation.Margin = new System.Windows.Forms.Padding(2);
             this.btn_set_Orientation.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
             this.btn_set_Orientation.Name = "btn_set_Orientation";
-            this.btn_set_Orientation.NumberOfStates = ((byte)(2));
+            this.btn_set_Orientation.NumberOfStates = ( (byte)( 2 ) );
             this.btn_set_Orientation.SideChain = 0.95F;
             this.btn_set_Orientation.Size = new System.Drawing.Size(96, 96);
             this.btn_set_Orientation.State = Stepflow.Gui.LedButton.Default.OFF;
@@ -445,18 +448,17 @@ namespace TestContainer
             // 
             this.btn_set_Led.AutoText = false;
             this.btn_set_Led.BackColor = System.Drawing.SystemColors.Control;
-            this.btn_set_Led.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_set_Led.BackgroundImage")));
             this.btn_set_Led.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_Led.CausesValidation = false;
             this.btn_set_Led.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btn_set_Led.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.btn_set_Led.LedLevel = 1F;
-            this.btn_set_Led.LedValue = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.btn_set_Led.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.btn_set_Led.Location = new System.Drawing.Point(1059, 794);
             this.btn_set_Led.Margin = new System.Windows.Forms.Padding(2);
             this.btn_set_Led.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
             this.btn_set_Led.Name = "btn_set_Led";
-            this.btn_set_Led.NumberOfStates = ((byte)(2));
+            this.btn_set_Led.NumberOfStates = ( (byte)( 2 ) );
             this.btn_set_Led.SideChain = 0.95F;
             this.btn_set_Led.Size = new System.Drawing.Size(96, 96);
             this.btn_set_Led.State = Stepflow.Gui.LedButton.Default.OFF;
@@ -482,6 +484,19 @@ namespace TestContainer
             this.lbl_set_Led.Size = new System.Drawing.Size(55, 15);
             this.lbl_set_Led.TabIndex = 17;
             this.lbl_set_Led.Text = "LedColor";
+            // 
+            // midiComboBoxToolStripMenuItem
+            // 
+            this.midiComboBoxToolStripMenuItem.Name = "midiComboBoxToolStripMenuItem";
+            this.midiComboBoxToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiComboBoxToolStripMenuItem.Text = "MidiComboBox";
+            // 
+            // midiComboBoxToolStripMenuItem1
+            // 
+            this.midiComboBoxToolStripMenuItem1.Name = "midiComboBoxToolStripMenuItem1";
+            this.midiComboBoxToolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
+            this.midiComboBoxToolStripMenuItem1.Text = "MidiComboBox";
+            this.midiComboBoxToolStripMenuItem1.Click += new System.EventHandler(this.mnu_MidiSelectBox_Click);
             // 
             // Form1
             // 
@@ -550,6 +565,8 @@ namespace TestContainer
         private System.Windows.Forms.ToolStripMenuItem jogDialToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem laGuitarraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiStringSetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem1;
     }
 }
 

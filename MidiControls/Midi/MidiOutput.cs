@@ -60,18 +60,30 @@ namespace Stepflow.Gui.Automation
         public void OnValueChange( object sender, float value )
         {
             switch ( MidiOut_Type ) {
-                case Win32Imports.Midi.Message.TYPE.CTRL_CHANGE:
+                case Message.TYPE.POLY_PRESSURE:
+                case Message.TYPE.NOTE_OFF:
+                case Message.TYPE.NOTE_ON:
                     MidiOut_Value = (int)(value * 127);
                     break;
-                case Win32Imports.Midi.Message.TYPE.PITCH:
+                case Message.TYPE.CTRL_CHANGE:
+                    MidiOut_Value = (int)(value * 127);
+                    break;
+                case Message.TYPE.PITCH:
                     SendPitchChange( value );
+                    break;
+                case Message.TYPE.MONO_PRESSURE:
+                    Message sent = LastMessage;
+                    sent.ProportionalFloat = value;
+                    SendMidiOut( sent.data.raw );
                     break;
             } 
         }
 
         public void OnValueChange( object sender, Value value )
         {
-             MidiOut_Value = value;
+            if( MidiOut_Type < Message.TYPE.CTRL_CHANGE )
+                SendMidiOut( value.asNotationMessage( MidiOut_Channel, MidiOut_Note, MidiOut_Type == Message.TYPE.POLY_PRESSURE ).data.raw );
+            else MidiOut_Value = value;
         }
 
         public IAutomationController<Value> automate()

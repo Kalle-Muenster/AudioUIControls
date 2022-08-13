@@ -92,8 +92,8 @@ namespace Stepflow
 
                 public System.UInt16 address
                 {
-                    get { fixed(byte* p=bytes) return (ushort)(p[0]+(p[2]<<8)); }
-                    set { loShort = (short)(value % 8); hiShort = (short)(value >> 8); }
+                    get { fixed(byte* p=bytes) return (ushort)(p[0]|(p[2]<<8)); }
+                    set { loShort = (short)(value & 0x00ff); hiShort = (short)( (value & 0xff00 ) >> 8 ); }
                 }
                 public System.Byte tyByte
                 {
@@ -122,11 +122,11 @@ namespace Stepflow
                     loShort = low;
                     hiShort = high;
                 }
-                public AutomationlayerAddressat(ushort addr) : this()
+                public AutomationlayerAddressat( ushort addr ) : this()
                 {
                     address = addr;
                 }
-                public AutomationlayerAddressat(byte lo, byte ty, byte hi, byte dry) : this()
+                public AutomationlayerAddressat( byte lo, byte ty, byte hi, byte dry ) : this()
                 {
                     loByte = lo; tyByte = ty; hiByte = hi; dryByte = dry;
                 }

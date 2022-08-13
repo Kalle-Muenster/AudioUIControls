@@ -167,7 +167,49 @@ namespace TestContainer
             SetWidth?.Invoke( (int)value.Value );
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void mnu_LedDisplay_Click( object sender, EventArgs e )
+        {
+            destruct?.Invoke();
+
+            if( ( sender as ToolStripItem ).Text.Contains("Midi") ) {
+                MidiValueDisplay dings = new MidiValueDisplay();
+                dings.Location = new Point(200,200);
+                dings.Size = new Size(256,64);
+                dings.CanChangeUnits = true;
+                dings.CanScaleUnits = true;
+                dings.Units = UnitsType.Db;
+                dings.Style = Style.Dark;
+                dings.Tag = 1;
+                Connect( dings );
+                destruct = () => { dings.Dispose(); };
+            } else {
+                ValueDisplay dings = new ValueDisplay();
+                dings.Location = new Point(200,200);
+                dings.Size = new Size(256,64);
+                dings.CanChangeUnits = true;
+                dings.CanScaleUnits = true;
+                dings.Units = UnitsType.Db;
+                dings.Style = Style.Dark;
+                dings.Tag = 1;
+                Connect( dings );
+                destruct = () => { dings.Dispose(); };
+            }
+        }
+
+        private void mnu_MidiSelectBox_Click( object sender, EventArgs e )
+        {
+            destruct?.Invoke();
+            Stepflow.Midi.Gui.MidiSelectBox dings = new Stepflow.Midi.Gui.MidiSelectBox();
+            dings.Location = new Point(200, 200);
+            dings.Size = new Size(256,64);
+            for( Win32Imports.Midi.Note note = Win32Imports.Midi.Note.C2; note < Win32Imports.Midi.Note.C4; ++note )
+                dings.Items.Add( note );
+            dings.Tag = 1;
+            Connect( dings );
+            destruct = () => { dings.Dispose(); };
+        }
+
+        private void mnu_LedButton_Click( object sender, EventArgs e )
         {
             destruct?.Invoke();
             LedButton button = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiButton() : new LedButton();
@@ -233,7 +275,7 @@ namespace TestContainer
             destruct = () => { dings.Dispose(); };
         }
 
-        private void mnu_DuiRangeControl_Click(object sender, EventArgs e)
+        private void mnu_GuiRangeControl_Click(object sender, EventArgs e)
         {
             destruct?.Invoke();
             GuiRanger dings = new GuiRanger();

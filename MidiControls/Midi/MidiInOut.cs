@@ -107,8 +107,13 @@ namespace Stepflow.Gui.Automation
         public void OnValueChange( object sender, float value ) 
         {
             switch ( MidiOut_Type ) {
+                case Message.TYPE.POLY_PRESSURE:
+                case Message.TYPE.NOTE_OFF:
+                case Message.TYPE.NOTE_ON:
+                    MidiOut_Value = (int)(value*127);
+                    break;
                 case Message.TYPE.CTRL_CHANGE:
-                    MidiOut_Value = (int)(value * 127);
+                    MidiOut_Value = (int)(value*127);
                     break;
                 case Message.TYPE.PITCH:
                     SendPitchChange( value );
@@ -127,7 +132,12 @@ namespace Stepflow.Gui.Automation
         // creation of distinct message types on their own).
         public void OnValueChange( object sender, Value value )
         {
-            MidiOut_Value = value;
+            if( MidiOut_Type < Message.TYPE.CTRL_CHANGE )
+                SendMidiOut( value.asNotationMessage(
+                    MidiOut_Channel, MidiOut_Note,
+                    MidiOut_Type == Message.TYPE.POLY_PRESSURE
+                    ).data.raw );
+            else MidiOut_Value = value;
         }
 
         public AutomationDirection direction {
@@ -154,17 +164,47 @@ namespace Stepflow.Gui.Automation
             if( (listenToCC.channel == automationlayer.loShort)
              && (listenToCC.control == automationlayer.hiShort) ) return;
 
-            listenToCC = new MidiController( automationlayer.loShort, 
-                                             automationlayer.hiShort > 127 ? 0
-                                           : automationlayer.hiShort,
-                                             automationlayer.hiShort > 127
-                                           ? automationlayer.hiShort : 127 );
-            Message.Filter filter;
-            if( listenToCC.resolut < 128 ) {
+            Message.Filter filter = new Message.Filter(
+                Message.TYPE.ANY );
+
+            listenToCC = new MidiController( automationlayer.loShort,
+                                 automationlayer.hiShort > 127 ? 0
+                               : automationlayer.hiShort,
+                                 automationlayer.hiShort > 127
+                               ? automationlayer.hiShort : 127 );
+
+            if ( automationlayer.tyByte != 0 ) {
+                Message.TYPE type = (Message.TYPE)automationlayer.tyByte;
+                switch( type ) {
+                    case Message.TYPE.NOTE_ON:
+                    case Message.TYPE.NOTE_OFF:
+                    case Message.TYPE.POLY_PRESSURE:
+                    if( automationlayer.dryByte != 0 )
+                        filter = new Message.Filter( type,
+                            automationlayer.loByte,
+                            automationlayer.hiByte,
+                            automationlayer.dryByte );
+                    else filter = new Message.Filter( type,
+                            automationlayer.loShort );
+                    break;
+                    case Message.TYPE.PROG_CHANGE:
+                        filter = new Message.Filter(
+                            (listenToCC.channel-1),
+                             listenToCC.control );
+                    break;
+                    case Message.TYPE.MONO_PRESSURE:
+                    case Message.TYPE.PITCH:
+                        filter = new Message.Filter( type,
+                             (listenToCC.channel-1) );
+                    break;
+                }
+            } else if( listenToCC.resolut < 128 ) {
                 filter = new Message.Filter( (listenToCC.channel - 1), listenToCC.control );
             } else {
                 filter = new Message.Filter( Message.TYPE.PITCH, (listenToCC.channel - 1) );
-            } base.UseMessageFilter( filter );
+            }
+            
+            base.UseMessageFilter( filter );
         }
 
         void IAutomationControlable<Message>.SignOutFromAutomationLoop()

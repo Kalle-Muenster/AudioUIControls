@@ -126,7 +126,6 @@ namespace Stepflow.Gui
             set { if( style != (sbyte)value ) {
                     style = (sbyte)value;
                     BackgroundImage = background[style+hover];
-                //    BorderFrame.Image = hoverframe[style];
                     Label.ForeColor = value <= Style.Flat
                                              ? Color.FromKnownColor(KnownColor.ControlDarkDark)
                                              : Color.FromKnownColor(KnownColor.ControlLight);
@@ -208,6 +207,8 @@ namespace Stepflow.Gui
                                          Resources.button_hover_Flat,
                                          Resources.LedButton_Lite,
                                          Resources.LedButton_Dark };
+            
+
             TaskAssist<SteadyAction,Action,Action>.Init( 60 );
 
             if( !PointerInput.isInitialized() ) {
@@ -283,14 +284,13 @@ namespace Stepflow.Gui
 
         }
 
-
-
         public new void Dispose()
         {
             Valence.UnRegisterIntervaluableElement( this );
-            PointerInput.Dispatcher.UnRegisterTouchableElement( this );
+            PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
             base.Dispose();
         }
+
 
         private bool clicked;
         private bool intermediate {

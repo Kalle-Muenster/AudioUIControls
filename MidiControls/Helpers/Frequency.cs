@@ -85,7 +85,7 @@ namespace Stepflow.Midi.ControlHelpers
                 switch( type ) {
                 case Message.TYPE.PITCH: 
                      detuneation = new Value((short)8192);
-                     detune = detuneation.asControlMessage(parameter);
+                     detune = detuneation.asControlMessage( parameter );
                      detuneByCC = true;
                      detuneByPP = false; break;
                 case Message.TYPE.CTRL_CHANGE:
@@ -100,7 +100,7 @@ namespace Stepflow.Midi.ControlHelpers
                      detuneByPP = true; break;
                 case Message.TYPE.MONO_PRESSURE:
                      detuneation = new Value((short)8192);
-                     detune = detuneation.asControlMessage(parameter);
+                     detune = detuneation.asControlMessage( parameter );
                      detune.Type = type;
                      detuneByPP = detuneByCC = false; break;
                 default: throw new Exception(
@@ -164,7 +164,7 @@ namespace Stepflow.Midi.ControlHelpers
             /// can be either one or two messages) </returns>
             public static Message[] toMidiData( float Hz, float db )
             {
-                return toMidiData(Hz, db, 0);
+                return toMidiData( Hz, db, 0 );
             }
             public static Message[] toMidiData( float Hz, float db, int ch)
             {

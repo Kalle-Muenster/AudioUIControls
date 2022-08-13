@@ -89,21 +89,49 @@ namespace Stepflow.Gui.Automation
 
         public void RegisterAsMesssageListener( AutomationlayerAddressat bindingDescriptor )
         {
-            if( (controll.channel == bindingDescriptor.loShort)
-             && (controll.control == bindingDescriptor.hiShort) ) return;
+            if( ( controll.channel == bindingDescriptor.loShort )
+             && ( controll.control == bindingDescriptor.hiShort ) ) return;
 
-            controll = new MidiController( bindingDescriptor.loShort,
-                                           bindingDescriptor.hiShort > 127 ? 0 
-                                         : bindingDescriptor.hiShort,
-                                           bindingDescriptor.hiShort > 127
-                                         ? bindingDescriptor.hiShort 
-                                         : 127 );
-            Message.Filter filt;
-            if( controll.resolut < 128 ) {
-                filt = new Message.Filter( (controll.channel - 1), controll.control );
+            Message.Filter filter = new Message.Filter(
+                Message.TYPE.ANY );
+
+            controll = new MidiController(bindingDescriptor.loShort,
+                                 bindingDescriptor.hiShort > 127 ? 0
+                               : bindingDescriptor.hiShort,
+                                 bindingDescriptor.hiShort > 127
+                               ? bindingDescriptor.hiShort : 127);
+
+            if( bindingDescriptor.tyByte != 0 ) {
+                Message.TYPE type = (Message.TYPE)bindingDescriptor.tyByte;
+                switch( type ) {
+                    case Message.TYPE.NOTE_ON:
+                    case Message.TYPE.NOTE_OFF:
+                    case Message.TYPE.POLY_PRESSURE:
+                    if( bindingDescriptor.dryByte != 0 )
+                        filter = new Message.Filter( type,
+                            bindingDescriptor.loByte,
+                            bindingDescriptor.hiByte,
+                            bindingDescriptor.dryByte);
+                    else filter = new Message.Filter( type,
+                            bindingDescriptor.loShort);
+                    break;
+                    case Message.TYPE.PROG_CHANGE:
+                    filter = new Message.Filter(
+                        ( controll.channel - 1 ),
+                          controll.control );
+                    break;
+                    case Message.TYPE.MONO_PRESSURE:
+                    case Message.TYPE.PITCH:
+                    filter = new Message.Filter( type,
+                         ( controll.channel - 1 ) );
+                    break;
+                }
+            } else if( controll.resolut < 128 ) {
+                filter = new Message.Filter( (controll.channel-1), controll.control );
             } else {
-                filt = new Message.Filter( Message.TYPE.PITCH, (controll.channel-1) );
-            } base.UseMessageFilter( filt );
+                filter = new Message.Filter( Message.TYPE.PITCH, (controll.channel-1) );
+            }
+            base.UseMessageFilter( filter );
         }
 
         public void SignOutFromAutomationLoop()

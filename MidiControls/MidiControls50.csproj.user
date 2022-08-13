@@ -11,6 +11,9 @@
     <Compile Update="Gui\MidiMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Gui\MidiSelectBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Gui\MidiSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
