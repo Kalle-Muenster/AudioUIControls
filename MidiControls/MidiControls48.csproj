@@ -115,6 +115,9 @@
     <Compile Include="Gui\MidiMeter.Designer.cs">
       <DependentUpon>MidiMeter.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\MidiSelectBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\MidiSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
