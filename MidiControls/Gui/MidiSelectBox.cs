@@ -11,7 +11,7 @@ using Win32Imports.Midi;
 
 namespace Stepflow.Midi.Gui
 {
-    public class MidiSelectBox
+    public class MidiComboBox
         : ComboBox
         , IInterValuable<Controlled.Byte>
         , IMidiControlElement<MidiInOut>
@@ -19,12 +19,12 @@ namespace Stepflow.Midi.Gui
     {
         private Controlled.Byte index; 
 
-        static MidiSelectBox()
+        static MidiComboBox()
         {
             Valence.RegisterIntervaluableType<Controlled.Byte>();
         }
 
-        public MidiSelectBox() : base()
+        public MidiComboBox() : base()
         {
             index = new Controlled.Byte();
             index.SetUp( 0, 127, 1, 64, ControlMode.Element );
@@ -49,7 +49,6 @@ namespace Stepflow.Midi.Gui
         {
             index.VAL = (byte)SelectedIndex;
             valence().SetDirty( ValenceFieldState.Flags.VAL );
-            
             midiio.automate().OnValueChange( this, midi().MidiValue );
             Invalidate();
         }
@@ -60,6 +59,7 @@ namespace Stepflow.Midi.Gui
                 valence().SetDirty( ValenceFieldState.Flags.MIN );
             }
         }
+
         public Byte Last {
             get { return index.MAX; }
             set { index.MAX = value;

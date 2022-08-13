@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Stepflow;
 using Stepflow.Gui;
 using Stepflow.Gui.Automation;
@@ -10,6 +11,16 @@ using System.Windows.Forms;
 
 namespace Stepflow.Midi
 {
+    public enum BindingType : uint
+    {
+        NoteValues = 0,
+        NoteVolume = Message.TYPE.NOTE_ON,
+        NotePresure = Message.TYPE.POLY_PRESSURE,
+        PitchWheel = Message.TYPE.PITCH,
+        Modulation = Message.TYPE.MONO_PRESSURE,
+        Controller = Message.TYPE.CTRL_CHANGE
+    }
+
     public class MidiInputMenu<MidiClass> where MidiClass : ImportWraper
     {
         public IMidiControlElement<MidiClass> element;
@@ -20,11 +31,16 @@ namespace Stepflow.Midi
         private ToolStripSeparator            midiIn_mnu_seperator1;
         private ToolStripMenuItem             midiIn_mnu_binding_learn;
         private ToolStripComboBox             midiIn_mnu_binding_channel;
-        private ToolStripComboBox             midiIn_mnu_binding_control;
+        private ToolStripComboBox             midiIn_mnu_binding_msgtype;
+        private ToolStripComboBox             midiIn_mnu_binding_number;
         private ToolStripMenuItem             midiIn_mnu_binding_accept;
+        private List<Note>                    midiIn_mnu_binding_number_notevalue;
+        private List<sbyte>                   midiIn_mnu_binding_number_ccnumbers;
 
 
-        public static implicit operator ToolStripMenuItem( MidiInputMenu<MidiClass> cast ) {
+
+        public static implicit operator ToolStripMenuItem( MidiInputMenu<MidiClass> cast )
+        {
             return cast.ContextMenuHook;
         }
 
@@ -55,13 +71,21 @@ namespace Stepflow.Midi
         private void OnSetClick( object sender, EventArgs e )
         {
             AutomationlayerAddressat layer = new AutomationlayerAddressat();
-            layer.loShort = (short)(int)midiIn_mnu_binding_channel.Tag;
-            layer.hiShort = (short)(int)midiIn_mnu_binding_control.Tag;
+            layer.loByte = (byte)(int)midiIn_mnu_binding_channel.Tag;
+            layer.tyByte = (byte)(BindingType)midiIn_mnu_binding_msgtype.Tag;
+            if( midiIn_mnu_binding_number.Enabled ) {
+                layer.hiByte = (byte)(int)midiIn_mnu_binding_number.Tag;
+                layer.dryByte = (byte)midiIn_mnu_input_port.SelectedIndex;
+            } else {
+                layer.hiByte = 0;
+                layer.dryByte = 127;
+            }
             if ( element.binding is MidiInput )
                 (element.binding as MidiInput).RegisterAsMesssageListener( layer );
             else
             if ( element.binding is MidiInOut )
                 (element.binding as MidiInOut).automation().RegisterAsMesssageListener( layer );
+
             midiIn_mnu.Close();
         }
 
@@ -100,7 +124,8 @@ namespace Stepflow.Midi
             this.midiIn_mnu_binding_mnu = new System.Windows.Forms.ToolStripMenuItem();
             this.midiIn_mnu_binding_learn = new System.Windows.Forms.ToolStripMenuItem();
             this.midiIn_mnu_binding_channel = new System.Windows.Forms.ToolStripComboBox();
-            this.midiIn_mnu_binding_control = new System.Windows.Forms.ToolStripComboBox();
+            this.midiIn_mnu_binding_msgtype = new System.Windows.Forms.ToolStripComboBox();
+            this.midiIn_mnu_binding_number = new System.Windows.Forms.ToolStripComboBox();
             this.midiIn_mnu_binding_accept = new System.Windows.Forms.ToolStripMenuItem();
             
 
@@ -133,7 +158,8 @@ namespace Stepflow.Midi
             this.midiIn_mnu_binding_mnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.midiIn_mnu_input_port,
             this.midiIn_mnu_binding_channel,
-            this.midiIn_mnu_binding_control,
+            this.midiIn_mnu_binding_msgtype,
+            this.midiIn_mnu_binding_number,
             this.midiIn_mnu_binding_learn,
             this.midiIn_mnu_binding_accept});
             this.midiIn_mnu_binding_mnu.Name = "midiIn_mnu_binding_mnu";
@@ -154,17 +180,32 @@ namespace Stepflow.Midi
             this.midiIn_mnu_binding_channel.Tag = 1;
             this.midiIn_mnu_binding_channel.SelectedIndexChanged += midiIn_mnu_binding_Input_config_SelectedIndexChanged;
 
-            object[] itemgenerator = new object[128];
-            for (int i = 0; i < 128; ++i)
-                itemgenerator[i] = i.ToString();
-            this.midiIn_mnu_binding_control.Items.AddRange(itemgenerator);
-            this.midiIn_mnu_binding_control.Items.Add("HiRes");
+            this.midiIn_mnu_binding_msgtype.Name = "midiIn_mnu_binding_msgtype";
+            this.midiIn_mnu_binding_msgtype.Size = new System.Drawing.Size(121,33);
+            Array enumtyps = Enum.GetValues( typeof(BindingType) );
+            object[] itemgenerator = new object[enumtyps.Length];
+            enumtyps.CopyTo( itemgenerator, 0 );
+            this.midiIn_mnu_binding_msgtype.Items.AddRange( itemgenerator );
+            this.midiIn_mnu_binding_msgtype.Text = "Controller";
+            this.midiIn_mnu_binding_msgtype.Tag = BindingType.Controller;
+            this.midiIn_mnu_binding_msgtype.SelectedIndexChanged += MidiIn_mnu_binding_msgtype_SelectedIndexChanged;
 
-            this.midiIn_mnu_binding_control.Name = "midiIn_mnu_binding_control";
-            this.midiIn_mnu_binding_control.Size = new System.Drawing.Size(121, 33);
-            this.midiIn_mnu_binding_control.Text = "33";
-            this.midiIn_mnu_binding_control.Tag = 33;
-            this.midiIn_mnu_binding_control.SelectedIndexChanged += midiIn_mnu_binding_Input_config_SelectedIndexChanged;
+            this.midiIn_mnu_binding_number_notevalue = new List<Note>(128);
+            for( Note note = Note.C_; note < Note.G9; ++note )
+                midiIn_mnu_binding_number_notevalue.Add(note);
+            midiIn_mnu_binding_number_notevalue.Add( Note.G9 );
+
+            this.midiIn_mnu_binding_number_ccnumbers = new List<sbyte>(128);
+            for( sbyte ccnu = 0; ccnu < 127; ++ccnu )
+                midiIn_mnu_binding_number_ccnumbers.Add(ccnu);
+            midiIn_mnu_binding_number_ccnumbers.Add( 127 );
+
+            this.midiIn_mnu_binding_number.Name = "midiIn_mnu_binding_number";
+            this.midiIn_mnu_binding_number.Size = new System.Drawing.Size(121,33);
+            this.midiIn_mnu_binding_number.ComboBox.DataSource = this.midiIn_mnu_binding_number_ccnumbers;
+            this.midiIn_mnu_binding_number.Text = 33.ToString();
+            this.midiIn_mnu_binding_number.Tag = 33;
+            this.midiIn_mnu_binding_number.SelectedIndexChanged += midiIn_mnu_binding_Input_config_SelectedIndexChanged;
 
             this.midiIn_mnu_binding_accept.Name = "midiIn_mnu_binding_accept";
             this.midiIn_mnu_binding_accept.Size = new System.Drawing.Size(193, 30);
@@ -185,6 +226,31 @@ namespace Stepflow.Midi
             midiIn_mnu.ResumeLayout();
             (element as IInterValuable).getMenuHook().Add( this );
         }
+
+        private void MidiIn_mnu_binding_msgtype_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            switch( (BindingType)midiIn_mnu_binding_msgtype.SelectedItem ) {
+                case BindingType.NoteValues:
+                    midiIn_mnu_binding_number.Tag = -1;
+                    midiIn_mnu_binding_number.Enabled = false;
+                    midiIn_mnu_binding_msgtype.Tag = BindingType.NoteVolume;
+                    break;
+                case BindingType.NoteVolume:
+                case BindingType.NotePresure:
+                    midiIn_mnu_binding_number.Enabled = true;
+                    midiIn_mnu_binding_number.ComboBox.DataSource = midiIn_mnu_binding_number_notevalue;
+                break;
+                case BindingType.Controller:
+                    midiIn_mnu_binding_number.Enabled = true;
+                    midiIn_mnu_binding_number.ComboBox.DataSource = midiIn_mnu_binding_number_ccnumbers;
+                    break;
+                case BindingType.PitchWheel:
+                case BindingType.Modulation:
+                    midiIn_mnu_binding_number.Enabled = false;
+                    break;
+            } if( midiIn_mnu_binding_number.ComboBox.Enabled )
+                midiIn_mnu_binding_number.ComboBox.Refresh();
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,8 +266,12 @@ namespace Stepflow.Midi
         private ToolStripSeparator midiOut_mnu_seperator1;
         public  ToolStripMenuItem  midiOut_mnu_binding_mnu;
         private ToolStripComboBox  midiOut_mnu_binding_channel;
-        private ToolStripComboBox  midiOut_mnu_binding_control;
+        private ToolStripComboBox  midiOut_mnu_binding_msgtype;
+        private ToolStripComboBox  midiOut_mnu_binding_number;
+        private byte               midiOut_mnu_binding_values;
         private ToolStripMenuItem  midiOut_mnu_binding_accept;
+        private List<Note>         midiOut_mnu_binding_number_notevalue;
+        private List<sbyte>        midiOut_mnu_binding_number_ccnumbers;
         private ToolStripMenuItem  ContextMenuHook;
 
 
@@ -232,10 +302,18 @@ namespace Stepflow.Midi
 
         private void OnSetClick( object sender, EventArgs e )
         {
-            AutomationlayerAddressat automat = new AutomationlayerAddressat(
-                (byte)(int)midiOut_mnu_binding_channel.Tag,  (byte)Message.TYPE.CTRL_CHANGE,
-                (byte)(int)midiOut_mnu_binding_control.Tag, (byte)midiOut_mnu_output_port.SelectedIndex
-            );
+            AutomationlayerAddressat automat;
+            Message.TYPE typ = (Message.TYPE)(midiOut_mnu_binding_msgtype.Tag as Enum).ToInt32();
+            if( midiOut_mnu_binding_number.Enabled )
+                automat = new AutomationlayerAddressat(
+                    (byte)(int)midiOut_mnu_binding_channel.Tag, (byte)typ,
+                    (byte)(int)midiOut_mnu_binding_number.Tag, (byte)midiOut_mnu_output_port.SelectedIndex
+                );
+            else
+                automat = new AutomationlayerAddressat(
+                    (byte)(int)midiOut_mnu_binding_channel.Tag,
+                    (byte)midiOut_mnu_binding_msgtype.Tag, 0,127
+                );
 
             if( element.binding is MidiOutput )
                 (element.binding as MidiOutput).ConfigureAsMessagingAutomat(automat, destination);
@@ -250,19 +328,44 @@ namespace Stepflow.Midi
             midiOut_mnu.Close();
         }
 
-        private void Midi_mnu_binding_output_config_SelectedIndexChanged(object sender, EventArgs e)
+        private void Midi_mnu_binding_output_config_SelectedIndexChanged( object sender, EventArgs e )
         {
             ToolStripComboBox config = sender as ToolStripComboBox;
             config.Tag = config.SelectedIndex;
         }
 
-        private void Midi_mnu_output_port_SelectedIndexChanged(object sender, EventArgs e)
+        private void Midi_mnu_output_port_SelectedIndexChanged( object sender, EventArgs e )
         {
             if ( element.binding is MidiInOut )
                 (element.binding as MidiInOut).triggerPortChange(AutomationDirection.Output, sender, (element.binding as Thru).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
             else
             if ( element.binding is MidiOutput )
                 (element.binding as MidiOutput).triggerPortChange(AutomationDirection.Output, sender, (element.binding as Out).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
+        }
+
+        private void MidiOut_mnu_binding_msgtype_SelectedIndexChanged( object sender, EventArgs e )
+        {
+            switch( (BindingType)midiOut_mnu_binding_msgtype.SelectedItem ) {
+                case BindingType.NoteValues:
+                midiOut_mnu_binding_values = 100;
+                midiOut_mnu_binding_number.Tag = -1;
+                midiOut_mnu_binding_number.Enabled = false;
+                midiOut_mnu_binding_msgtype.Tag = BindingType.NoteVolume;
+                break;
+                case BindingType.NoteVolume:
+                case BindingType.NotePresure:
+                midiOut_mnu_binding_number.Enabled = true;
+                midiOut_mnu_binding_number.ComboBox.DataSource = midiOut_mnu_binding_number_notevalue;
+                break;
+                case BindingType.Controller:
+                midiOut_mnu_binding_number.Enabled = true;
+                midiOut_mnu_binding_number.ComboBox.DataSource = midiOut_mnu_binding_number_ccnumbers;
+                break;
+                case BindingType.PitchWheel:
+                case BindingType.Modulation:
+                midiOut_mnu_binding_number.Enabled = false;
+                break;
+            }
         }
 
         public MidiOutputMenu( IMidiControlElement<MidiClass> parent,
@@ -277,15 +380,16 @@ namespace Stepflow.Midi
             element.outputMenu = this;
             destination = 0;
 
+            midiOut_mnu_binding_values = 100;
             this.midiOut_mnu = new System.Windows.Forms.ContextMenuStrip(connector);
             this.midiOut_mnu_output_port = new System.Windows.Forms.ToolStripComboBox();
             this.midiOut_mnu_seperator1 = new System.Windows.Forms.ToolStripSeparator();
             this.midiOut_mnu_binding_mnu = new System.Windows.Forms.ToolStripMenuItem();
             this.midiOut_mnu_binding_channel = new System.Windows.Forms.ToolStripComboBox();
-            this.midiOut_mnu_binding_control = new System.Windows.Forms.ToolStripComboBox();
+            this.midiOut_mnu_binding_msgtype = new System.Windows.Forms.ToolStripComboBox();
+            this.midiOut_mnu_binding_number = new System.Windows.Forms.ToolStripComboBox();
             this.midiOut_mnu_binding_accept = new System.Windows.Forms.ToolStripMenuItem();
             this.midiOut_mnu.SuspendLayout();
-
             this.midiOut_mnu.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.midiOut_mnu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.midiOut_mnu_seperator1,
@@ -315,7 +419,8 @@ namespace Stepflow.Midi
             this.midiOut_mnu_binding_mnu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.midiOut_mnu_output_port,
             this.midiOut_mnu_binding_channel,
-            this.midiOut_mnu_binding_control,
+            this.midiOut_mnu_binding_msgtype,
+            this.midiOut_mnu_binding_number,
             this.midiOut_mnu_binding_accept});
             this.midiOut_mnu_binding_mnu.Name = "midiOut_mnu_binding_mnu";
             this.midiOut_mnu_binding_mnu.Size = new System.Drawing.Size(198, 30);
@@ -330,17 +435,31 @@ namespace Stepflow.Midi
             this.midiOut_mnu_binding_channel.Tag = 1;
             this.midiOut_mnu_binding_channel.SelectedIndexChanged += Midi_mnu_binding_output_config_SelectedIndexChanged;
 
-            object[] itemgenerator = new object[128];
-            for (int i = 0; i < 128; ++i)
-                itemgenerator[i] = i.ToString();
-            this.midiOut_mnu_binding_control.Items.AddRange(itemgenerator);
-            this.midiOut_mnu_binding_control.Items.Add("HiRes");
+            this.midiOut_mnu_binding_msgtype.Name = "midiIn_mnu_binding_msgtype";
+            this.midiOut_mnu_binding_msgtype.Size = new System.Drawing.Size(121, 33);
+            Array enumtyps = Enum.GetValues( typeof(BindingType) );
+            object[] itemgenerator = new object[enumtyps.Length];
+            enumtyps.CopyTo(itemgenerator, 0);
+            this.midiOut_mnu_binding_msgtype.Items.AddRange(itemgenerator);
+            this.midiOut_mnu_binding_msgtype.Text = "Controller";
+            this.midiOut_mnu_binding_msgtype.Tag = BindingType.Controller;
+            this.midiOut_mnu_binding_msgtype.SelectedIndexChanged += MidiOut_mnu_binding_msgtype_SelectedIndexChanged;
 
-            this.midiOut_mnu_binding_control.Name = "midiOut_mnu_binding_control";
-            this.midiOut_mnu_binding_control.Size = new System.Drawing.Size(121, 33);
-            this.midiOut_mnu_binding_control.Text = "33";
-            this.midiOut_mnu_binding_control.Tag = 33;
-            this.midiOut_mnu_binding_control.SelectedIndexChanged += Midi_mnu_binding_output_config_SelectedIndexChanged;
+            this.midiOut_mnu_binding_number_notevalue = new List<Note>(128);
+            for( Note note = Note.C_; note < Note.G9; ++note )
+                midiOut_mnu_binding_number_notevalue.Add(note);
+            midiOut_mnu_binding_number_notevalue.Add(Note.G9);
+
+            this.midiOut_mnu_binding_number_ccnumbers = new List<sbyte>(128);
+            for( sbyte ccnu = 0; ccnu < 127; ++ccnu )
+                midiOut_mnu_binding_number_ccnumbers.Add(ccnu);
+            midiOut_mnu_binding_number_ccnumbers.Add(127);
+
+            this.midiOut_mnu_binding_number.Name = "midiOut_mnu_binding_number";
+            this.midiOut_mnu_binding_number.Size = new System.Drawing.Size(121, 33);
+            this.midiOut_mnu_binding_number.Text = "33";
+            this.midiOut_mnu_binding_number.Tag = 33;
+            this.midiOut_mnu_binding_number.SelectedIndexChanged += Midi_mnu_binding_output_config_SelectedIndexChanged;
 
             this.midiOut_mnu_binding_accept.Name = "midi_mnu_binding_accept";
             this.midiOut_mnu_binding_accept.Size = new System.Drawing.Size(193, 30);

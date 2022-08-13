@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
-//using Windows.Devices.Input;
-//using Windows.Devices.HumanInterfaceDevice;
-//using Windows.Foundation;
 using Win32Imports;
 using Win32Imports.Touch;
 using PointerAction = Win32Imports.Touch.PointerAction;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using Stepflow.Gui.Helpers;
 using Stepflow.Gui.Geometry;
 #if DEBUG
@@ -21,7 +19,6 @@ using Point = System.Drawing.Point;
 using Rect  = System.Drawing.Rectangle;
 using RectF = System.Drawing.RectangleF;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
-using System.ComponentModel;
 #elif USE_WITH_WPF
 using System.Windows.Controls;
 using Point = System.Windows.Point;
@@ -87,7 +84,7 @@ namespace Stepflow.Gui
     }
 
     public class PointerInput 
-        : Win32Imports.Touch.Wrapper
+        : Wrapper
         , ITouchDispatchTrigger
     {
         public delegate void Registration (ITouchInputDispatcher ToucheInterPatsche);
@@ -99,7 +96,7 @@ namespace Stepflow.Gui
         public event TouchMessage FingerTouchLift;
         public event TouchMessage FingerTouchDown;
 
-        private static AutoRegistration         registration = AutoRegistration.Enabled;
+        private static AutoRegistration         registration = AutoRegistration.Disabled;
         public static event InternalInit        InitializationFinished;
         public static event OnInitialize        Initialized;
         public static readonly uint             ThreasholdForDownCount;
@@ -153,7 +150,7 @@ namespace Stepflow.Gui
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Auto-Registration related
 
-        public static AutoRegistration  AutoRegistration {
+        public static AutoRegistration AutoRegistration {
             get { return registration; }
             set { if( value == AutoRegistration.Enabled ) {
                     if( registration != value ) {
@@ -171,10 +168,10 @@ namespace Stepflow.Gui
             }
         }
 
-        private static void AutoInitializingTouchInput(object sender, EventArgs e)
+        private static void AutoInitializingTouchInput( object sender, EventArgs e )
         {
-            if ( Application.OpenForms.Count > 0 ) {
-                if (PointerInput.instance == null) {
+            if( Application.OpenForms.Count > 0 ) {
+                if( PointerInput.instance == null ) {
                     PointerInput t = new PointerInput( Application.OpenForms[0], Application.OpenForms[0], 0 );
                 } Application.Idle -= AutoInitializingTouchInput;
             }
@@ -230,7 +227,7 @@ namespace Stepflow.Gui
         {
 #if DEBUG
                 std = new Consola.StdStreams( CreationFlags.NewConsole );
-                std.Out.WriteLine("begin: PointerInput() Debug output:...");
+                std.Out.WriteLine( "begin: PointerInput() Debug output:..." );
                 RETURN_CODE.LogAnyResult = false;
                 RETURN_CODE.SetLogOutWriter( std.Out.WriteLine );
 #endif
@@ -244,7 +241,9 @@ namespace Stepflow.Gui
             elements = new HashSet<ITouchableElement>();
             translateToArea = panel;
             InputReceived += PointerInput_IncommingMessage;
-            touches = new Dictionary<ushort, FingerTip>( NumberOfDevices );
+            int maximumtouches = MaximumTouches;
+            maximumtouches = maximumtouches == 0 ? 10 : maximumtouches;
+            touches = new Dictionary<ushort,FingerTip>( maximumtouches );
         }
 
         protected override void OnInitializationDone()
@@ -269,7 +268,6 @@ namespace Stepflow.Gui
                 IRectangle area = elms.Current.ScreenRectangle();
                 if( area.Contains( touch.Origin ) ) {
                     if( touch.Interact( elms.Current, area ) ) {
-                        //touch.SetOffset( area.Corner );
                         break;
                     }
                 }
@@ -293,15 +291,15 @@ namespace Stepflow.Gui
         private void PointerInput_IncommingMessage( PointerAction action )
         {
             switch( action.typ ) {
-                case PointerAction.Add: {
+                case ActTyp.Add: {
                         touches_AddNew( action );
                         break;
                     }
-                case PointerAction.Set: {
+                case ActTyp.Set: {
                         touches[action.pid].Update( action.pos );
                         break;
                     }
-                case PointerAction.Rem: {
+                case ActTyp.Rem: {
                         touches[action.pid].Remove( action.pos );
                         touches.Remove( action.pid );
                         break;

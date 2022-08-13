@@ -33,9 +33,6 @@ namespace Stepflow.Gui
         public int X { get { return location.x - translat.x; } }
         public int Y { get { return location.y - translat.y; } }
         public Point64 Position { get { return location - translat; } }
-        //public int X { get { return reporter.PointToClient( location ).X; } }
-        //public int Y { get { return reporter.PointToClient( location ).Y; } }
-        //public Point64 Position { get { return reporter.PointToClient( location ); } }
         public Point64 Origin   { get { return location; } }
 
         public Control Reporter {
@@ -48,7 +45,7 @@ namespace Stepflow.Gui
                             Control reportingElement )  {
             location = touchAction.pos;
             reporter = reportingElement;
-            translat = new Point32( reportingElement.PointToScreen( Point.Empty ) ); //  reportingElement.Location ) );
+            translat = new Point32( reportingElement.PointToScreen( Point.Empty ) );
             Id = touchAction.pid;
             Move = moveHandler;
             Lift = liftHandler;
@@ -126,7 +123,6 @@ namespace Stepflow.Gui
             IRectangle bounds = element.ScreenRectangle();
             if ( bounds.Contains( location ) ) {
                 if ( Interact( element, bounds ) ) {
-                   // SetOffset( bounds.Corner );
                     info |= IsTouching.AnElement;
                     return true;
                 }
@@ -135,7 +131,6 @@ namespace Stepflow.Gui
 
         public bool Interact( ITouchableElement element, IRectangle bounds )
         {
-            //if( reporter == element.Element ) return true;
             reporter = element.Element;
             if( info.HasFlag( IsTouching.TrackKept ) ){
                 Lift += element.touch.Lift;

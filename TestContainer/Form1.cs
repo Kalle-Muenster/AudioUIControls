@@ -199,7 +199,7 @@ namespace TestContainer
         private void mnu_MidiSelectBox_Click( object sender, EventArgs e )
         {
             destruct?.Invoke();
-            Stepflow.Midi.Gui.MidiSelectBox dings = new Stepflow.Midi.Gui.MidiSelectBox();
+            Stepflow.Midi.Gui.MidiComboBox dings = new Stepflow.Midi.Gui.MidiComboBox();
             dings.Location = new Point(200, 200);
             dings.Size = new Size(256,64);
             for( Win32Imports.Midi.Note note = Win32Imports.Midi.Note.C2; note < Win32Imports.Midi.Note.C4; ++note )

@@ -27,6 +27,7 @@ namespace Win32Imports
 
         public enum INPUT_TYPE : uint
         {
+            PT_UNKNOWN = 0x00000000,
             PT_POINTER = 0x00000001,   // Generic pointer
             PT_TOUCH = 0x00000002,   // Touch
             PT_PEN = 0x00000003,   // Pen
@@ -36,11 +37,11 @@ namespace Win32Imports
 
         public enum DEVICE_TYPE : uint
         {
+            UNKNOWN = 0x00000000,
             INTEGRATED_PEN = 0x00000001,
             EXTERNAL_PEN = 0x00000002,
             TOUCH = 0x00000003,
-            TOUCH_PAD = 0x00000004,
-            MAX = 0xFFFFFFFF
+            TOUCH_PAD = 0x00000004
         }
 
         [Flags]
@@ -86,8 +87,7 @@ namespace Win32Imports
         {
             POINTER_DEVICE_CURSOR_TYPE_UNKNOWN = 0x00000000,
             POINTER_DEVICE_CURSOR_TYPE_TIP = 0x00000001,
-            POINTER_DEVICE_CURSOR_TYPE_ERASER = 0x00000002,
-            POINTER_DEVICE_CURSOR_TYPE_MAX = 0xFFFFFFFF
+            POINTER_DEVICE_CURSOR_TYPE_ERASER = 0x00000002
         }
 
         public enum TOUCH_FLAGS : uint
@@ -95,10 +95,10 @@ namespace Win32Imports
 
         public enum TOUCH_MASK : uint
         {
-            TOUCH_MASK_NONE = 0x00000000, // Default - none of the optional fields are valid
+            TOUCH_MASK_NONE = 0x00000000,        // Default - none of the optional fields are valid
             TOUCH_MASK_CONTACTAREA = 0x00000001, // The rcContact field is valid
             TOUCH_MASK_ORIENTATION = 0x00000002, // The orientation field is valid
-            TOUCH_MASK_PRESSURE = 0x00000004 // The pressure field is valid
+            TOUCH_MASK_PRESSURE = 0x00000004     // The pressure field is valid
         }
 
 #if WIN64
@@ -141,9 +141,7 @@ namespace Win32Imports
             DM_POINTERHITTEST            = 0x0250,
             WM_POINTERROUTEDTO           = 0x0251,
             WM_POINTERROUTEDAWAY         = 0x0252,
-            WM_POINTERROUTEDRELEASED     = 0x0253,
-
-            MASK_LIFTMESSAGEES = 0x0007|0x000A
+            WM_POINTERROUTEDRELEASED     = 0x0253
         }
 
 
@@ -191,20 +189,25 @@ namespace Win32Imports
             public Point64 center
             {
                 get { return corner + scales; }
-                set
-                {
-                    Point64 s = scales; corner = value - s;
-                    right = value.x + s.x; bottom = value.y + s.y;
-                }
+                set { Point64 s = scales;
+                    corner = value - s;
+                    right = value.x + s.x;
+                    bottom = value.y + s.y; }
             }
 
-            public RECT(int x, int y, int w, int h)
+            public RECT( int x, int y, int w, int h )
             {
-                left = x; top = y; right = x + w; bottom = y + h;
+                left = x;
+                top = y;
+                right = x + w;
+                bottom = y + h;
             }
             public RECT(Rect rect)
             {
-                left = rect.Left; right = rect.Right; top = rect.Top; bottom = rect.Bottom;
+                left = rect.Left;
+                right = rect.Right;
+                top = rect.Top;
+                bottom = rect.Bottom;
             }
             public override string ToString()
             {
@@ -214,14 +217,13 @@ namespace Win32Imports
             }
             public static implicit operator Rect(RECT cast)
             {
-                return new Rect(cast.corner, cast.length);
+                return new Rect( cast.corner, cast.length );
             }
-            public bool Contains(Point location)
+            public bool Contains( Point location )
             {
-                return ((Rect)this).Contains(location);
+                return ((Rect)this).Contains( location );
             }
         }
-
 
 #if WIN64
         [StructLayout(LayoutKind.Sequential, Size = 92)]
@@ -234,9 +236,9 @@ namespace Win32Imports
             public uint pointerId;
             public uint frameId;
             public FLAG pointerFlags;
-            public IntPtr sourceDevice;			  //handle
+            public IntPtr sourceDevice;			      //handle
             public IntPtr hwndTarget;				  //hwnd
-            public Point64 ptPixelLocation;		  //POINT
+            public Point64 ptPixelLocation;		      //POINT
             public Point64 ptHimetricLocation;		  //POINT
             public Point64 ptPixelLocationRaw;		  //POINT
             public Point64 ptHimetricLocationRaw;	  //POINT
@@ -299,7 +301,7 @@ namespace Win32Imports
             public char startingCursorId_3;
             public char startingCursorId_4;
             public UInt16 maxActiveContacts;  //x86-26/x64-34/ alignment? 32/40
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1040)] //+1040 byte
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 1040 )] //+1040 byte
             public byte[] productString;
         };
 
@@ -424,57 +426,43 @@ namespace Win32Imports
         #endregion
 
 #region Helpers:
-        [StructLayout(LayoutKind.Explicit,Size=16)]   
-        unsafe struct PtrActTyp {
-            public static readonly PtrActTyp FourCC = new PtrActTyp(new uint[]{7237454,6579265,7628115,7169362});
-            public static readonly PtrActTyp Indexe = new PtrActTyp(new uint[]{0,1,2,3}); 
-            [FieldOffset(0)] public fixed uint idx[4];
-            [FieldOffset(0)] public uint Non;// = 7237454;
-            [FieldOffset(4)] public uint Add;// = 6579265;
-            [FieldOffset(8)] public uint Set;// = 7628115;
-           [FieldOffset(12)] public uint Rem;// = 7169362;
-            internal PtrActTyp(uint[] init)
-            {
-                Non = init[0];
-                Add = init[1];
-                Set = init[2];
-                Rem = init[3];
+
+            internal enum ActTyp : ushort {
+                Non = 0,
+                Add = 1,
+                Set = 2,
+                Rem = 3
             }
-        }
 
             [StructLayout(LayoutKind.Explicit,Size=8)]
-            internal struct PointerAction {   
-                public const ushort Non = 0;
-                public const ushort Add = 1;
-                public const ushort Set = 2;
-                public const ushort Rem = 3;
-                
+            internal struct PointerAction
+            {
                 [FieldOffset(0)]
                 private uint wpm;
                 [FieldOffset(0)]
                 public ushort pid;
                 [FieldOffset(2)]
-                public ushort typ;
+                public ActTyp typ;
                 [FieldOffset(4)]
                 private uint lpm;
                 [FieldOffset(4)]
                 public Point32 pos;
 
-                public PointerAction( ref POINTER_MESSAGE msg ) : this() {
-                    wpm = msg.wParam; lpm = msg.lParam;
+                public PointerAction( ref POINTER_MESSAGE msg )
+                    : this() {
+                    wpm = msg.wParam;
+                    lpm = msg.lParam;
                     typ =( msg.message == WM_POINTER_MESSAGE_TYPE.WM_POINTERLEAVE
                         || msg.message == WM_POINTER_MESSAGE_TYPE.WM_POINTERUP
-                        || (int)msg.message >= 0x250 ) 
-                         ? Rem : Non;
+                        || msg.message >= WM_POINTER_MESSAGE_TYPE.WM_POINTERROUTEDTO ) 
+                         ? ActTyp.Rem : ActTyp.Non;
                 }
-                public override string ToString() {
-                unsafe {
-                    PtrActTyp ptrtyp = PtrActTyp.FourCC;
-                    return new string( (sbyte*)&ptrtyp.idx[typ] );
-                }}
 
+                public override string ToString() {
+                    return typ.ToString();
+                }
                 public static implicit operator ushort( PointerAction cast ) {
-                    return cast.typ;
+                    return (ushort)cast.typ;
                 }
             }
             
@@ -483,7 +471,7 @@ namespace Win32Imports
                 public delegate void MessageReceiver( ref System.Windows.Forms.Message msg );
                 private MessageReceiver receiver = null;
                 public bool PreFilterMessage( ref System.Windows.Forms.Message msg ) {
-                    if( msg.Msg >= 0x238 && msg.Msg <= 0x24a ) {
+                    if( msg.Msg >= 0x0238 && msg.Msg <= 0x024A ) {
                         receiver?.Invoke( ref msg );
                         return true;
                     } return false;
@@ -532,15 +520,15 @@ namespace Win32Imports
                 }
             }
 
-            public class InitializationEventArgs : EventArgs
+            public class InitializationEventArgs
+                : EventArgs
             {
                 public readonly PointerHandle Device;
                 public InitializationEventArgs( ref PointerHandle value )
-                {
+                    : base() {
                     Device = value;
                 }
-                public static implicit operator PointerHandle( InitializationEventArgs cast )
-                {
+                public static implicit operator PointerHandle( InitializationEventArgs cast ) {
                     return cast.Device;
                 }
             }
@@ -551,55 +539,55 @@ namespace Win32Imports
         {
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            GetMessage(ref POINTER_MESSAGE getter, IntPtr hWnd, WM_POINTER_MESSAGE_TYPE wMsgFilterMin, WM_POINTER_MESSAGE_TYPE wMsgFilterMax);
+            GetMessage( ref POINTER_MESSAGE getter, IntPtr hWnd, WM_POINTER_MESSAGE_TYPE wMsgFilterMin, WM_POINTER_MESSAGE_TYPE wMsgFilterMax );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            PeekMessage(ref POINTER_MESSAGE getter, IntPtr hWnd, WM_POINTER_MESSAGE_TYPE wMsgFilterMin, WM_POINTER_MESSAGE_TYPE wMsgFilterMax, PEAK_MESSAGE_FLAGS removeMsg );
+            PeekMessage( ref POINTER_MESSAGE getter, IntPtr hWnd, WM_POINTER_MESSAGE_TYPE wMsgFilterMin, WM_POINTER_MESSAGE_TYPE wMsgFilterMax, PEAK_MESSAGE_FLAGS removeMsg );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            DispatchMessage(ref POINTER_MESSAGE returner);
+            DispatchMessage( ref POINTER_MESSAGE returner );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            GetPointerDevices(out UInt32 deviceCount, [In,Out] DEVICE_INFO[] pointerDevices); // POINTER_DEVICE_INFO*
+            GetPointerDevices( out UInt32 deviceCount, [In,Out] DEVICE_INFO[] pointerDevices );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            GetPointerDevice(UIntPtr devHandle, ref DEVICE_INFO devInfo);
-
-            [DllImport("user32.dll")]
-            protected unsafe static extern RETURN_CODE
-            GetPointerDeviceProperties( UIntPtr device, ref UInt32 propertyCount, [In,Out] DEVICE_PROPERTY[] pointerProperties);
-
-            [DllImport("user32.dll")]
-            protected static extern RETURN_CODE
-            RegisterPointerDeviceNotifications( IntPtr hWnd, bool notifyRange);
+            GetPointerDevice( UIntPtr devHandle, ref DEVICE_INFO devInfo );
 
             [DllImport("user32.dll")]
             protected unsafe static extern RETURN_CODE
-            GetPointerDeviceCursors(UIntPtr device, ref UInt32 cursorCount, [In,Out] DEVICE_CURSOR_INFO[] deviceCursors);
+            GetPointerDeviceProperties( UIntPtr device, ref UInt32 propertyCount, [In,Out] DEVICE_PROPERTY[] pointerProperties );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            GetPointerDeviceRects(UIntPtr device, out RECT pointerDeviceRect, out RECT displayRect);
+            RegisterPointerDeviceNotifications( IntPtr hWnd, bool notifyRange );
+
+            [DllImport("user32.dll")]
+            protected unsafe static extern RETURN_CODE
+            GetPointerDeviceCursors( UIntPtr device, ref UInt32 cursorCount, [In,Out] DEVICE_CURSOR_INFO[] deviceCursors );
 
             [DllImport("user32.dll")]
             protected static extern RETURN_CODE
-            GetRawPointerDeviceData(UInt32 pointerId, UInt32 historyCount, UInt32 propertiesCount, [In] DEVICE_PROPERTY[] pProperties, [Out] Int64[] pValues);
+            GetPointerDeviceRects( UIntPtr device, out RECT pointerDeviceRect, out RECT displayRect );
+
+            [DllImport("user32.dll")]
+            protected static extern RETURN_CODE
+            GetRawPointerDeviceData( UInt32 pointerId, UInt32 historyCount, UInt32 propertiesCount, [In] DEVICE_PROPERTY[] pProperties, [Out] Int64[] pValues );
 
             [DllImport("User32.dll")]
             protected static extern RETURN_CODE
-            GetPointerType(uint pointerId, out INPUT_TYPE pointerType);
+            GetPointerType( uint pointerId, out INPUT_TYPE pointerType );
 
             [DllImport("User32.dll")]
             protected static extern RETURN_CODE
-            GetPointerCursorId(uint pointerId, out uint cursorId);
+            GetPointerCursorId( uint pointerId, out uint cursorId );
 
             [DllImport("User32.dll")]
             protected static extern RETURN_CODE
-            GetPointerInfo(uint pointerId, out INFO pointerInfo);
+            GetPointerInfo( uint pointerId, out INFO pointerInfo );
 
             [DllImport("User32.dll")]
             protected static extern RETURN_CODE
@@ -615,7 +603,7 @@ namespace Win32Imports
 
 
             internal static Dictionary<ushort,PointerAction> fingers = null;
-            private static List<Wrapper>       instances = null;
+            private  static List<Wrapper>      instances = null;
             private static UInt32              deviceCount = 0;
             private DEVICE_INFO                deviceInfo;
             private string                     deviceName = "";
@@ -624,7 +612,7 @@ namespace Win32Imports
             private System.Windows.Forms.Form  window = null;
   
             public unsafe string DeviceName {
-                get { if( handleOwner == null ) return "Still initializing statics... no handleOwner was initialized yet";
+                get { if( handleOwner == null ) return "Still initializing statics... no handleOwner initialized yet";
                     fixed ( byte* productString = handleOwner.deviceInfo.productString ) {
                         if ( handleOwner.deviceName.Length == 0 ) {
                             if ( productString[0] != '\0' ) {
@@ -642,13 +630,16 @@ namespace Win32Imports
                     }
                 }
             }
+
             public DEVICE_TYPE DeviceType {
-                get { if( handleOwner == null ) return DEVICE_TYPE.MAX;
+                get { if( handleOwner == null ) return DEVICE_TYPE.UNKNOWN;
                     return handleOwner.deviceInfo.pointerDeviceType;
                 }
             }
+
             public int MaximumTouches {
-                get { return handleOwner.deviceInfo.maxActiveContacts; }
+                get { if( handleOwner == null ) return 0;
+                    return handleOwner.deviceInfo.maxActiveContacts; }
             }
             
             public int NumberOfDevices {
@@ -661,25 +652,29 @@ namespace Win32Imports
                     string.Format( "GetPointerDevices(): {0}", deviceCount )
                 );
             }
-            public Wrapper( System.Windows.Forms.Form window, int deviceNum ) {
+
+            public Wrapper( System.Windows.Forms.Form window, int deviceNum )
+            {
                 RETURN_CODE result = true;
-                fingers = new Dictionary<ushort,PointerAction>(5);
+                fingers = new Dictionary<ushort,PointerAction>( 5 );
                 if ( instances == null ) {
                      instances = new List<Wrapper>(1);
                      result.logInfo( "Registered for receiving messages from device: "
-                               + CreateReceiverLoop( deviceNum, window.Handle ) );
-                } if( handleOwner == null )
+                                   + CreateReceiverLoop( deviceNum, window.Handle ) );
+                }
+                if( handleOwner == null ) { 
                     foreach( Wrapper pointer in instances ) {
                         if( pointer.handleOwner.device.window == window.Handle ) {
-                            this.handleOwner = pointer;
-                            this.device = pointer.device;
+                            handleOwner = pointer;
+                            device = pointer.device;
                         }
                     }
+                }
                 this.window = window;
                 instances.Add( this );
                 result.logInfo( string.Format(
                     "Device Name: {0}\nDevice Type: {1}\n", DeviceName, DeviceType )
-                              );
+                                 );
             }
             
             internal delegate void FingerTouchAction( PointerAction action );
@@ -693,28 +688,27 @@ namespace Win32Imports
 
             private void DoFingerDown( ref PointerAction action )
             {
-                if ( action.typ != PointerAction.Rem ) {
-                     action.typ  = PointerAction.Add;
+                if ( action.typ != ActTyp.Rem ) {
+                     action.typ  = ActTyp.Add;
                     fingers.Add( action.pid, action );
                     InputReceived?.Invoke( action );
                 }
             }
             private void DoFingerLift( ref PointerAction action )
             {
-                action.typ = PointerAction.Rem;
+                action.typ = ActTyp.Rem;
                 fingers.Remove( action.pid );
                 InputReceived?.Invoke( action );
             }
             private void DoFingerMove( ref PointerAction action )
             {
-                action.typ = PointerAction.Set;
+                action.typ = ActTyp.Set;
                 fingers[action.pid] = action;
                 InputReceived?.Invoke( action );
             }
 
             private void inputReceiver( ref System.Windows.Forms.Message input )
             {
-                //handleOwner.device.window = input.HWnd;
                 RETURN_CODE result = true;
                 unsafe { fixed (void* ptMsg = &input) {
                     POINTER_MESSAGE* winMsg = (POINTER_MESSAGE*)ptMsg; 
@@ -795,7 +789,7 @@ namespace Win32Imports
             {
                 if( InitializationDone != null ) InitializationDone( this, new InitializationEventArgs( ref this.device ) );
 #if DEBUG
-                Consola.StdStream.Out.WriteLine("Successfully registered for receiving Touch Pointer event messages!");
+                Consola.StdStream.Out.WriteLine( "Successfully registered for receiving Touch Pointer event messages!" );
             }
 
             public void logInfo()
@@ -806,8 +800,8 @@ namespace Win32Imports
                     if( result = GetPointerDeviceProperties( handleOwner.device.handle, ref propCount, null ) ) {
                         DEVICE_PROPERTY[] props = new DEVICE_PROPERTY[propCount];
                         if( result = GetPointerDeviceProperties( handleOwner.device.handle, ref propCount, props ) ) {
-                            for(int i=0;i<propCount;++i ) {
-                                    Consola.StdStream.Out.Stream.Put("Device ").Put(i).Put(" got properties!").End();
+                            for( int i=0; i<propCount; ++i ) {
+                                Consola.StdStream.Out.Stream.Put( "Device " ).Put( i ).Put( " has properties!" ).End();
                             }
                         }
                     }
