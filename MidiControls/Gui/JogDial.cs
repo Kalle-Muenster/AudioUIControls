@@ -20,7 +20,7 @@ using Stepflow.Gui.Automation;
 using Stepflow.Controller;
 using MidiControls.Properties;
 using Midi = Win32Imports.Midi;
-using Stepflow.Midi.ControlHelpers;
+using Stepflow.Midi.Helpers;
 using Message = Win32Imports.Midi.Message;
 using Rectangle = System.Drawing.Rectangle;
 

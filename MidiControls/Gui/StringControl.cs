@@ -10,10 +10,14 @@ using System.Windows.Forms;
 using Win32Imports.Midi;
 using Stepflow;
 using Stepflow.Gui;
+using Stepflow.Gui.Helpers;
+using Stepflow.Gui.Geometry;
 using Stepflow.Gui.Automation;
 using Stepflow.Controller;
 using Stepflow.TaskAssist;
-using Stepflow.Gui.Geometry;
+using Stepflow.Midi;
+using Stepflow.Midi.Helpers;
+
 using Point64 = Stepflow.Gui.Geometry.Point64;
 using System.Windows.Input;
 using Stepflow.Midi.ControlHelpers;
@@ -23,7 +27,7 @@ using MidiMessage = Win32Imports.Midi.Message;
 using MidiValue = Win32Imports.Midi.Value;
 using FingerTip = Stepflow.Gui.FingerTip;
 using Win32Imports.Touch;
-using Stepflow.Gui.Helpers;
+
 
 namespace Stepflow
 {
@@ -89,7 +93,7 @@ namespace Stepflow
                     saite = stringDing;
                     midiIn = new MidiInput();
                     tone = new Controlled.Float32();
-                    //press = null;
+                    
                     touchimpl = new TouchGesturesHandler<SlideBar>(this);
                     Parent = instrument.steg.Panel2;
                     tone.SetUp(minFrq, maxFrq, 0, minFrq, ControlMode.Element);
@@ -125,7 +129,7 @@ namespace Stepflow
                 private void SlideBar_TouchLift(object sender, FingerTip touch)
                 {
                     // TODO check if any vibrato (quer-richting touch moved) is applied - and gegebenenfalls remove that vibrato,
-                    // (or beter transform such 'rest-vibrato' amount to a value forwarded for being applied as zupf or strike 
+                    // (or beter transform such 'rest-vibrato' amount to a value forwarded for being applied as zupf energy (slap)
                 }
 
                 private void SlideBar_TouchMove(object sender, FingerTip touch)

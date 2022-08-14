@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="Helpers\Frequency.cs" />
     <Compile Include="Helpers\Resonator.cs" />
+    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Midi\Automation.cs" />
     <Compile Include="Midi\MidiInput.cs" />
     <Compile Include="Midi\MidiInOut.cs" />

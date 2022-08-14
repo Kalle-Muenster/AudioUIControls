@@ -17,7 +17,7 @@ using Win32Imports.Midi;
 using Message = Win32Imports.Midi.Message;
 using System.Runtime.InteropServices;
 
-namespace Stepflow.Midi.ControlHelpers
+namespace Stepflow.Midi.Helpers
 {
         public static class Frequency
         {
@@ -30,12 +30,7 @@ namespace Stepflow.Midi.ControlHelpers
             static Frequency()
             {
                 tunes = new float[128];
-                setBaseTunes( new double[] {
-                    261.6255653006,277.1826309769,293.6647679174,
-                    331.1269837221,329.6275569129,349.2282314330,
-                    369.9944227116,391.9954359817,415.3046975799,
-                    440.0000000000,466.1637615181,493.8833012561}
-                );
+                setBaseTunes( Binding.MidiTuning );
                 setDetunationType( Message.TYPE.POLY_PRESSURE );
             }
 
@@ -133,6 +128,7 @@ namespace Stepflow.Midi.ControlHelpers
             {
                 return tunes[(int)note];
             }
+
             /// <summary> Frequency.fromMidiNote(Note,Fine)
             /// returns frequency (in Hz) of given midi note when some additional amout on pitch would be applied.
             /// </summary><param name="note"> Midi note where to retreive represented frequency from </param>
@@ -155,18 +151,20 @@ namespace Stepflow.Midi.ControlHelpers
             {
                 return toMidiData( frequencyHz, 1.0f );
             }
-            /// <summary> Frequency.toMidiData(frequencyHz,volumeDb)
-            /// Create a midi messages (or maybe several messages) which plays a note at given volume, which tune matches the 
-            /// requested Hz frequency parameter. When given frequency does not exactly match any midi note's frequency value,
-            /// an additional control change message will be generated which will apply detunation (via pitch or aftertouch)
-            /// to that channel where the generated note is going to be played for making it matching the requested frequency
-            /// value exactly. </summary> <param name="frequencyHz"></param><returns> An array of midi messages (where length
-            /// can be either one or two messages) </returns>
-            public static Message[] toMidiData( float Hz, float db )
+
+        /// <summary> Frequency.toMidiData(frequencyHz,volumeDb)
+        /// Create a midi messages (or maybe several messages) which plays a note at given volume, which tune matches the 
+        /// requested Hz frequency parameter. When given frequency does not exactly match any midi note's frequency value,
+        /// an additional control change message will be generated which will apply detunation (via pitch or aftertouch)
+        /// to that channel, to making it matching exactly that requested frequency where the generated note is going to
+        /// be played at. </summary> <param name="frequencyHz"></param><returns> An array of midi messages (where length
+        /// can be either one or two messages) </returns>
+        public static Message[] toMidiData( float Hz, float db )
             {
                 return toMidiData( Hz, db, 0 );
             }
-            public static Message[] toMidiData( float Hz, float db, int ch)
+
+            public static Message[] toMidiData( float Hz, float db, int ch )
             {
                 int note = -1;
                 float freq = 0;
