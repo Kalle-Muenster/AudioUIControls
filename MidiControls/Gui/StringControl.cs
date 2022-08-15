@@ -39,9 +39,10 @@ namespace Stepflow
             , IMidiControlElement<MidiOutput>
         {
             public class SlideBar
-                : MidiMeter, ITouchGesturedElement<SlideBar>
+                : MidiMeter
+                , ITouchGesturedElement<SlideBar>
             {
-                public enum Valence { Level, Tone }
+                public  enum Valence { Level, Tone }
                 public const Valence Volume = Valence.Level;
                 public const Valence Tuning = Valence.Tone;
 
@@ -49,7 +50,6 @@ namespace Stepflow
 
                 private String             saite;
                 private Controlled.Float32 tone;
-            //    public  FingerTip          press;
 
                 public IResonator resonator {
                     get { return saite; }
@@ -61,18 +61,20 @@ namespace Stepflow
                     return getJoints<Valence>().field();
                 }
 
-                override public IControllerValenceField<Controlled.Float32> valence(Enum which)
+                override public IControllerValenceField<Controlled.Float32> valence( Enum which )
                 {
-                    return getJoints<Valence>().field(which) as IControllerValenceField<Controlled.Float32>;
+                    return getJoints<Valence>().field( which ) as IControllerValenceField<Controlled.Float32>;
                 }
                 public float Tone {
                     get { return tone; }
-                    set {
-                        tone.VAL = value;
-                        valence(Tuning).SetDirty(
+                    set { float current = tone.VAL;
+                        if( current != value ) {
+                            tone.VAL = value;
+                            valence( Tuning ).SetDirty(
                              ValenceFieldState.Flags.VAL );
-                        ToneChanged?.Invoke( this, tone.VAL );
-                        Invalidate();
+                            ToneChanged?.Invoke( this, tone.VAL );
+                            Invalidate();
+                        }
                     }
                 }
                 public float ToneRange {
@@ -83,12 +85,16 @@ namespace Stepflow
                     set { Tone = (value * ToneRange) + tone.MIN; }
                 }
                 public override float ClipFactor {
-                    get { return clipo = (tone - tone.MIN) / ToneRange; }
+                    get {
+                        float t = tone;
+                        clipo = (t - tone.MIN) / ToneRange;
+                        return clipo;
+                    }
                 }
 
-                public SlideBar(StringControl instrument, String stringDing,
-                                 float minFrq, float maxFrq)
-                    : base(false)
+                public SlideBar( StringControl instrument, String stringDing,
+                                 float minFrq, float maxFrq )
+                    : base( false )
                 {
                     saite = stringDing;
                     midiIn = new MidiInput();
@@ -100,11 +106,12 @@ namespace Stepflow
                     unsafe
                     {
                         *(bool*)tone.GetPin(ElementValue.CYCLED).ToPointer() = false;
-                        *(bool*)tone.GetPin(ElementValue.CLAMPED).ToPointer() = true;
+                        *(bool*)tone.GetPin(ElementValue.CLAMPED).ToPointer() = false;
                         *(bool*)tone.GetPin(ElementValue.UNSIGNED).ToPointer() = true;
                     }
                     tone.SetCheckAtSet();
                     tone.Active = true;
+               //     tone.Invert = Spin.DOWN;
 
                     InitValue();
                     (valence() as ValenceField<Controlled.Float32, Valence>).SetControllerArray(
@@ -115,8 +122,8 @@ namespace Stepflow
                     base.RightToLeft = RightToLeft.Yes;
                     directionalOrientation = (int)DirectionalOrientation.Up;
                     BorderStyle = BorderStyle.None;
-                    InitMidi(connector);
-                    Inverted = true;
+                    InitMidi( connector );
+                    Inverted = false;
                     Unsigned = true;
 
                     if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
@@ -124,23 +131,30 @@ namespace Stepflow
                             PointerInput.Initialized += (this as ITouchableElement).TouchInputReady;
                         } else PointerInput.Dispatcher.RegisterTouchableElement(this);
                     }
+
+                    Disposed += SlideBar_Disposed;
                 }
 
-                private void SlideBar_TouchLift(object sender, FingerTip touch)
+                private void SlideBar_Disposed( object sender, EventArgs e )
                 {
-                    // TODO check if any vibrato (quer-richting touch moved) is applied - and gegebenenfalls remove that vibrato,
-                    // (or beter transform such 'rest-vibrato' amount to a value forwarded for being applied as zupf energy (slap)
+                    PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
                 }
 
-                private void SlideBar_TouchMove(object sender, FingerTip touch)
-                {
-                    // Not used actually
-                }
+                //private void SlideBar_TouchLift( object sender, FingerTip touch )
+                //{
+                //    // TODO check if any vibrato (quer-richting touch moved) is applied - and gegebenenfalls remove that vibrato,
+                //    // (or beter transform such 'rest-vibrato' amount to a value forwarded for being applied as zupf energy (slap)
+                //}
 
-                private void SlideBar_TouchDown(object sender, FingerTip touch)
-                {
+                //private void SlideBar_TouchMove( object sender, FingerTip touch )
+                //{
+                //    // Not used actually
+                //}
 
-                }
+                //private void SlideBar_TouchDown( object sender, FingerTip touch )
+                //{
+
+                //}
 
                 public TouchGesturesHandler<SlideBar> touchimpl { get; set; }
 
@@ -162,16 +176,13 @@ namespace Stepflow
                 public event MultiFinger.TouchDelegate TouchResize { add { touchimpl.events().TouchResize += value;} remove { touchimpl.events().TouchResize -= value; } }
                 public event MultiFinger.TouchDelegate TouchRotate { add { touchimpl.events().TouchRotate += value;} remove { touchimpl.events().TouchRotate -= value; } }
 
-                virtual public void OnTouchDown(FingerTip touch)
-                {
-                    saite.TapPosition = saite.Instrument.Orientation == Orientation.Horizontal ? touch.X : touch.Y;
-                }
+                virtual public void OnTouchDown( FingerTip tip )
+                {}
 
-                virtual public void OnTouchMove(FingerTip tip)
-                {
-                }
+                virtual public void OnTouchMove( FingerTip tip )
+                {}
 
-                virtual public void OnTouchLift(FingerTip tip)
+                virtual public void OnTouchLift( FingerTip tip )
                 {
                 }
 
@@ -182,9 +193,11 @@ namespace Stepflow
                 public void OnTouchDupple(FingerTip tip)
                 {
                 }
+
                 public void OnTouchTrippl(FingerTip tip)
                 {
                 }
+
                 public void OnTouchDraged(MultiFinger tip)
                 {
                 }
@@ -199,12 +212,12 @@ namespace Stepflow
 
                 public IRectangle ScreenRectangle()
                 {
-                    return CornerAndSize.FromRectangle(RectangleToScreen(Bounds));
+                    return CornerAndSize.FromRectangle( RectangleToScreen( new Rectangle(0,0,Width,Height) ) );
                 }
 
                 public Point64 ScreenLocation()
                 {
-                    return PointToScreen(Location);
+                    return PointToScreen( Location );
                 }
 
                 ITouchEventTrigger ITouchableElement.touch {
@@ -221,68 +234,12 @@ namespace Stepflow
                     return this;
                 }
 
-
-                /*
-                                virtual public void OnTouchDown(  FingerTip tip )
-                                {
-                                    TouchDown?.Invoke( this, tip );
-                                    Invalidate();
-                                }
-
-                                virtual public void OnTouchMove( FingerTip tip )
-                                {
-                                    TouchMove?.Invoke( this, tip );
-                                    Invalidate();
-                                }
-
-                                virtual public void OnTouchLift( FingerTip tip )
-                                {
-                                    TouchLift?.Invoke( this, tip );
-                                    Invalidate();
-                                }
-
-                            void ITouchEventTrigger.Down( FingerTip tip )
-                            {
-                                if(!press) {
-                                    if( tip.Interact( this ) )
-                                        OnTouchDown( press = tip );
-                                    else return;
-                                } else if( press.Id != tip.Id ) {
-                                    switch (saite.Instrument.Orientation) {
-                                        case Orientation.Horizontal: if (press.X > tip.X ) OnTouchDown(press = tip); break;
-                                        case Orientation.Vertical: if( press.Y > tip.Y ) OnTouchDown(press = tip); break;
-                                        case Orientation.Rondael: // TODO later... 
-                                            break;
-                                    }
-                                } 
-                            }
-
-                            void ITouchEventTrigger.Move( FingerTip tip ) 
-                            {
-                                if( !press ) press = tip;
-                                if( Bounds.Contains( tip.Position ) ) {
-                                    OnTouchMove( tip );
-                                    //TouchMove?.Invoke( this, tip );
-                                    //Invalidate();
-                                } else passFinger( tip );
-                            }
-
-                            void ITouchEventTrigger.Lift( FingerTip tip )
-                            {
-                                if( press != null )
-                                    if( tip.Id == press.Id ) {
-                                        press = null;
-                                } OnTouchLift( tip );
-                            }
-                            */
                 void passFinger( FingerTip tip )
                 {
-                    //  touch().Lift( tip );
                     Invalidate();
-                    //   touch().screen().Down( tip );
                 }
 
-                public bool TouchHitTest(Win32Imports.Touch.RECT fingerprint)
+                public bool TouchHitTest( Win32Imports.Touch.RECT fingerprint )
                 {
                     return Bounds.IntersectsWith( fingerprint );
                 }
@@ -303,8 +260,6 @@ namespace Stepflow
                 public ITouchableElement element {
                     get { return this; }
                 }
-
-
             };
 
             public struct StringSet
@@ -428,28 +383,28 @@ namespace Stepflow
                     }
                 }
 
-                private void OnStringSlide(object sender, FingerTip e)
+                private void OnStringSlide( object sender, FingerTip e )
                 {
                     float newdetune = 0;
                     Point64 pos = e.Position;
                     switch( Instrument.Orientation ) {
                         case Orientation.Horizontal:
                             TapPosition = pos.x;
-#pragma warning disable CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
+#pragma warning disable CS1690 
                             newdetune = detunated.MOV + (float)( pos.y - (elementar.Height/2)) * 0.1f;
-#pragma warning restore CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
+#pragma warning restore CS1690
                             break;
                         case Orientation.Vertical:
                             TapPosition = pos.y;
-#pragma warning disable CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
+#pragma warning disable CS1690
                             newdetune = detunated.MOV + (float)( pos.x - (elementar.Width/2)) * 0.1f;
-#pragma warning restore CS1690 // Beim Zugriff auf ein Element zu einem Feld einer Marshal-by-reference-Klasse kann eine Laufzeitausnahme ausgelöst werden
+#pragma warning restore CS1690
                             break;
                     }
                     if( detunated.VAL != newdetune ) {
-                        StringDetunation?.Invoke(this, newdetune);
+                        StringDetunation?.Invoke( this, newdetune );
                     }
-
+                    elementar.Invalidate();
                 }
                 public string Name {
                     get { return name; }
@@ -458,7 +413,6 @@ namespace Stepflow
                 public float ZupfPoint {
                     get { return marker; }
                 }
-                //   private IntPtr tuneInvert;
                 public bool TuneInvert {
                     get { return frequency.Invert; }
                     set { frequency.Invert = value ? Spin.UP : Spin.DOWN; }
@@ -478,15 +432,15 @@ namespace Stepflow
                 }
                 public float Proportion {
                     get { return (frequency - frequency.MIN) / TuneRange; }
-                    set { elementar.ToneProportion = value; }
+                    set { frequency.VAL =  (value * TuneRange) + frequency.MIN; }
                 }
                 public int TapPosition {
                     get {
-                        return (int)(((float)elementar.PixelRange * (1.0f - elementar.ToneProportion)) + elementar.InnerBorder);
+                        return (int)(((float)elementar.PixelRange * elementar.ToneProportion) + elementar.InnerBorder);
                     }
                     set {
-                        Proportion = GuiMeter.rasterize(Instrument.NumberOfBounds,
-                                      1.0f - ((float)(value - elementar.InnerBorder) / elementar.PixelRange)
+                        elementar.ToneProportion = GuiMeter.rasterize( Instrument.NumberOfBounds,
+                                      (float)(value - elementar.InnerBorder) / elementar.PixelRange
                         );
                     }
                 }
@@ -543,7 +497,7 @@ namespace Stepflow
                     }
                 }
 
-                public String(StringControl instrument, int stringdex, float zupfpoint, float Min, float Max, string name)
+                public String( StringControl instrument, int stringdex, float zupfpoint, float Min, float Max, string name )
                 {
                     marker = zupfpoint;
                     index = stringdex;
@@ -603,44 +557,44 @@ namespace Stepflow
                     oscilator.Active = true;
                     detunated.Active = true;
 
-                    instrument.steg.Panel2.Controls.Add(elementar);
+                    instrument.steg.Panel2.Controls.Add( elementar );
 
                     FrequencyChanged += String_FrequencyChanged;
                     StringDetunation += String_StringDetunation;
                 }
 
-                private void String_StringDetunation(object sender, ValueChangeArgs<float> value)
+                private void String_StringDetunation( object sender, ValueChangeArgs<float> value )
                 {
                     detunated.VAL = value.Value;
                 }
 
-                private void String_AmplitudeChanged(object sender, ValueChangeArgs<float> value)
+                private void String_AmplitudeChanged( object sender, ValueChangeArgs<float> value )
                 {
-                    midi().binding.SendNoteOn(outchannel, notevalue, (int)(127.0f * value.Value));
+                    midi().binding.SendNoteOn( outchannel, notevalue, (int)(127.0f * value.Value) );
                 }
 
-                private void String_FrequencyChanged(object sender, ValueChangeArgs<float> value)
+                private void String_FrequencyChanged( object sender, ValueChangeArgs<float> value )
                 {
-                    midimsges = Frequency.toMidiData(value.Value, amplitude, outchannel);
+                    midimsges = Frequency.toMidiData( value.Value, amplitude, outchannel );
                     notevalue = (Note)midimsges[0].Number;
-                    midi().binding.SendOutMessages(midimsges);
+                    midi().binding.SendOutMessages( midimsges );
                 }
 
 
-                private void OnStringPaint(object sender, PaintEventArgs e)
+                private void OnStringPaint( object sender, PaintEventArgs e )
                 {
                     if( sloaping )
                         Sloaping = elementar.Level > 0;
                 }
 
-                private void OnStringTap(object sender, FingerTip e)
+                private void OnStringTap( object sender, FingerTip e )
                 {
                     Slide = true;
                     TapPosition = Instrument.Orientation == Orientation.Horizontal
                                 ? e.X : e.Y;
                 }
 
-                public void OnStringInvoke(object sender, MidiSlider.MarkerPassedEventArgs zupfPoint)
+                public void OnStringInvoke( object sender, MidiSlider.MarkerPassedEventArgs zupfPoint )
                 {
                     float set = Math.Abs( zupfPoint.Speed * 5 );
                     oscilator.MIN = -set;
@@ -649,9 +603,9 @@ namespace Stepflow
                     if( !Sloaping ) {
                         Sloaping = true;
                     }
-                    midimsges = Frequency.toMidiData(frequency, amplitude, outchannel);
+                    midimsges = Frequency.toMidiData( frequency, amplitude, outchannel );
                     notevalue = (Note)midimsges[0].Number;
-                    midi().binding.SendOutMessages(midimsges);
+                    midi().binding.SendOutMessages( midimsges );
                 }
 
                 private void OnStringRelease(object sender, FingerTip e)
@@ -669,11 +623,6 @@ namespace Stepflow
                             var = 0;
                         detunated.MOV = var;
                     }
-                    //if( frequency.VAL != frequency.MIN ) {
-                    //    if( !Slide )
-                    //        if( (elementar.ToneProportion *= 0.9f) <= 0.01f )
-                    //            elementar.Tone = frequency.MIN;
-                    //}
                     var = (elementar.Proportion * 0.93f);
                     if( var <= 0.0001 ) {
                         return 0;
@@ -721,20 +670,19 @@ namespace Stepflow
                     plectrum.ClearEventMarkers();
                     for( int i = 0; i < value; ++i ) {
                         float pos = plectrum.Minimum + (i * distant);
-                        String saite = new String(this, i, pos, 100, 2000, string.Format("Saite{0}", (char)('A' + i)));
-                        strings.Add(saite);
-                        Strings.Add(saite.Name, saite);
-                    }
-                    Invalidate();
+                        String saite = new String( this, i, pos, 100, 2000, string.Format("Saite{0}", (char)('A' + i)) );
+                        strings.Add( saite );
+                        Strings.Add( saite.Name, saite );
+                    } Invalidate();
                 }
             }
 
-            public void AttachStrings(StringSet set)
+            public void AttachStrings( StringSet set )
             {
                 float distance = ( plectrum.ValueRange / set.Saiten );
                 plectrum.Proportion = 0;
                 foreach( String saite in strings )
-                    Controls.Remove(saite.elementar);
+                    Controls.Remove( saite.elementar );
                 strings.Clear(); Strings.Clear();
                 plectrum.ClearEventMarkers();
                 NumberOfStrings = set.Saiten;
@@ -743,12 +691,11 @@ namespace Stepflow
                 for( int i = 0; i < set.Saiten; ++i ) {
                     float pos = plectrum.Minimum + (i * distance);
                     String saite = new String( this, i, pos, set.Tunes[i],
-                                           set.Tunes[i] * 2.0f,
-                                           set.Names[i].ToString() );
-                    strings.Add(saite);
-                    Strings.Add(set.Names[i].ToString(), saite);
-                }
-                Invalidate();
+                                               set.Tunes[i] * 2.0f,
+                                               set.Names[i].ToString() );
+                    strings.Add( saite );
+                    Strings.Add( set.Names[i].ToString(), saite );
+                } Invalidate();
             }
 
             private int orientation;
@@ -797,11 +744,10 @@ namespace Stepflow
                                 str.elementar.Height = stringSize;
                                 str.elementar.Location = new Point(0, i * stringSize);
                                 str.elementar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-                                str.createEventMarker((float)(str.elementar.Location.Y + (float)str.elementar.Height / 2) / steg.Panel2.Height);
+                                str.createEventMarker( (float)(str.elementar.Location.Y + (float)str.elementar.Height / 2) / steg.Panel2.Height );
                                 str.elementar.Inverted = false;
                             }
-                        }
-                        break;
+                        } break;
                     case Orientation.Vertical: {
                             int stringSize = steg.Panel2.Width / stringCount;
                             plectrum.ClearEventMarkers();
@@ -818,13 +764,11 @@ namespace Stepflow
                                 str.elementar.Height = steg.Panel2.Height;
                                 str.elementar.Location = new Point(i * stringSize, 0);
                                 str.elementar.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-                                str.createEventMarker((float)(str.elementar.Location.X + ((float)str.elementar.Width / 2)) / steg.Panel2.Width);
+                                str.createEventMarker( (float)(str.elementar.Location.X + (float)str.elementar.Width / 2) / steg.Panel2.Width );
                                 str.elementar.Inverted = false;
                             }
-                        }
-                        break;
-                }
-                Invalidate(true);
+                        } break;
+                } Invalidate( true );
             }
 
             private void TapResize()
@@ -855,25 +799,16 @@ namespace Stepflow
             static StringControl()
             {
                 Valence.RegisterIntervaluableType<Controlled.Float32>();
-                TaskAssist<SteadyAction, Action, Action>.Init(60);
+                TaskAssist<SteadyAction,Action,Action>.Init( 60 );
             }
 
 
             public StringControl()
             {
-                Frequency.setDetunationType(MidiMessage.TYPE.POLY_PRESSURE, 1);
+                Frequency.setDetunationType( MidiMessage.TYPE.POLY_PRESSURE, 1 );
 
                 midiOut = new MidiOutput();
                 joints = new ValenceField<Controlled.Float32, ValenceField>(this);
-                /*    touchhandler = new TouchControl( this );
-                    if(!PointerInput.isInitialized() ) {
-                        touchpointer = new PointerInput( this, Application.OpenForms[0], 0 );
-                        PointerInput.Initialized += PointerInput_Initialized;
-                    } else {
-                        touchpointer = PointerInput.Dispatcher;
-                        touchpointer.RegisterTouchableElement( this );
-                    }
-                  */
 
                 strings = new List<String>();
                 Strings = new Dictionary<string, String>();
@@ -902,7 +837,7 @@ namespace Stepflow
                 plectrum.Location = new System.Drawing.Point((steg.Panel1.Width / 2) - plectrum.Width / 2, 0);
                 plectrum.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
 
-                AttachStrings(StringSets.Guitar);
+                AttachStrings( StringSets.Guitar );
                 if( Variant == StringVariant.Zupf ) {
                     plectrum.MarkerPassed += OnStringClampf;
                     plectrum.ValueChanged += OnPlecSlowMove;
@@ -910,13 +845,10 @@ namespace Stepflow
                 plectrum.MovementFast += OnPlecFastMove;
                 plectrum.LedColor = LED.Cyan;
                 plectrum.Style = Style.Dark;
-                plectrum.AttachSideChain(IntPtr.Zero);
+                plectrum.AttachSideChain( IntPtr.Zero );
 
-                //touchpointer.FingerTouchDown += Touchpointer_TouchFingerDown;
-                //     Load += SafeInitTouchpointer;
-
-                midi().binding.InitializeComponent(this, components);
-                //    InstrumentContextMenu.Items.Add( midiOut.midi_mnu_binding_mnu );
+                midi().binding.InitializeComponent( this, components );
+                Disposed += Dispose_function;
             }
 
             private void Driver_Round(object sender, LapEventArgs e)
@@ -925,21 +857,12 @@ namespace Stepflow
                 plectrum.Invalidate();
             }
 
-            //       private void PointerInput_Initialized( PointerInput inst )
-            //       {
-            //           inst.RegisterTouchableElement(this);
-            //           touchpointer = inst; 
-            //       }
-
-            new public void Dispose()
+            private void Dispose_function( object sender, EventArgs e )
             {
-                Valence.UnRegisterIntervaluableElement(this);
-                //    touchpointer.UnRegisterTouchableElement( this );
-                base.Dispose();
+                Valence.UnRegisterIntervaluableElement( this );
             }
 
-            public enum StringVariant
-            {
+            public enum StringVariant {
                 Zupf, Strike
             }
             private StringVariant variant = StringVariant.Zupf;
@@ -949,7 +872,7 @@ namespace Stepflow
                     if( value != variant ) {
                         if( value == StringVariant.Zupf ) {
                             plectrum.ThresholdForFastMovement = 2400f;
-                            plectrum.AttachSideChain(IntPtr.Zero);
+                            plectrum.AttachSideChain( IntPtr.Zero );
                             (plectrum.task().assist.driver as SteadyAction).Round -= Driver_Round;
                         } else {
                             plectrum.ThresholdForFastMovement = 0.4f;
@@ -961,34 +884,7 @@ namespace Stepflow
                     }
                 }
             }
-            /*
-        virtual protected void OnTouchDown( FingerTip tip )
-        {
-            Rectangle screenrect = strings[0].elementar.touch().element.ScreenRectangle(); //.RectangleToScreen( strings[0].elementar.Bounds );
-            for( int s = 0; s < stringCount; ++s) {
-                String saite = strings[s];
-                if( screenrect.Contains( tip.Origin ) ) {
-                    //saite.elementar.touch().Down( tip );
-                    tip.Interact( saite.elementar );
-                    return;
-                } else switch( Orientation ) {
-                    case Orientation.Horizontal: screenrect.Y += screenrect.Height; break;
-                    case Orientation.Vertical: screenrect.X += screenrect.Width; break;
-                    case Orientation.Rondael: break;
-                }
-                
-            }
-        }
-     */
 
-            /*
-                    private void SafeInitTouchpointer(object sender, EventArgs e)
-                    {
-            //            if ( assistor.Status != TaskStatus.Running )
-            //                 assistor.Start();
-                        Load -= SafeInitTouchpointer;
-                    }
-            */
             private void OnPlecSlowMove(object sender, ValueChangeArgs<float> value)
             {
                 dbglbl.Text = "Move: " + value.Value.ToString();
@@ -1011,7 +907,7 @@ namespace Stepflow
             private void OnStringClampf(object sender, MidiSlider.MarkerPassedEventArgs zupfpoint)
             {
                 String saite = Strings[zupfpoint.Named];
-                plectrum.AttachSideChain(saite.amplitude.GetTarget());
+                plectrum.AttachSideChain( saite.amplitude.GetTarget() );
                 // plectrum.LedSource = GuiSlider.LEDSource.TheSideChainedValue;
             }
 
