@@ -401,7 +401,7 @@ namespace Stepflow.Gui
             {
                 IInterValuable otherElement = (otherField as IStepflowControlElementComponent).getElement();
                 if ( otherElement != instance ) {
-                    (otherElement as Control).Invalidated += OnWrapUpdate; // instance.valence(level_index).getInvalidationHandler();
+                    (otherElement as Control).Invalidated += OnWrapUpdate;
                     wrapinst_Invalidate = otherElement.getInvalidationTrigger();
                     level = otherField.controller();
                     instance.setter( level_index, level );
@@ -680,13 +680,14 @@ namespace Stepflow.Gui
             InitNippels( Orientation );
             Resize += Resized;
             mipmap = 2;
+
+            Disposed += GuiRanger_Disposed;
         }
 
-        public new void Dispose()
+        private void GuiRanger_Disposed( object sender, EventArgs e )
         {
             Valence.UnRegisterIntervaluableElement( this );
             PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
-            base.Dispose();
         }
 
         private int mipmap;

@@ -454,12 +454,12 @@ namespace Stepflow.Gui
             Inverted = true;
             BorderStyle = BorderStyle.None;
             menue = new ValenceBondMenu<Controlled.Float32>( this, components );
+            Disposed += GuiMeter_Disposed;
         }
 
-        public new void Dispose()
+        private void GuiMeter_Disposed( object sender, EventArgs e )
         {
             Valence.UnRegisterIntervaluableElement( this );
-            base.Dispose();
         }
 
         protected IContainer InitConnector()

@@ -72,28 +72,29 @@ namespace Midi
         }
 
         private int  messageReadCount = 0;
+        private Action messageLoopTrigger;
         private void readMessageQueue()
         {
             bool read = midi().binding.automation().messageAvailable();
-            if( !read ) read = ( --messageReadCount > 0 );
-            else messageReadCount = 10;
-            if ( read ) midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
-            else task().assist.ReleaseAssist( readMessageQueue );
+            if( !read ) { if ( --messageReadCount <= 0 ) task().assist.ReleaseAssist( readMessageQueue ); }
+            else { midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
+                   messageReadCount = 10; }
             if ( read ) Invalidate();
         }
 
         private void emptyMessageQueue()
         {
             if( messageReadCount == 0 ) {
-                task().assist.GetAssistence( readMessageQueue );
-            } messageReadCount = 10;
+                messageReadCount = 10;
+                task().assist.GetAssistence( messageLoopTrigger );
+            } else messageReadCount = 10;
         }
 
         protected void InitMidi( IContainer connector )
         {
+            messageLoopTrigger = readMessageQueue;
             midi().binding.InitializeComponent( this, connector, emptyMessageQueue );
             midi().binding.automation().AutomationEvent += midiDelegate();
-            //Paint += midi().binding.automation().ProcessMessageQueue;
         }
 
     }

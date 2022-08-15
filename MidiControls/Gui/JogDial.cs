@@ -87,11 +87,6 @@ namespace Midi
         private MidiInOut     midiIO = null;
         private TaskAssist<SteadyAction,Action,Action> propellor;
 
-//#if DEBUG
-//        private System.Windows.Forms.Label lbl_position;
-//        private System.Windows.Forms.Label lbl_motion;
-//#endif
-
         private static Rectangle rectFromXmlSheet(System.Xml.XPath.XPathNavigator xpath, string name)
         {
             string xpress = "//brush[@name='"+name+"']/{0}/text()";
@@ -198,9 +193,7 @@ namespace Midi
                     MovementFast( this, new ValueChangeArgs<float>( actual > 0 ? m : -m ) );
                 } 
             }
-//#if DEBUG
-//            positText = string.Format("value: {0}, flow: {1}, Accel: {2}", pos.VAL, flow.VAL, Accellaration);
-//#endif
+
             flow.Active = state;
             pos.Active = state;
         }
@@ -262,11 +255,6 @@ namespace Midi
         }
 
 
-
-//#if DEBUG
-//        private volatile string slopetext = "";
-//        private volatile string positText = "";
-//#endif
         private volatile uint slopetime = 0;
         private volatile bool useracces = false;
         private volatile bool slopecase = false;
@@ -356,43 +344,7 @@ namespace Midi
         }
 
 
-        public JogDial() { /*
-#if DEBUG
-            this.lbl_position = new System.Windows.Forms.Label();
-            this.lbl_position.Anchor = (System.Windows.Forms.AnchorStyles) ( 
-                   System.Windows.Forms.AnchorStyles.Top 
-                 | System.Windows.Forms.AnchorStyles.Bottom 
-                 | System.Windows.Forms.AnchorStyles.Left 
-                 | System.Windows.Forms.AnchorStyles.Right
-            );
-            this.lbl_position.AutoSize = true;
-            this.lbl_position.Location = new System.Drawing.Point(103, 98);
-            this.lbl_position.Name = "lbl_position";
-            this.lbl_position.Size = new System.Drawing.Size(51, 20);
-            this.lbl_position.TabIndex = 1;
-            this.lbl_position.Text = "label1";
-            this.lbl_position.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
-            this.lbl_motion = new System.Windows.Forms.Label();
-            this.lbl_motion.Anchor = (System.Windows.Forms.AnchorStyles) (
-                System.Windows.Forms.AnchorStyles.Top
-              | System.Windows.Forms.AnchorStyles.Bottom
-              | System.Windows.Forms.AnchorStyles.Left
-              | System.Windows.Forms.AnchorStyles.Right
-            );
-            this.lbl_motion.AutoSize = true;
-            this.lbl_motion.Location = new System.Drawing.Point(103, 127);
-            this.lbl_motion.Name = "lbl_motion";
-            this.lbl_motion.Size = new System.Drawing.Size(51, 20);
-            this.lbl_motion.TabIndex = 2;
-            this.lbl_motion.Text = "label2";
-            this.lbl_motion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
-            this.Controls.Add(this.lbl_motion);
-            this.Controls.Add(this.lbl_position);
-
-            Consola.StdStream.Out.WriteLine( "Midi note C2: {0} Hz", Frequency.fromMidiNote( Win32Imports.Midi.Note.C2) );
-#endif */
+        public JogDial() { 
 
             touchinput = new TouchGesturesHandler<JogDial>( this );
             interaction = InteractionMode.FlowByQuadrants;
@@ -446,9 +398,17 @@ namespace Midi
                     PointerInput.Dispatcher.RegisterTouchableElement( this );
             }
 
+            Disposed += JogDial_Disposed;
+
             Width = Height = 256;
             Invalidate( true );
         }
+
+            private void JogDial_Disposed( object sender, EventArgs e )
+            {
+                Valence.UnRegisterIntervaluableElement( this );
+                PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
+            }
 
             public event MultiFinger.TouchDelegate TouchDraged {
                 add { touchinput.events().TouchDraged += value; }
@@ -565,30 +525,6 @@ namespace Midi
             {
                 return this;
             }
-
-            /*
-            private void Touchinput_TouchFingerLift( FingerTip touch )
-            {
-                Slope_MouseMove(this, new MouseEventArgs((MouseButtons)touch.Id,1,touch.X,touch.Y,1));
-            }
-
-            private void Touchinput_TouchFingerMove( FingerTip touch )
-            {
-                Slope_MouseMove(this, new MouseEventArgs((MouseButtons)touch.Id,1,touch.X,touch.Y,1));
-            }
-
-            private void Touchinput_TouchFingerDown(object sender, FingerTip touch)
-            {
-                touch.SetHandler( Touchinput_TouchFingerMove, Touchinput_TouchFingerLift ); 
-            }
-            */
-            public new void Dispose()
-            {
-                Valence.UnRegisterIntervaluableElement( this );
-                PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
-                base.Dispose();
-            }
-
 
         private void MidiIn_PortChanged( object sender, int newPortId )
         {
@@ -873,9 +809,7 @@ namespace Midi
                 };
             }
         }
-        public IMidiControlElement<MidiInOut> midi() {
-            return this;
-        }
+        public IMidiControlElement<MidiInOut> midi() { return this; }
         MidiInOut IMidiControlElement<MidiInOut>.binding {
             get { return midiIO == null ? midiIO = new MidiInOut() : midiIO; }
         }
@@ -884,17 +818,11 @@ namespace Midi
             set { Position = value.getProportionalFloat() * 360; }
         }
         void IMidiControlElement<MidiInOut>.OnIncommingMidiControl( object sender, Message value ) {
-            this.MidiValue = new Win32Imports.Midi.Value((short)value.Value);
+            this.MidiValue = new Win32Imports.Midi.Value( (short)value.Value );
         }
-
-        MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu {
-            get; set;
-        }
-        MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu {
-            get; set;
-        }
-
-            #endregion
+        MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu { get; set; }
+        MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu { get; set; }
+#endregion
 
         }
     }}

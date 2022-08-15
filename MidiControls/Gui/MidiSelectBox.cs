@@ -43,6 +43,12 @@ namespace Stepflow.Midi.Gui
             midiio.automation().AutomationEvent += midi().OnIncommingMidiControl;
             SelectedIndexChanged += MidiSelectBox_SelectedIndexChanged;
             Paint += midiio.automation().ProcessMessageQueue;
+            Disposed += MidiComboBox_Disposed;
+        }
+
+        private void MidiComboBox_Disposed( object sender, EventArgs e )
+        {
+            Valence.UnRegisterIntervaluableElement( this );
         }
 
         private void MidiSelectBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -72,8 +78,7 @@ namespace Stepflow.Midi.Gui
             set { SelectedIndex = value; }
         }
 
-        #region MidiAutomation
-
+#region MidiAutomation
         private MidiInOut                midiio;
         private AutomationlayerAddressat midiad;
 
@@ -117,10 +122,9 @@ namespace Stepflow.Midi.Gui
         {
             return midi().OnIncommingMidiControl;
         }
-        #endregion
+#endregion
 
-        #region IInterValuable
-
+#region IInterValuable
         private ValenceBondMenu<Controlled.Byte>            mnu_valence;
         private ValenceField<Controlled.Byte,ValenceField>  ctr_valence;
         ToolStripItemCollection IInterValuable.getMenuHook() { return ContextMenuStrip.Items; }
@@ -130,17 +134,8 @@ namespace Stepflow.Midi.Gui
         IControllerValenceField IInterValuable.valence<cT>() { return ctr_valence.field(); }
         Action IInterValuable.getInvalidationTrigger() { return valueUpdate; }
         void IInterValuable.callOnInvalidated( InvalidateEventArgs e ) { OnInvalidated( e ); }
-        private void valueUpdate() { /* TriggerEvents(); */ Invalidate(); }
-
-
-        //public new void Invalidate()
-        //{
-        //    base.Invalidate();
-        //}
-
-     
- 
-        #endregion
+        private void valueUpdate() { /* TriggerEvents(); */ Invalidate(); } 
+#endregion
 
 
     }

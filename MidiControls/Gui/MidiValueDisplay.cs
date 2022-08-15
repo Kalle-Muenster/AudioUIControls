@@ -165,10 +165,9 @@ namespace Stepflow.Midi
             Style = Style.Dark;
         }
 
-        public new void Dispose()
+        private void Disposeing( object sender, EventArgs e )
         {
             Valence.UnRegisterIntervaluableElement( this );
-            base.Dispose();
         }
 
 #if IMPLEMENT_MIDICONTOL
@@ -191,6 +190,7 @@ namespace Stepflow.Midi
             );
             init();
             input = true;
+            Disposed += Disposeing;
         }
 
 #if IMPLEMENT_MIDICONTOL
@@ -208,6 +208,7 @@ namespace Stepflow.Midi
             init();
             Wrap( wrappedElement );
             input = true;
+            Disposed += Disposeing;
         }
 
         public bool Wrap<cT>( IInterValuable<cT> element ) where cT : ControllerBase

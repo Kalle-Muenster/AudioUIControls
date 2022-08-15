@@ -912,9 +912,17 @@ namespace Stepflow.Gui
             TouchLift += GuiSlider_TouchLift;
 
             Load += AdjustSpriteColor;
+
+            Disposed += GuiSlider_Disposed;
         }
 
-        private void AdjustSpriteColor(object sender, EventArgs e)
+        private void GuiSlider_Disposed( object sender, EventArgs e )
+        {
+            Valence.UnRegisterIntervaluableElement( this );
+            PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
+        }
+
+        private void AdjustSpriteColor( object sender, EventArgs e )
         {
             base.BackColor = Color.Transparent;
             base.ForeColor = Color.Transparent;
@@ -946,12 +954,6 @@ namespace Stepflow.Gui
             inst.RegisterTouchableElement( this );
         }
 
-        public new void Dispose()
-        {
-            Valence.UnRegisterIntervaluableElement( this );
-            PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
-            base.Dispose();
-        }
         //////////////////////////////////////////////////////////////////////////////////////////
         // ControlMarkers:
 

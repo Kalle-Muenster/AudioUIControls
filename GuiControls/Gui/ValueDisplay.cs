@@ -158,12 +158,6 @@ namespace Stepflow.Gui
             Style = Style.Dark;
         }
 
-        public new void Dispose()
-        {
-            Valence.UnRegisterIntervaluableElement( this );
-            base.Dispose();
-        }
-
 #if IMPLEMENT_MIDICONTOL
         public MidiValueDisplay() {
 #else
@@ -184,6 +178,12 @@ namespace Stepflow.Gui
             );
             init();
             input = true;
+            Disposed += ValueDisplay_Disposed;
+        }
+
+        private void ValueDisplay_Disposed(object sender, EventArgs e)
+        {
+            Valence.UnRegisterIntervaluableElement( this );
         }
 
 #if IMPLEMENT_MIDICONTOL
@@ -201,6 +201,7 @@ namespace Stepflow.Gui
             init();
             Wrap( wrappedElement );
             input = true;
+            Disposed += ValueDisplay_Disposed;
         }
 
         public bool Wrap<cT>( IInterValuable<cT> element ) where cT : ControllerBase

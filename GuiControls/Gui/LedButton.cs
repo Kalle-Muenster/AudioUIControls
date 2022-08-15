@@ -282,15 +282,14 @@ namespace Stepflow.Gui
                     PointerInput.Dispatcher.RegisterTouchableElement(this);
             }
 
+            Disposed += LedButton_Disposed;
         }
 
-        public new void Dispose()
+        private void LedButton_Disposed(object sender, EventArgs e)
         {
             Valence.UnRegisterIntervaluableElement( this );
             PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
-            base.Dispose();
         }
-
 
         private bool clicked;
         private bool intermediate {
