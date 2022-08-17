@@ -115,9 +115,6 @@
     <Compile Include="Gui\MidiMeter.Designer.cs">
       <DependentUpon>MidiMeter.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MidiSelectBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Gui\MidiSlider.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -139,6 +136,12 @@
     <Compile Include="Helpers\Frequency.cs" />
     <Compile Include="Helpers\Resonator.cs" />
     <Compile Include="Helpers\Constants.cs" />
+    <Compile Include="Gui\MidiComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\MidiTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Midi\Automation.cs" />
     <Compile Include="Midi\MidiInput.cs" />
     <Compile Include="Midi\MidiInOut.cs" />
