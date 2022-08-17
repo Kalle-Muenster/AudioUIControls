@@ -111,10 +111,10 @@ namespace Stepflow.Gui
         event FingerTip.TouchDelegate TouchTrippl;
     }
 
-    public interface ISelectTouchTrigger
+    public interface ITouchSelectTrigger
         : IBasicTouchTrigger
     {
-        ISelectTouchTrigger     tipseld();
+        ITouchSelectTrigger     tipseld();
         FingerTip.TouchDelegate TouchTapped { get; set; }
         FingerTip.TouchDelegate TouchDupple { get; set; }
         FingerTip.TouchDelegate TouchTrippl { get; set; }
@@ -133,7 +133,7 @@ namespace Stepflow.Gui
     }
 
     public interface IGestureTouchTrigger
-        : ISelectTouchTrigger
+        : ITouchSelectTrigger
     {
         MultiFinger               hands();
         IGestureTouchTrigger      gesture();
@@ -154,7 +154,7 @@ namespace Stepflow.Gui
         : ITouchableElement
     {
         EventProvider                     outerer();
-        EventEnsourcer                    sourced();
+     //   EventEnsourcer                    trigger();
         ITouchTrigger<EventEnsourcer>     innerer();
     }
 
@@ -173,6 +173,8 @@ namespace Stepflow.Gui
     {
         public static ITouchableElement ToTouchableElement(this Control cast)
         {
+            if( cast.GetType().GetInterface("ITouchable") is null )
+                throw new InvalidCastException( "Control is not ITouchable" );
             return cast as ITouchableElement;
         }
     }
@@ -185,7 +187,7 @@ namespace Stepflow.Gui
         , IBasicTouchable
     {
         private ElementType           control;
-        private ITouchInputDispatcher inputs;
+        //private ITouchInputDispatcher inputs;
 
         protected FingerTip           fingers;
         IBasicTouchTrigger IBasicTouchTrigger.touch() { return this; }
@@ -206,17 +208,16 @@ namespace Stepflow.Gui
         public Control Element { get { return control; } }
         ITouchableElement ITouchable.element() { return control; }
 
-        void ITouchTrigger.Down( FingerTip tip ) { control.OnTouchDown(tip); events().TouchDown?.Invoke(control, tip); }
-        void ITouchTrigger.Move( FingerTip tip ) { control.OnTouchMove(tip); events().TouchMove?.Invoke(control, tip); }
-        void ITouchTrigger.Lift( FingerTip tip ) { control.OnTouchLift(tip); events().TouchLift?.Invoke(control, tip); }
+        void ITouchTrigger.Down( FingerTip tip ) { control.OnTouchDown( tip ); events().TouchDown?.Invoke( control, tip ); }
+        void ITouchTrigger.Move( FingerTip tip ) { control.OnTouchMove( tip ); events().TouchMove?.Invoke( control, tip ); }
+        void ITouchTrigger.Lift( FingerTip tip ) { control.OnTouchLift( tip ); events().TouchLift?.Invoke( control, tip ); }
 
         public virtual IBasicTouchable           outerer() { return control; }
-        public IBasicTouchTrigger                sourced() { return this as IBasicTouchTrigger; }
         public ITouchTrigger<IBasicTouchTrigger> innerer() { return this as ITouchTrigger<IBasicTouchTrigger>; }
 
         ITouchable ITouchTrigger.instance<Purpose>() {
             return typeof(Purpose) == typeof(ITouchEventTrigger<IBasicTouchable,IBasicTouchTrigger>) 
-                 ? (ITouchable)control : (ITouchable)inputs;
+                 ? (ITouchable)control : PointerInput.Dispatcher;
         }
 
         public ITouchEventTrigger trigger() {
@@ -224,7 +225,7 @@ namespace Stepflow.Gui
         }
 
         public virtual ITouchDispatchTrigger screen() {
-            return inputs.dispatch().trigger();
+            return PointerInput.Dispatcher.dispatch().trigger();
         }
 
         public bool hasFinger( ushort fingerTipId ) {
@@ -239,6 +240,137 @@ namespace Stepflow.Gui
 
     }
 
+
+    public class TouchSelectHandler<ElementType>
+        : ITouchHandler<ElementType,ITouchSelectable,ITouchSelectTrigger>
+        , ITouchSelectTrigger
+    where ElementType
+        : Control
+        , ITouchSelectable
+    {
+        private ElementType           control;
+      //  private ITouchInputDispatcher inputs;
+        protected FingerTip           fingers;
+
+
+        Rect ITouchable.Bounds { get { return control.Bounds; } set { control.Bounds = value; } }
+        Control ITouchable.Element { get { return control; } }
+        
+        public TouchSelectHandler( ElementType init ) { control = init; }
+
+
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchTapped { get; set; }
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchDupple { get; set; }
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchTrippl { get; set; }
+        FingerTip.TouchDelegate IBasicTouchTrigger.TouchDown { get; set; }
+        FingerTip.TouchDelegate IBasicTouchTrigger.TouchLift { get; set; }
+        FingerTip.TouchDelegate IBasicTouchTrigger.TouchMove { get; set; }
+        
+
+
+        ITouchableElement ITouchable.element()
+        {
+            return control;
+        }
+
+        public ITouchSelectTrigger events()
+        {
+            return this;
+        }
+
+        public FingerTip finger()
+        {
+            return fingers?.Prime;
+        }
+
+        public bool hasFinger( ushort fingerTipId )
+        {
+            return fingers != null
+                 ? fingers.HasFinger( fingerTipId )
+                 : false;
+        }
+
+        public bool IsTouched { 
+            get { return hasFinger(0); }
+        }
+
+
+        ITouchTrigger<ITouchSelectTrigger> ITouchEventTrigger<ITouchSelectable, ITouchSelectTrigger>.innerer()
+        {
+            return this as ITouchTrigger<ITouchSelectTrigger>;
+        }
+
+        ITouchable ITouchTrigger.instance<Purpose>()
+        {
+            return typeof(Purpose) == typeof(ITouchEventTrigger<ITouchSelectable,ITouchSelectTrigger>)
+                 ? control : PointerInput.Dispatcher.dispatch().trigger();
+        }
+
+
+        void ITouchTrigger.Down( FingerTip tip )
+        {
+            // invoke generation of a Touch down event in the implementing control element
+            control.OnTouchDown( tip );
+            events().TouchDown?.Invoke( control, tip );
+
+            // check if registered touch maybe consists from more then just a single finger tip 
+            if( tip.HasFlags( IsTouching.SubHere )
+            && tip.Prime.TimeDown.TotalMilliseconds <= PointerInput.ThreasholdForDownCount ) {
+                // and if so, in addition, invoke generating a higher level gesture event also 
+                if( tip.HasFlags( IsTouching.SecondSub ) ) {
+                    control.OnTouchTrippl( tip );
+                    events().TouchTrippl?.Invoke( control, tip );
+                } else
+                if( tip.HasFlags( IsTouching.FirstSub ) ) {
+                    control.OnTouchDupple( tip );
+                    events().TouchDupple?.Invoke( control, tip );
+                }
+            }
+        }
+
+        void ITouchTrigger.Move( FingerTip tip )
+        {
+            control.OnTouchMove( tip );
+            events().TouchMove?.Invoke( control, tip );
+        }
+
+        void ITouchTrigger.Lift( FingerTip tip )
+        {
+            control.OnTouchLift( tip );
+            events().TouchLift?.Invoke( control, tip );
+
+            if( tip.Prime.TimeDown.TotalMilliseconds < PointerInput.ThreasholdForDownCount ) {
+                control.OnTouchTapped( tip );
+                events().TouchTapped( control, tip );
+            }
+        }
+
+        ITouchSelectable ITouchEventTrigger<ITouchSelectable,ITouchSelectTrigger>.outerer()
+        {
+            return control;
+        }
+
+        ITouchDispatchTrigger ITouchable.screen()
+        {
+            return PointerInput.Dispatcher.dispatch().trigger();
+        }
+
+        ITouchSelectTrigger ITouchSelectTrigger.tipseld()
+        {
+            return this;
+        }
+
+        IBasicTouchTrigger IBasicTouchTrigger.touch()
+        {
+            return this;
+        }
+
+        ITouchEventTrigger ITouchTrigger<ITouchEventTrigger>.trigger()
+        {
+            return this;
+        }
+    }
+
     public class TouchGesturesHandler<ElementType>
         : ITouchHandler<ElementType,ITouchGestutred,IGestureTouchTrigger>
         , IGestureTouchTrigger
@@ -247,24 +379,24 @@ namespace Stepflow.Gui
         , ITouchGestutred
     {
         private ElementType           control;
-        private ITouchInputDispatcher inputs;
+        //private ITouchInputDispatcher inputs;
 
         protected FingerTip           fingers;
-        public    FingerTip           finger() { return fingers; }
+        public    FingerTip           finger() { return fingers?.Prime; }
         IBasicTouchTrigger IBasicTouchTrigger.touch() { return this; }
-        ISelectTouchTrigger ISelectTouchTrigger.tipseld() { return this; }
+        ITouchSelectTrigger ITouchSelectTrigger.tipseld() { return this; }
 
         protected MultiFinger         hand;
-        public MultiFinger            hands() { return hand; }
-        IGestureTouchTrigger IGestureTouchTrigger.gesture() { return this; }
+        public    MultiFinger         hands() { return hand; }
+        public IGestureTouchTrigger gesture() { return this; }
 
         FingerTip.TouchDelegate IBasicTouchTrigger.TouchDown { get; set; }
         FingerTip.TouchDelegate IBasicTouchTrigger.TouchLift { get; set; }
         FingerTip.TouchDelegate IBasicTouchTrigger.TouchMove { get; set; }
 
-        FingerTip.TouchDelegate ISelectTouchTrigger.TouchTapped { get; set; }
-        FingerTip.TouchDelegate ISelectTouchTrigger.TouchDupple { get; set; }
-        FingerTip.TouchDelegate ISelectTouchTrigger.TouchTrippl { get; set; }
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchTapped { get; set; }
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchDupple { get; set; }
+        FingerTip.TouchDelegate ITouchSelectTrigger.TouchTrippl { get; set; }
 
         MultiFinger.TouchDelegate IGestureTouchTrigger.TouchDraged { get; set; }
         MultiFinger.TouchDelegate IGestureTouchTrigger.TouchResize { get; set; }
@@ -286,35 +418,43 @@ namespace Stepflow.Gui
             if ( tip.HasFlags( IsTouching.SubPrime )
             &&   tip.Prime.TimeDown.TotalMilliseconds <= PointerInput.ThreasholdForDownCount ) {
                 // and if so, in addition, invoke generating a higher level gesture event also 
-                control.OnTouchTapped( tip );
-                events().TouchTapped?.Invoke( control, tip );
+                if( tip.HasFlags( IsTouching.SecondSub ) ) {
+                    control.OnTouchTrippl( tip );
+                    events().TouchTrippl?.Invoke( control, tip );
+                } else
+                if( tip.HasFlags( IsTouching.FirstSub ) ) {
+                    control.OnTouchDupple( tip );
+                    events().TouchDupple?.Invoke( control, tip );
+                }
             }
         }
 
         void ITouchTrigger.Move( FingerTip tip ) {
             // invoke generation of a touch move event in the implementing control element
             control.OnTouchMove( tip );
-            events().TouchMove?.Invoke(control,tip);
+            events().TouchMove?.Invoke( control, tip );
 
             // check if the actually registerd finger tip maybe slides off from an actual hands ongoing gesture. 
             // ...far away enough to make clear it cannot belong to a single, one-handed interaction gesture, and which
             // rather should be handled as start for a drag/drop operation the user seemingly just begun performing it
-            if ( tip.HasFlags( IsTouching.Here|IsTouching.There ) ) {
-                // and if so, invoke the implementing control element to let generate a drag or a slide event
-                control.OnTouchDraged( hand );
-                events().TouchDraged?.Invoke( control, hand );
-            }
-            // check if more then one fingers belong to maybe one same hand which could perform a one-handed gesture actually  
-            if ( tip.HasFlags( IsTouching.SubPrime ) ) {
-                if ( hand.GetResizing() != 0 ) {
-                    // if so, if maybe distance between fingers in- or de-creases rapidly, make it invoking a resize event
-                    control.OnTouchResize( hand );
-                    events().TouchResize?.Invoke( control, hand );
+            if( tip.Prime.TimeDown.TotalMilliseconds >= PointerInput.ThreasholdForDownCount ) {
+                if( tip.HasFlags( IsTouching.Here | IsTouching.There ) ) {
+                    // and if so, invoke the implementing control element to let generate a drag or a slide event
+                    control.OnTouchDraged( hand );
+                    events().TouchDraged?.Invoke( control, hand );
                 }
-                if ( hand.GetRotation() != 0 ) {
-                    // and/or if diagonals between fingers rapidly change their rotation angle, make it invoking a screew event
-                    control.OnTouchRotate( hand );
-                    events().TouchRotate?.Invoke( control, hand );
+                // check if more then one fingers belong to maybe one same hand which could perform a one-handed gesture actually  
+                if( tip.HasFlags(IsTouching.SubPrime) ) {
+                    if( hand.GetResizing() != 0 ) {
+                        // if so, if maybe distance between fingers in- or de-creases rapidly, make it invoking a resize event
+                        control.OnTouchResize( hand );
+                        events().TouchResize?.Invoke( control, hand );
+                    }
+                    if( hand.GetRotation() != 0 ) {
+                        // and/or if diagonals between fingers rapidly change their rotation angle, make it invoking a screew event
+                        control.OnTouchRotate( hand );
+                        events().TouchRotate?.Invoke( control, hand );
+                    }
                 }
             }
         }
@@ -323,7 +463,14 @@ namespace Stepflow.Gui
             // invoke removing the finger tip from the implementing control element and make it generating a touch lift event
             control.OnTouchLift( tip );
             events().TouchLift?.Invoke( control, tip );
-            // check if the just lifted finger tip maybe was part of any kind of higher level gesture operation like dragging or sizeing 
+
+            // check if liftet fingertip was on the screen for just a few milliseconds and count it as a finger tapp then
+            if( tip.Prime.TimeDown.TotalMilliseconds < PointerInput.ThreasholdForDownCount ) {
+                if( tip.HasFlags( IsTouching.Prime ) ) {
+                    control.OnTouchTapped( tip );
+                    events().TouchTapped?.Invoke( control, tip );
+                }
+            } else // check if the just lifted finger tip maybe was part of any kind of higher level gesture operation like dragging or sizeing       
             if ( tip.HasFlags( IsTouching.Here|IsTouching.There ) ) {
                 // and make the control element to generate some event for signaling a maby ongoing 'drag' just turned into a 'drop' - plop!
                 hand.Discard();
@@ -334,11 +481,11 @@ namespace Stepflow.Gui
 
         ITouchable ITouchTrigger.instance<Purpose>() {
             return typeof(Purpose) == typeof(ITouchEventTrigger<IBasicTouchable,IBasicTouchTrigger>)
-                 ? (ITouchable)control : (ITouchable)inputs;
+                 ? control : PointerInput.Dispatcher;
         }
 
         public virtual ITouchDispatchTrigger screen() {
-            return inputs.dispatch().trigger();
+            return PointerInput.Dispatcher.dispatch().trigger();
         }
 
         public bool hasFinger( ushort fingerTipId ) {
@@ -353,11 +500,7 @@ namespace Stepflow.Gui
 
 
         ITouchGestutred ITouchEventTrigger<ITouchGestutred,IGestureTouchTrigger>.outerer() { return control; }
-
-        IGestureTouchTrigger ITouchEventTrigger<ITouchGestutred,IGestureTouchTrigger>.sourced() { return this as IGestureTouchTrigger; }
-
         ITouchTrigger<IGestureTouchTrigger> ITouchEventTrigger<ITouchGestutred,IGestureTouchTrigger>.innerer() { return this as ITouchTrigger<IGestureTouchTrigger>; }
-
         ITouchEventTrigger ITouchTrigger<ITouchEventTrigger>.trigger() { return this; }
 
     } 
@@ -368,7 +511,7 @@ namespace Stepflow.Gui
         : Control
         , IBasicTouchable
     {
-        BasicTouchHandler<T> handler();
+        BasicTouchHandler<T> handler { get; set; }
     }
 
     public interface ITouchGesturedElement<T>
@@ -377,7 +520,7 @@ namespace Stepflow.Gui
         : Control
         , ITouchGestutred
     {
-        TouchGesturesHandler<T> handler();
+        TouchGesturesHandler<T> handler { get; set; }
     }
 
     public interface ITouchDispatchTrigger
