@@ -663,7 +663,7 @@ namespace Stepflow.Gui
             mnu_valence = new ValenceBondMenu<Controlled.Float32>( this, components );
             (this as IInterValuable).getMenuHook().Add( mnu_valence );
 
-            touchhandler = new TouchGesturesHandler<GuiRanger>( this );
+            (this as ITouchGesturedElement<GuiRanger>).handler = new TouchGesturesHandler<GuiRanger>( this );
             if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
                 if( PointerInput.Dispatcher == null ) {
                     PointerInput.Initialized += (this as ITouchableElement).TouchInputReady;
@@ -1111,52 +1111,52 @@ namespace Stepflow.Gui
             return this as ITouchGesturedElement<GuiSlider>;
         }
 
-        private TouchGesturesHandler<GuiRanger> touchhandler;
-        TouchGesturesHandler<GuiRanger> ITouchGesturedElement<GuiRanger>.handler() {
-            return touchhandler;
+        private IGestureTouchTrigger touchEvents() { return ( this as ITouchGesturedElement<GuiRanger> ).handler.events(); }
+        TouchGesturesHandler<GuiRanger> ITouchGesturedElement<GuiRanger>.handler {
+            get; set;
         }
 
         public bool IsTouched {
-            get { return touchhandler.IsTouched; }
+            get { return touch.IsTouched; }
         }
 
         public event FingerTip.TouchDelegate TouchDown {
-            add { touchhandler.events().TouchDown += value; }
-            remove { touchhandler.events().TouchDown -= value; }
+            add { touchEvents().TouchDown += value; }
+            remove { touchEvents().TouchDown -= value; }
         }
         public event FingerTip.TouchDelegate TouchMove {
-            add { touchhandler.events().TouchMove += value; }
-            remove { touchhandler.events().TouchMove -= value; }
+            add { touchEvents().TouchMove += value; }
+            remove { touchEvents().TouchMove -= value; }
         }
         public event FingerTip.TouchDelegate TouchLift {
-            add { touchhandler.events().TouchLift += value; }
-            remove { touchhandler.events().TouchLift -= value; }
+            add { touchEvents().TouchLift += value; }
+            remove { touchEvents().TouchLift -= value; }
         }
 
         public event FingerTip.TouchDelegate TouchTapped {
-            add { touchhandler.events().TouchTapped += value; }
-            remove { touchhandler.events().TouchTapped -= value; }
+            add { touchEvents().TouchTapped += value; }
+            remove { touchEvents().TouchTapped -= value; }
         }
         public event FingerTip.TouchDelegate TouchDupple {
-            add { touchhandler.events().TouchDupple += value; }
-            remove { touchhandler.events().TouchDupple -= value; }
+            add { touchEvents().TouchDupple += value; }
+            remove { touchEvents().TouchDupple -= value; }
         }
         public event FingerTip.TouchDelegate TouchTrippl {
-            add { touchhandler.events().TouchTrippl += value; }
-            remove { touchhandler.events().TouchTrippl -= value; }
+            add { touchEvents().TouchTrippl += value; }
+            remove { touchEvents().TouchTrippl -= value; }
         }
 
         public event MultiFinger.TouchDelegate TouchDraged {
-            add { touchhandler.events().TouchDraged += value; }
-            remove { touchhandler.events().TouchDraged -= value; }
+            add { touchEvents().TouchDraged += value; }
+            remove { touchEvents().TouchDraged -= value; }
         }
         public event MultiFinger.TouchDelegate TouchResize {
-            add { touchhandler.events().TouchResize += value; }
-            remove { touchhandler.events().TouchResize -= value; }
+            add { touchEvents().TouchResize += value; }
+            remove { touchEvents().TouchResize -= value; }
         }
         public event MultiFinger.TouchDelegate TouchRotate {
-            add { touchhandler.events().TouchRotate += value; }
-            remove { touchhandler.events().TouchRotate -= value; }
+            add { touchEvents().TouchRotate += value; }
+            remove { touchEvents().TouchRotate -= value; }
         }
 
         public void OnTouchTapped(FingerTip tip )
@@ -1202,7 +1202,7 @@ namespace Stepflow.Gui
         }
 
         ITouchDispatchTrigger ITouchable.screen() {
-            return touchhandler.screen();
+            return touch.screen();
         }
 
         ITouchableElement ITouchable.element() {
@@ -1214,7 +1214,7 @@ namespace Stepflow.Gui
         }
 
         public ITouchEventTrigger touch {
-            get { return touchhandler; }
+            get { return (this as ITouchGesturedElement<GuiRanger>).handler; }
         }
         #endregion
 

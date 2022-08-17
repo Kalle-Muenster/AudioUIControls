@@ -263,7 +263,7 @@ namespace Stepflow.Gui
             Visible = true;
             clicked = false;
             task().assist = new TaskAssist<SteadyAction,Action,Action>( this, ImTackt, 60 );
-            touche_inter_patsche = new BasicTouchHandler<LedButton>( this );
+            (this as IBasicTouchableElement<LedButton>).handler = new BasicTouchHandler<LedButton>( this );
 
 
             InitializeComponent();
@@ -613,10 +613,10 @@ namespace Stepflow.Gui
 
         #region ITouchable
 
-        private BasicTouchHandler<LedButton> touche_inter_patsche;
+        private IBasicTouchTrigger touchEvents() { return (this as IBasicTouchableElement<LedButton>).handler.events(); }
 
         public ITouchEventTrigger touch {
-            get { return touche_inter_patsche; }
+            get { return (this as IBasicTouchableElement<LedButton>).handler; }
         }
 
         Control ITouchable.Element {
@@ -624,7 +624,7 @@ namespace Stepflow.Gui
         }
 
         bool ITouchable.IsTouched {
-            get { return touche_inter_patsche.IsTouched; }
+            get { return touch.IsTouched; }
         }
 
         void ITouchableElement.TouchInputReady( PointerInput touchdevice )
@@ -634,25 +634,23 @@ namespace Stepflow.Gui
         }
 
         event FingerTip.TouchDelegate IBasicTouchable.TouchDown {
-            add { touche_inter_patsche.events().TouchDown += value; }
-            remove { touche_inter_patsche.events().TouchDown -= value; }
+            add { touchEvents().TouchDown += value; }
+            remove { touchEvents().TouchDown -= value; }
         }
 
         event FingerTip.TouchDelegate IBasicTouchable.TouchLift {
-            add { touche_inter_patsche.events().TouchLift += value; }
-            remove { touche_inter_patsche.events().TouchLift -= value; }
+            add { touchEvents().TouchLift += value; }
+            remove { touchEvents().TouchLift -= value; }
         }
 
         event FingerTip.TouchDelegate IBasicTouchable.TouchMove {
-            add { touche_inter_patsche.events().TouchMove += value; }
-            remove { touche_inter_patsche.events().TouchMove -= value; }
+            add { touchEvents().TouchMove += value; }
+            remove { touchEvents().TouchMove -= value; }
         }
 
 
-        BasicTouchHandler<LedButton> IBasicTouchableElement<LedButton>.handler()
-        {
-            return touche_inter_patsche;
-        }
+        BasicTouchHandler<LedButton> IBasicTouchableElement<LedButton>.handler { get; set; }
+
 
         void IBasicTouchable.OnTouchDown( FingerTip tip ) {
             processButtonPressed();
@@ -677,7 +675,7 @@ namespace Stepflow.Gui
 
         ITouchDispatchTrigger ITouchable.screen()
         {
-            return touche_inter_patsche.screen();
+            return touch.screen();
         }
 
         ITouchableElement ITouchable.element()

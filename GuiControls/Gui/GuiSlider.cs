@@ -888,7 +888,7 @@ namespace Stepflow.Gui
             joints = new ValenceField<Controlled.Float32,ValenceField>(
                                  this, new Controlled.Float32[]{value} );
             interaction = InteractionMode.XFactor;
-            touche_inter_patsche = new TouchGesturesHandler<GuiSlider>(this);
+            getInTouch().handler = new TouchGesturesHandler<GuiSlider>(this);
             InitializeComponent();
             Resize += OnResize;
             BorderStyle = BorderStyle.None;
@@ -1064,50 +1064,50 @@ namespace Stepflow.Gui
         //////////////////////////////////////////////////////////
         #region // ITouchableElement
 
-        private TouchGesturesHandler<GuiSlider> touche_inter_patsche;
-        TouchGesturesHandler<GuiSlider> ITouchGesturedElement<GuiSlider>.handler() { return touche_inter_patsche; }
+        private IGestureTouchTrigger touchEvents() { return getInTouch().handler.events(); }
+        TouchGesturesHandler<GuiSlider> ITouchGesturedElement<GuiSlider>.handler { get; set; }
 
         // basic touch interface events, directly triggered on touch down/move/lift for each finger (similar to mouse down/up/move events)
 
         public event FingerTip.TouchDelegate TouchDown {
-            add{ touche_inter_patsche.events().TouchDown += value; }
-            remove{ touche_inter_patsche.events().TouchDown -= value; }
+            add{ touchEvents().TouchDown += value; }
+            remove{ touchEvents().TouchDown -= value; }
         }
         public event FingerTip.TouchDelegate TouchLift {
-            add{ touche_inter_patsche.events().TouchLift += value; }
-            remove{ touche_inter_patsche.events().TouchLift -= value; }
+            add{ touchEvents().TouchLift += value; }
+            remove{ touchEvents().TouchLift -= value; }
         }
         public event FingerTip.TouchDelegate TouchMove {
-            add{ touche_inter_patsche.events().TouchMove += value; }
-            remove{ touche_inter_patsche.events().TouchMove -= value; }
+            add{ touchEvents().TouchMove += value; }
+            remove{ touchEvents().TouchMove -= value; }
         }
 
         // higher level events, abstracted from interpreting several Downs/Moves/Lifts (of maybe several fingers) over time axis...  (similar to mouse click/double/drag events )
 
         public event FingerTip.TouchDelegate TouchTapped {
-            add { touche_inter_patsche.events().TouchTapped += value; }
-            remove { touche_inter_patsche.events().TouchTapped -= value; }
+            add { touchEvents().TouchTapped += value; }
+            remove { touchEvents().TouchTapped -= value; }
         }
         public event FingerTip.TouchDelegate TouchDupple {
-            add { touche_inter_patsche.events().TouchDupple += value; }
-            remove { touche_inter_patsche.events().TouchDupple -= value; }
+            add { touchEvents().TouchDupple += value; }
+            remove { touchEvents().TouchDupple -= value; }
         }
                 public event FingerTip.TouchDelegate TouchTrippl {
-            add { touche_inter_patsche.events().TouchTrippl += value; }
-            remove { touche_inter_patsche.events().TouchTrippl -= value; }
+            add { touchEvents().TouchTrippl += value; }
+            remove { touchEvents().TouchTrippl -= value; }
         }
 
         public event MultiFinger.TouchDelegate TouchDraged { // almost same like 'dragndrop finished' or 'dropped'
-            add { touche_inter_patsche.events().TouchDraged += value; }
-            remove { touche_inter_patsche.events().TouchDraged -= value; }
+            add { touchEvents().TouchDraged += value; }
+            remove { touchEvents().TouchDraged -= value; }
         }
         public event MultiFinger.TouchDelegate TouchRotate { // apears when more then one fingers (at least two involved) gesturing a rotation on the screen
-            add { touche_inter_patsche.events().TouchRotate += value; }
-            remove { touche_inter_patsche.events().TouchRotate -= value; }
+            add { touchEvents().TouchRotate += value; }
+            remove { touchEvents().TouchRotate -= value; }
         }
         public event MultiFinger.TouchDelegate TouchResize { // apears when more then one fingers (at least two involved) gesturing a resize on the screen 
-            add { touche_inter_patsche.events().TouchResize += value; }
-            remove { touche_inter_patsche.events().TouchResize -= value; }
+            add { touchEvents().TouchResize += value; }
+            remove { touchEvents().TouchResize -= value; }
         }
 
 
@@ -1144,7 +1144,7 @@ namespace Stepflow.Gui
 
         public ITouchEventTrigger touch
         {
-            get { return (this as ITouchGesturedElement<GuiSlider>).handler(); }
+            get { return (this as ITouchGesturedElement<GuiSlider>).handler; }
         }
 
         public ITouchDispatchTrigger screen()

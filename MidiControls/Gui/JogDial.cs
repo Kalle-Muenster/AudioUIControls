@@ -68,7 +68,6 @@ namespace Midi
         public event DirectionHasChanged TurningStopt;
 
         private MouseEventDelegator           SlopeDown;
-        private TouchGesturesHandler<JogDial> touchinput;
         
         private Controlled.Float32 flow;
         private Controlled.Float32 pos;
@@ -131,7 +130,7 @@ namespace Midi
             };
 
             TaskAssist<SteadyAction,Action,Action>.Init( PropellorSpeed );
-            Resources.ResourceManager.ReleaseAllResources();
+            //Resources.ResourceManager.ReleaseAllResources();
 
             if( !PointerInput.isInitialized() ) {
                 PointerInput.AutoRegistration = AutoRegistration.Enabled;
@@ -346,7 +345,8 @@ namespace Midi
 
         public JogDial() { 
 
-            touchinput = new TouchGesturesHandler<JogDial>( this );
+            (this as ITouchGesturedElement<JogDial>).handler = new TouchGesturesHandler<JogDial>( this );
+
             interaction = InteractionMode.FlowByQuadrants;
             InitializeComponent();
             midi().binding.InitializeComponent( this, components, Invalidate );
@@ -411,58 +411,59 @@ namespace Midi
             }
 
             public event MultiFinger.TouchDelegate TouchDraged {
-                add { touchinput.events().TouchDraged += value; }
-                remove { touchinput.events().TouchDraged -=value; }
+                add { touchEvents().TouchDraged += value; }
+                remove { touchEvents().TouchDraged -=value; }
             }
 
             public event MultiFinger.TouchDelegate TouchResize {
-                add { touchinput.events().TouchResize += value; }
-                remove { touchinput.events().TouchResize -=value; }
+                add { touchEvents().TouchResize += value; }
+                remove { touchEvents().TouchResize -=value; }
             }
 
             public event MultiFinger.TouchDelegate TouchRotate {
-                add { touchinput.events().TouchRotate += value; }
-                remove { touchinput.events().TouchRotate -= value; }
+                add { touchEvents().TouchRotate += value; }
+                remove { touchEvents().TouchRotate -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchTapped {
-                add { touchinput.events().TouchTapped += value; }
-                remove { touchinput.events().TouchTapped -= value; }
+                add { touchEvents().TouchTapped += value; }
+                remove { touchEvents().TouchTapped -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchDupple {
-                add { touchinput.events().TouchDupple += value; }
-                remove { touchinput.events().TouchDupple -= value; }
+                add { touchEvents().TouchDupple += value; }
+                remove { touchEvents().TouchDupple -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchTrippl {
-                add { touchinput.events().TouchTrippl += value; }
-                remove { touchinput.events().TouchTrippl -= value; }
+                add { touchEvents().TouchTrippl += value; }
+                remove { touchEvents().TouchTrippl -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchDown {
-                add { touchinput.events().TouchDown += value; }
-                remove { touchinput.events().TouchDown -= value; }
+                add { touchEvents().TouchDown += value; }
+                remove { touchEvents().TouchDown -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchLift {
-                add { touchinput.events().TouchLift += value; }
-                remove { touchinput.events().TouchLift -= value; }
+                add { touchEvents().TouchLift += value; }
+                remove { touchEvents().TouchLift -= value; }
             }
 
             public event FingerTip.TouchDelegate TouchMove {
-                add { touchinput.events().TouchMove += value; }
-                remove { touchinput.events().TouchMove -= value; }
+                add { touchEvents().TouchMove += value; }
+                remove { touchEvents().TouchMove -= value; }
             }
 
-            public ITouchEventTrigger touch { get { return touchinput; } }
+            public ITouchEventTrigger touch { get { return (this as ITouchGesturedElement<JogDial>).handler; } }
+            private IGestureTouchTrigger touchEvents() { return (this as ITouchGesturedElement<JogDial>).handler.events(); }
 
             Control ITouchable.Element { get { return this; } }
 
-            public bool IsTouched { get { return touchinput.IsTouched; } }
+            public bool IsTouched { get { return touch.IsTouched; } }
 
-            TouchGesturesHandler<JogDial> ITouchGesturedElement<JogDial>.handler() {
-                return touchinput;
+            TouchGesturesHandler<JogDial> ITouchGesturedElement<JogDial>.handler {
+                get; set;
             }
 
             void ITouchGestutred.OnTouchDraged( MultiFinger tip )
