@@ -173,7 +173,7 @@ namespace Stepflow.Gui
     {
         public static ITouchableElement ToTouchableElement(this Control cast)
         {
-            if( cast.GetType().GetInterface("ITouchable") is null )
+            if( cast.GetType().GetInterface("ITouchable") == null )
                 throw new InvalidCastException( "Control is not ITouchable" );
             return cast as ITouchableElement;
         }
@@ -217,7 +217,7 @@ namespace Stepflow.Gui
 
         ITouchable ITouchTrigger.instance<Purpose>() {
             return typeof(Purpose) == typeof(ITouchEventTrigger<IBasicTouchable,IBasicTouchTrigger>) 
-                 ? (ITouchable)control : PointerInput.Dispatcher;
+                 ? (ITouchable)control : (ITouchable)PointerInput.Dispatcher.dispatch().trigger();
         }
 
         public ITouchEventTrigger trigger() {
@@ -303,7 +303,7 @@ namespace Stepflow.Gui
         ITouchable ITouchTrigger.instance<Purpose>()
         {
             return typeof(Purpose) == typeof(ITouchEventTrigger<ITouchSelectable,ITouchSelectTrigger>)
-                 ? control : PointerInput.Dispatcher.dispatch().trigger();
+                 ? (ITouchable)control : (ITouchable)PointerInput.Dispatcher.dispatch().trigger();
         }
 
 
@@ -481,7 +481,7 @@ namespace Stepflow.Gui
 
         ITouchable ITouchTrigger.instance<Purpose>() {
             return typeof(Purpose) == typeof(ITouchEventTrigger<IBasicTouchable,IBasicTouchTrigger>)
-                 ? control : PointerInput.Dispatcher;
+                 ? (ITouchable)control : (ITouchable)PointerInput.Dispatcher.dispatch().trigger();
         }
 
         public virtual ITouchDispatchTrigger screen() {

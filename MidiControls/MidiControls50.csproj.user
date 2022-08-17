@@ -8,23 +8,23 @@
     <Compile Update="Gui\MidiButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Gui\MidiComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Gui\MidiMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Win\MidiComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="Gui\MidiSlider.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Gui\MidiTrackBar.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Update="Gui\MidiValueDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Gui\StringControl.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Win\MidiTrackBar.cs">
-      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
 </Project>
