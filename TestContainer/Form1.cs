@@ -196,7 +196,7 @@ namespace TestContainer
             }
         }
 
-        private void mnu_MidiSelectBox_Click( object sender, EventArgs e )
+        private void mnu_MidiComboBox_Click( object sender, EventArgs e )
         {
             destruct?.Invoke();
             Stepflow.Midi.Gui.MidiComboBox dings = new Stepflow.Midi.Gui.MidiComboBox();
@@ -204,6 +204,17 @@ namespace TestContainer
             dings.Size = new Size(256,64);
             for( Win32Imports.Midi.Note note = Win32Imports.Midi.Note.C2; note < Win32Imports.Midi.Note.C4; ++note )
                 dings.Items.Add( note );
+            dings.Tag = 1;
+            Connect( dings );
+            destruct = () => { dings.Dispose(); };
+        }
+
+        private void mnu_MidiTrackBar_Click( object sender, EventArgs e )
+        {
+            destruct?.Invoke();
+            Stepflow.Midi.Gui.MidiTrackBar dings = new Stepflow.Midi.Gui.MidiTrackBar();
+            dings.Location = new Point(200, 200);
+            dings.Size = new Size(256, 64);
             dings.Tag = 1;
             Connect( dings );
             destruct = () => { dings.Dispose(); };

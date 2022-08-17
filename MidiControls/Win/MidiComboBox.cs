@@ -1,8 +1,10 @@
 ﻿using Stepflow;
 using Stepflow.Gui;
 using Stepflow.Gui.Automation;
+using Stepflow.Gui.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,13 +17,19 @@ namespace Stepflow.Midi.Gui
         : ComboBox
         , IInterValuable<Controlled.Byte>
         , IMidiControlElement<MidiInOut>
+        , IBasicTouchableElement<MidiComboBox>
 
     {
-        private Controlled.Byte index; 
+        private Controlled.Byte                 index;
+        private MidiInOut                       midiio;
+        private AutomationlayerAddressat        midiad;
 
         static MidiComboBox()
         {
             Valence.RegisterIntervaluableType<Controlled.Byte>();
+            if( !PointerInput.isInitialized() ) {
+                PointerInput.AutoRegistration = AutoRegistration.Enabled;
+            }
         }
 
         public MidiComboBox() : base()
@@ -32,23 +40,47 @@ namespace Stepflow.Midi.Gui
             midiad = new AutomationlayerAddressat(1, (byte)Win32Imports.Midi.Message.TYPE.NOTE_ON, 127, 0 );
             midiio = new MidiInOut();
 
+            ( this as IBasicTouchableElement<MidiComboBox> ).handler = new BasicTouchHandler<MidiComboBox>( this );
             ctr_valence = new ValenceField<Controlled.Byte, ValenceField>( this, new ControllerBase[] { index });
             System.ComponentModel.IContainer connector = this.Container == null ? new System.ComponentModel.Container() : this.Container;
             ContextMenuStrip = new ContextMenuStrip( connector );
-            mnu_valence = new ValenceBondMenu<Controlled.Byte>( this, connector );
             ( this as IInterValuable ).getMenuHook().Add( new ValenceBondMenu<Controlled.Byte>(this, connector));
             midiio.InitializeComponent( this, connector , Invalidate );
             midiio.automate().ConfigureAsMessagingAutomat( midiad, 0 );
             midiio.automation().RegisterAsMesssageListener( midiad );
             midiio.automation().AutomationEvent += midi().OnIncommingMidiControl;
+
+            if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
+                if( PointerInput.Dispatcher == null ) {
+                    PointerInput.Initialized += touch.element().TouchInputReady;
+                } else
+                    PointerInput.Dispatcher.RegisterTouchableElement(this);
+            }
+
             SelectedIndexChanged += MidiSelectBox_SelectedIndexChanged;
             Paint += midiio.automation().ProcessMessageQueue;
             Disposed += MidiComboBox_Disposed;
         }
 
+        public event FingerTip.TouchDelegate TouchDown {
+            add { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchDown += value; }
+            remove { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchDown -= value; }
+        }
+
+        public event FingerTip.TouchDelegate TouchLift {
+            add { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchLift += value; }
+            remove { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchLift -= value; }
+        }
+
+        public event FingerTip.TouchDelegate TouchMove {
+            add { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchMove += value; }
+            remove { ( this as IBasicTouchableElement<MidiComboBox> ).handler.events().TouchMove -= value; }
+        }
+
         private void MidiComboBox_Disposed( object sender, EventArgs e )
         {
             Valence.UnRegisterIntervaluableElement( this );
+            PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
         }
 
         private void MidiSelectBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -79,16 +111,9 @@ namespace Stepflow.Midi.Gui
         }
 
 #region MidiAutomation
-        private MidiInOut                midiio;
-        private AutomationlayerAddressat midiad;
-
         Value IMidiControlElement<MidiInOut>.MidiValue {
-            get {
-                return new Value( SelectedIndex );
-            }
-            set {
-                SelectedIndex = value;
-            }
+            get { return new Value( SelectedIndex ); }
+            set { SelectedIndex = value; }
         }
 
         
@@ -108,6 +133,7 @@ namespace Stepflow.Midi.Gui
         }
 
 
+
         public IMidiControlElement<MidiInOut> midi()
         {
             return this;
@@ -125,7 +151,6 @@ namespace Stepflow.Midi.Gui
 #endregion
 
 #region IInterValuable
-        private ValenceBondMenu<Controlled.Byte>            mnu_valence;
         private ValenceField<Controlled.Byte,ValenceField>  ctr_valence;
         ToolStripItemCollection IInterValuable.getMenuHook() { return ContextMenuStrip.Items; }
         public IControllerValenceField<Controlled.Byte> valence() { return ctr_valence.field(); }
@@ -134,7 +159,46 @@ namespace Stepflow.Midi.Gui
         IControllerValenceField IInterValuable.valence<cT>() { return ctr_valence.field(); }
         Action IInterValuable.getInvalidationTrigger() { return valueUpdate; }
         void IInterValuable.callOnInvalidated( InvalidateEventArgs e ) { OnInvalidated( e ); }
-        private void valueUpdate() { /* TriggerEvents(); */ Invalidate(); } 
+        private void valueUpdate() { /* TriggerEvents(); */ Invalidate(); }
+        #endregion
+
+#region IBasicTouchable
+        public ITouchEventTrigger touch { get { return (this as IBasicTouchableElement<MidiComboBox>).handler; } }
+        Control ITouchable.Element { get { return this; } }
+        public bool IsTouched { get { return touch.IsTouched; } }
+        BasicTouchHandler<MidiComboBox> IBasicTouchableElement<MidiComboBox>.handler {
+            get; set;
+        }
+
+        void IBasicTouchable.OnTouchDown( FingerTip tip ){}
+
+        void IBasicTouchable.OnTouchMove( FingerTip tip ){}
+
+        void IBasicTouchable.OnTouchLift( FingerTip tip ){}
+
+        Point64 ITouchableElement.ScreenLocation() {
+            return PointToScreen( Point.Empty );
+        }
+
+        IRectangle ITouchableElement.ScreenRectangle() {
+            Rectangle size = Rectangle.Empty;
+            size.Size = Size;
+            return AbsoluteEdges.FromRectangle( RectangleToScreen( size ) );
+        }
+
+        void ITouchableElement.TouchInputReady( PointerInput touchdevice )
+        {
+            touchdevice.RegisterTouchableElement( this );
+            PointerInput.Initialized -= touch.element().TouchInputReady;
+        }
+
+        ITouchDispatchTrigger ITouchable.screen() {
+            return touch.screen();
+        }
+
+        ITouchableElement ITouchable.element() {
+            return this;
+        }
 #endregion
 
 

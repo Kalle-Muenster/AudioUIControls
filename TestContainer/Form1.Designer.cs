@@ -42,7 +42,9 @@ namespace TestContainer
             this.midiValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jogDialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.laGuitarraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.midiComboBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.midiStringSetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.midiComboBoxToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sld_set_width = new Stepflow.Gui.GuiSlider();
             this.sld_set_height = new Stepflow.Gui.GuiSlider();
             this.val_set_width = new Stepflow.Gui.ValueDisplay();
@@ -60,8 +62,7 @@ namespace TestContainer
             this.lbl_element_Max = new System.Windows.Forms.Label();
             this.lbl_set_Orientation = new System.Windows.Forms.Label();
             this.lbl_set_Led = new System.Windows.Forms.Label();
-            this.midiComboBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.midiComboBoxToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.midiTrackBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,7 +92,8 @@ namespace TestContainer
             this.laGuitarraToolStripMenuItem,
             this.midiComboBoxToolStripMenuItem,
             this.midiStringSetToolStripMenuItem,
-            this.midiComboBoxToolStripMenuItem1});
+            this.midiComboBoxToolStripMenuItem1,
+            this.midiTrackBarToolStripMenuItem});
             this.controllsToolStripMenuItem.Name = "controllsToolStripMenuItem";
             this.controllsToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.controllsToolStripMenuItem.Text = "Controlls";
@@ -99,85 +101,98 @@ namespace TestContainer
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem1.Text = "GuiButton";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // guiSliderToolStripMenuItem
             // 
             this.guiSliderToolStripMenuItem.Name = "guiSliderToolStripMenuItem";
-            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.guiSliderToolStripMenuItem.Text = "GuiSlider";
             this.guiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // guiMeterToolStripMenuItem
             // 
             this.guiMeterToolStripMenuItem.Name = "guiMeterToolStripMenuItem";
-            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.guiMeterToolStripMenuItem.Text = "GuiMeter";
             this.guiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // guiRangerToolStripMenuItem
             // 
             this.guiRangerToolStripMenuItem.Name = "guiRangerToolStripMenuItem";
-            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.guiRangerToolStripMenuItem.Text = "GuiRanger";
             this.guiRangerToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiRangeControl_Click);
             // 
             // guiValueToolStripMenuItem
             // 
             this.guiValueToolStripMenuItem.Name = "guiValueToolStripMenuItem";
-            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.guiValueToolStripMenuItem.Text = "GuiValue";
             this.guiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // midiButtonToolStripMenuItem
             // 
             this.midiButtonToolStripMenuItem.Name = "midiButtonToolStripMenuItem";
-            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.midiButtonToolStripMenuItem.Text = "MidiButton";
             this.midiButtonToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // midiSliderToolStripMenuItem
             // 
             this.midiSliderToolStripMenuItem.Name = "midiSliderToolStripMenuItem";
-            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.midiSliderToolStripMenuItem.Text = "MidiSlider";
             this.midiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // midiMeterToolStripMenuItem
             // 
             this.midiMeterToolStripMenuItem.Name = "midiMeterToolStripMenuItem";
-            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.midiMeterToolStripMenuItem.Text = "MidiMeter";
             this.midiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // midiValueToolStripMenuItem
             // 
             this.midiValueToolStripMenuItem.Name = "midiValueToolStripMenuItem";
-            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.midiValueToolStripMenuItem.Text = "MidiValue";
             this.midiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // jogDialToolStripMenuItem
             // 
             this.jogDialToolStripMenuItem.Name = "jogDialToolStripMenuItem";
-            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.jogDialToolStripMenuItem.Text = "JogDial";
             this.jogDialToolStripMenuItem.Click += new System.EventHandler(this.mnu_JogDial_Click);
             // 
             // laGuitarraToolStripMenuItem
             // 
             this.laGuitarraToolStripMenuItem.Name = "laGuitarraToolStripMenuItem";
-            this.laGuitarraToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.laGuitarraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.laGuitarraToolStripMenuItem.Text = "MidiString";
+            // 
+            // midiComboBoxToolStripMenuItem
+            // 
+            this.midiComboBoxToolStripMenuItem.Name = "midiComboBoxToolStripMenuItem";
+            this.midiComboBoxToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiComboBoxToolStripMenuItem.Text = "MidiComboBox";
             // 
             // midiStringSetToolStripMenuItem
             // 
             this.midiStringSetToolStripMenuItem.Name = "midiStringSetToolStripMenuItem";
-            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.midiStringSetToolStripMenuItem.Text = "StringControl";
             this.midiStringSetToolStripMenuItem.Click += new System.EventHandler(this.mnu_StringControl_Click);
+            // 
+            // midiComboBoxToolStripMenuItem1
+            // 
+            this.midiComboBoxToolStripMenuItem1.Name = "midiComboBoxToolStripMenuItem1";
+            this.midiComboBoxToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.midiComboBoxToolStripMenuItem1.Text = "MidiComboBox";
+            this.midiComboBoxToolStripMenuItem1.Click += new System.EventHandler(this.mnu_MidiComboBox_Click);
             // 
             // sld_set_width
             // 
@@ -349,26 +364,6 @@ namespace TestContainer
             this.val_element_Val.Units = Stepflow.Gui.UnitsType.Per;
             this.val_element_Val.Value = 0F;
             // 
-            // lbl_element_Val
-            // 
-            this.lbl_element_Val.AutoSize = true;
-            this.lbl_element_Val.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_element_Val.Location = new System.Drawing.Point(948, 286);
-            this.lbl_element_Val.Name = "lbl_element_Val";
-            this.lbl_element_Val.Size = new System.Drawing.Size(35, 15);
-            this.lbl_element_Val.TabIndex = 9;
-            this.lbl_element_Val.Text = "Value";
-            // 
-            // lbl_element_Min
-            // 
-            this.lbl_element_Min.AutoSize = true;
-            this.lbl_element_Min.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_element_Min.Location = new System.Drawing.Point(948, 357);
-            this.lbl_element_Min.Name = "lbl_element_Min";
-            this.lbl_element_Min.Size = new System.Drawing.Size(60, 15);
-            this.lbl_element_Min.TabIndex = 11;
-            this.lbl_element_Min.Text = "Minimum";
-            // 
             // val_element_Min
             // 
             this.val_element_Min.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ), ( (int)( ( (byte)( 32 ) ) ) ));
@@ -391,6 +386,26 @@ namespace TestContainer
             this.val_element_Min.Units = Stepflow.Gui.UnitsType.Per;
             this.val_element_Min.Value = 0F;
             // 
+            // lbl_element_Val
+            // 
+            this.lbl_element_Val.AutoSize = true;
+            this.lbl_element_Val.ForeColor = System.Drawing.Color.Wheat;
+            this.lbl_element_Val.Location = new System.Drawing.Point(948, 286);
+            this.lbl_element_Val.Name = "lbl_element_Val";
+            this.lbl_element_Val.Size = new System.Drawing.Size(35, 15);
+            this.lbl_element_Val.TabIndex = 9;
+            this.lbl_element_Val.Text = "Value";
+            // 
+            // lbl_element_Min
+            // 
+            this.lbl_element_Min.AutoSize = true;
+            this.lbl_element_Min.ForeColor = System.Drawing.Color.Wheat;
+            this.lbl_element_Min.Location = new System.Drawing.Point(948, 357);
+            this.lbl_element_Min.Name = "lbl_element_Min";
+            this.lbl_element_Min.Size = new System.Drawing.Size(60, 15);
+            this.lbl_element_Min.TabIndex = 11;
+            this.lbl_element_Min.Text = "Minimum";
+            // 
             // lbl_element_Max
             // 
             this.lbl_element_Max.AutoSize = true;
@@ -400,6 +415,26 @@ namespace TestContainer
             this.lbl_element_Max.Size = new System.Drawing.Size(62, 15);
             this.lbl_element_Max.TabIndex = 13;
             this.lbl_element_Max.Text = "Maximum";
+            // 
+            // lbl_set_Orientation
+            // 
+            this.lbl_set_Orientation.AutoSize = true;
+            this.lbl_set_Orientation.ForeColor = System.Drawing.Color.Wheat;
+            this.lbl_set_Orientation.Location = new System.Drawing.Point(948, 777);
+            this.lbl_set_Orientation.Name = "lbl_set_Orientation";
+            this.lbl_set_Orientation.Size = new System.Drawing.Size(67, 15);
+            this.lbl_set_Orientation.TabIndex = 16;
+            this.lbl_set_Orientation.Text = "Orientation";
+            // 
+            // lbl_set_Led
+            // 
+            this.lbl_set_Led.AutoSize = true;
+            this.lbl_set_Led.ForeColor = System.Drawing.Color.Wheat;
+            this.lbl_set_Led.Location = new System.Drawing.Point(1059, 777);
+            this.lbl_set_Led.Name = "lbl_set_Led";
+            this.lbl_set_Led.Size = new System.Drawing.Size(55, 15);
+            this.lbl_set_Led.TabIndex = 17;
+            this.lbl_set_Led.Text = "LedColor";
             // 
             // val_element_Max
             // 
@@ -465,38 +500,12 @@ namespace TestContainer
             this.btn_set_Led.Style = Stepflow.Gui.Style.Dark;
             this.btn_set_Led.TabIndex = 15;
             // 
-            // lbl_set_Orientation
+            // midiTrackBarToolStripMenuItem
             // 
-            this.lbl_set_Orientation.AutoSize = true;
-            this.lbl_set_Orientation.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_set_Orientation.Location = new System.Drawing.Point(948, 777);
-            this.lbl_set_Orientation.Name = "lbl_set_Orientation";
-            this.lbl_set_Orientation.Size = new System.Drawing.Size(67, 15);
-            this.lbl_set_Orientation.TabIndex = 16;
-            this.lbl_set_Orientation.Text = "Orientation";
-            // 
-            // lbl_set_Led
-            // 
-            this.lbl_set_Led.AutoSize = true;
-            this.lbl_set_Led.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_set_Led.Location = new System.Drawing.Point(1059, 777);
-            this.lbl_set_Led.Name = "lbl_set_Led";
-            this.lbl_set_Led.Size = new System.Drawing.Size(55, 15);
-            this.lbl_set_Led.TabIndex = 17;
-            this.lbl_set_Led.Text = "LedColor";
-            // 
-            // midiComboBoxToolStripMenuItem
-            // 
-            this.midiComboBoxToolStripMenuItem.Name = "midiComboBoxToolStripMenuItem";
-            this.midiComboBoxToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.midiComboBoxToolStripMenuItem.Text = "MidiComboBox";
-            // 
-            // midiComboBoxToolStripMenuItem1
-            // 
-            this.midiComboBoxToolStripMenuItem1.Name = "midiComboBoxToolStripMenuItem1";
-            this.midiComboBoxToolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
-            this.midiComboBoxToolStripMenuItem1.Text = "MidiComboBox";
-            this.midiComboBoxToolStripMenuItem1.Click += new System.EventHandler(this.mnu_MidiSelectBox_Click);
+            this.midiTrackBarToolStripMenuItem.Name = "midiTrackBarToolStripMenuItem";
+            this.midiTrackBarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiTrackBarToolStripMenuItem.Text = "MidiTrackBar";
+            this.midiTrackBarToolStripMenuItem.Click += new System.EventHandler(this.mnu_MidiTrackBar_Click);
             // 
             // Form1
             // 
@@ -567,6 +576,7 @@ namespace TestContainer
         private System.Windows.Forms.ToolStripMenuItem midiStringSetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem midiTrackBarToolStripMenuItem;
     }
 }
 
