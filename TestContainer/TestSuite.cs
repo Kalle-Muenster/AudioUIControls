@@ -75,7 +75,7 @@ namespace MidiGUI.Test
 
             Aut.SetControlValue( LedButton.Default.ON );
             Thread.Sleep( 1000 );
-            MatchStep( testling.State.ToString(), "ON", "{0} shows expected lable text");
+            MatchStep( testling.State.ToString(), "ON", "LedButton.State", "...shows lable as expected" );
             Thread.Sleep( 1000 );
 
             Point32 point = Aut.GetTestlingArea().Center;
@@ -83,7 +83,7 @@ namespace MidiGUI.Test
             ConTrol.Click( ConTrol.Button.L, point.X, point.Y );
             Thread.Sleep( 1000 );
 
-            MatchStep( testling.Text, "OFF", "{0} changed state on clicked" );
+            MatchStep( testling.Text, "OFF", "LedButton.State", "...state changed as expected" );
             Thread.Sleep( 1000 );
         }
 
@@ -91,7 +91,7 @@ namespace MidiGUI.Test
         {
             SelectControlType( typeof(GuiSlider) );
             GuiSlider testling = Aut.GetStagedControl() as GuiSlider;
-            CheckStep(testling != null, "{0} instanciated", CurrentCase);
+            CheckStep(testling != null, "{0} instanciated", CurrentCase );
             Thread.Sleep( 1000 );
 
             while( testling.Orientation != Stepflow.Gui.Orientation.Vertical ) {
@@ -99,14 +99,18 @@ namespace MidiGUI.Test
                 Thread.Sleep( 200 );
             }
 
+            InfoStep("Set {0} range: 0 to 100", CurrentCase);
             Controlled.Float32 testvalue = testling.valence().controller();
             testvalue.MIN = 0;
             testvalue.MAX = 100;
+
             Aut.SetControlWidth( 48 );
             Aut.SetControlHeight( 512 );
+            InfoStep("Assigning value 50 to {0}", CurrentCase);
             Aut.SetControlValue( 50.0f );
             Thread.Sleep ( 1000 );
             ConTrol.Point point = GetScreenArea( testling ).Center;
+            InfoStep("Sliding till maximum");
             ConTrol.Mouse( ConTrol.Move.Absolute, point );
             ConTrol.Click( ConTrol.Button.L|ConTrol.Button.DOWN );
             for( int i = 0; i < 25; ++i ) {
@@ -115,7 +119,8 @@ namespace MidiGUI.Test
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             } ConTrol.Click( ConTrol.Button.L|ConTrol.Button.UP );
             Thread.Sleep( 100 );
-            MatchStep( testvalue.VAL, testvalue.MAX );
+            MatchStep( testvalue.VAL, testvalue.MAX, CurrentCase+".Value", "...value changed to 100" );
+            InfoStep( "Sliding down to minimum" );
             ConTrol.Click( ConTrol.Button.L|ConTrol.Button.DOWN );
             for( int i = 0; i < 50; ++i ) {
                 point.Y += 10;
@@ -123,7 +128,7 @@ namespace MidiGUI.Test
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             } ConTrol.Click( ConTrol.Button.L|ConTrol.Button.UP );
             Thread.Sleep( 100 );
-            MatchStep( testvalue.VAL, testvalue.MIN );
+            MatchStep( testvalue.VAL, testvalue.MIN, CurrentCase+".Value", "...value changed to 0" );
         }
     }
 }
