@@ -1,5 +1,5 @@
 ﻿
-namespace TestContainer
+namespace MidiGUI.Test.Container
 {
     partial class Form1
     {
@@ -42,7 +42,6 @@ namespace TestContainer
             this.midiValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jogDialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.laGuitarraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.midiComboBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.midiStringSetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.midiComboBoxToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sld_set_width = new Stepflow.Gui.GuiSlider();
@@ -90,7 +89,6 @@ namespace TestContainer
             this.midiValueToolStripMenuItem,
             this.jogDialToolStripMenuItem,
             this.laGuitarraToolStripMenuItem,
-            this.midiComboBoxToolStripMenuItem,
             this.midiStringSetToolStripMenuItem,
             this.midiComboBoxToolStripMenuItem1,
             this.midiTrackBarToolStripMenuItem});
@@ -102,7 +100,7 @@ namespace TestContainer
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem1.Text = "GuiButton";
+            this.toolStripMenuItem1.Text = "LedButton";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // guiSliderToolStripMenuItem
@@ -167,18 +165,6 @@ namespace TestContainer
             this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.jogDialToolStripMenuItem.Text = "JogDial";
             this.jogDialToolStripMenuItem.Click += new System.EventHandler(this.mnu_JogDial_Click);
-            // 
-            // laGuitarraToolStripMenuItem
-            // 
-            this.laGuitarraToolStripMenuItem.Name = "laGuitarraToolStripMenuItem";
-            this.laGuitarraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.laGuitarraToolStripMenuItem.Text = "MidiString";
-            // 
-            // midiComboBoxToolStripMenuItem
-            // 
-            this.midiComboBoxToolStripMenuItem.Name = "midiComboBoxToolStripMenuItem";
-            this.midiComboBoxToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.midiComboBoxToolStripMenuItem.Text = "MidiComboBox";
             // 
             // midiStringSetToolStripMenuItem
             // 
@@ -574,7 +560,6 @@ namespace TestContainer
         private System.Windows.Forms.ToolStripMenuItem jogDialToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem laGuitarraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiStringSetToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem midiComboBoxToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem midiTrackBarToolStripMenuItem;
     }

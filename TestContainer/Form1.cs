@@ -7,18 +7,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Stepflow;
 using Stepflow.Gui;
 using Stepflow.Midi;
-using Stepflow;
+using Stepflow.Gui.Geometry;
 
-namespace TestContainer
+namespace MidiGUI.Test.Container
 {
+
+    public static class Extensions
+    {
+        public static Consola.Test.ConTrol.Point ConTrolPoint( this Point32 point )
+        {
+            return new Consola.Test.ConTrol.Point( point.X, point.Y );
+        }
+
+        public static Consola.Test.ConTrol.Point ConTrolPoint( this Point64 point )
+        {
+            return new Consola.Test.ConTrol.Point( point.x, point.y );
+        }
+
+        public static Consola.Test.Area ConTrolArea( this IRectangle rectangle )
+        {
+            return new Consola.Test.Area( rectangle.Corner.ConTrolPoint(), rectangle.Sizes.ConTrolPoint() );
+        }
+    }
 
     public partial class Form1 : Form
     {
         public delegate void SetInt32Value(int setValue);
         public delegate void SetEnumValue(Enum setValue);
         public delegate void SetColorValue(Color setValue);
+        public delegate void SetMainValue(object setValue);
 
         private event SetInt32Value SetWidth;
         private event SetInt32Value SetHeight;
@@ -26,9 +46,15 @@ namespace TestContainer
         private event SetEnumValue  SetOrientation;
         private event SetEnumValue  SetLed;
 
-        private string             Staged;
-        private List<Control>      Instances;
-        private Action             destruct;
+        private SetMainValue  SetValue;
+
+        private string               Staged;
+        public  Dictionary<string,IInterValuable> Testling;
+        private Action               destruct;
+        public IRectangle            location;
+        private int                  setHeight;
+        private int                  setWidth;
+        private object               setValue;
 
         private void Connect( Control staged )
         {
@@ -36,11 +62,17 @@ namespace TestContainer
                 SetWidth = null;
                 SetHeight = null;
                 SetStylo = null;
+            //    SetValue = null;
                 IDisposable contrl = Controls.Find( Staged, false)[0];
                 contrl.Dispose();
                 Controls.Remove( contrl as Control );
             } Staged = staged.Name;
 
+            if ( Testling.ContainsKey( Staged ) ) {
+                Testling.Remove( Staged );
+            }
+
+            Testling.Add( Staged, (IInterValuable)staged );
             Controls.Add( staged );
 
             val_element_Val.valence().Free();
@@ -52,20 +84,24 @@ namespace TestContainer
             
             if (staged is GuiSlider) {
                 GuiSlider slider = staged as GuiSlider;
-                SetOrientation += (Enum set) => { slider.Orientation = (Stepflow.Gui.Orientation)set; };
+                SetOrientation += (Enum set) => { slider.Orientation = (Stepflow.Gui.Orientation)set; if( slider.Orientation == Stepflow.Gui.Orientation.Vertical ) slider.Inverted = true; };
                 SetLed += (Enum set) => { slider.LedColor = (LED)set; };
                 SetStylo += (Enum set) => { slider.Style = (Style)set; };
+             //   SetValue += ( object val ) => { slider.Value = (float)val; };
                 val_element_Val.Wrap( slider );
             } else if (staged is LedButton) {
                 LedButton button = staged as LedButton;
                 SetLed += (Enum set) => { button.DefineState( button.Index, button.State, (LED)set ); };
                 SetStylo += (Enum set) => { button.Style = (Style)set; };
+              //  SetValue += ( object val ) => { button.State = (Enum)val; };
                 val_element_Val.Wrap( button );
             } else if ( staged is GuiMeter ) {
                 GuiMeter meter = staged as GuiMeter;
-                SetOrientation += (Enum set) => { meter.Orientation = (Stepflow.Gui.Orientation)set; };
+                SetOrientation += (Enum set) => { meter.Orientation = (Stepflow.Gui.Orientation)set; if( meter.Orientation == Stepflow.Gui.Orientation.Vertical ) meter.Direction = DirectionalOrientation.Up; 
+                      };
                 SetStylo += (Enum set) => { meter.Style = (Style)set; };
                 SetLed += (Enum set) => { meter.ForeColor = Color.FromArgb( (int)Stepflow.Gui.Helpers.LedGlower.ledCol[set.ToInt32()] ); };
+             //   SetValue += ( object val ) => { meter.Level = (float)val; };
                 val_element_Val.Wrap( meter );
             } else if( staged is JogDial ) {
                 JogDial dial = staged as JogDial;
@@ -86,11 +122,18 @@ namespace TestContainer
 
             SetWidth += (int set) => { staged.Width = set; };
             SetHeight += (int set) => { staged.Height = set; };
+
+            UpdateScreenLocation();
         }
 
         public Form1()
         {
+            setHeight = -1;
+            setWidth = -1;
+            setValue = null;
+
             Staged = "";
+            Testling = new Dictionary<string,IInterValuable>();
 
             InitializeComponent();
 
@@ -115,7 +158,7 @@ namespace TestContainer
             btn_set_style.AutoText = true;
             btn_set_style.Changed += Btn_set_style_Changed;
 
-            btn_set_Orientation.SetUp(LED.Blue, LED.Orange, LED.Cyan);
+            btn_set_Orientation.SetUp( LED.Blue, LED.Orange, LED.Cyan );
             btn_set_Orientation.DefineState(1, Stepflow.Gui.Orientation.Rondeal, LED.Blue);
             btn_set_Orientation.DefineState(2, Stepflow.Gui.Orientation.Horizontal, LED.Orange);
             btn_set_Orientation.DefineState(3, Stepflow.Gui.Orientation.Vertical, LED.Mint);
@@ -139,7 +182,75 @@ namespace TestContainer
             val_element_Max.Maximum = float.MaxValue;
             val_element_Max.Minimum = float.MinValue;
 
-            
+            Load += Form1_Load;
+        }
+
+        private void UpdateScreenLocation()
+        {
+            location = CornerAndSize.FromRectangle( RectangleToScreen( new Rectangle(0,0, Width, Height) ) );
+        }
+
+        private void Form1_Load( object sender, EventArgs e )
+        {
+            Load -= Form1_Load;
+            UpdateScreenLocation();
+        }
+
+        public IInterValuable GetStagedControl() 
+        {
+            if( Testling.ContainsKey( Staged ) ) {
+                return Testling[Staged];
+            } return null;
+        }
+
+        public void SetControlHeight( int height )
+        {
+            setHeight = height;
+            Invalidate();
+        }
+        
+        public void SetControlWidth( int width )
+        {
+            setWidth = width;
+            Invalidate();
+        }
+
+        public void SetControlValue( object value )
+        {
+            setValue = value;
+            Invalidate();
+        }
+
+        public Point64 GetMenuPosition( string menupath )
+        {
+            return FindMenuPosition( menupath, null, location.Corner );
+        }
+        private Point64 FindMenuPosition( string itempath, ToolStripItemCollection menuitems, Point32 offset )
+        {
+            if( menuitems == null ) {
+                menuitems = menuStrip1.Items;
+            }
+
+            string[] path = itempath.Split('.',2);
+            foreach( ToolStripMenuItem item in menuitems ) {
+                if( item.Text == path[0] ) {
+                    if( path.Length == 1 ) {
+                        Rectangle rect = item.Bounds;
+                        return CenterAndScale.FromRectangle( rect ).Center + offset;
+                    } else {
+                        offset.y += (short)( item.Bounds.Height );
+                        return FindMenuPosition(path[1], item.DropDownItems, offset);
+                    }
+                }
+            }
+            return Point32.EMPTY;
+        }
+
+        public IRectangle GetTestlingArea()
+        {
+            CenterAndScale area = CenterAndScale.FromRectangle( (Testling[Staged] as Control).Bounds );
+            area.Center += location.Corner;
+            return area;
         }
 
         private void Btn_set_Led_Changed(object sender, ValueChangeArgs<Enum> value)
@@ -295,6 +406,25 @@ namespace TestContainer
             dings.Tag = 1;
             Connect( dings );
             destruct = () => { dings.Dispose(); };
+        }
+
+        protected override void OnPaint( PaintEventArgs e )
+        {
+            base.OnPaint( e );
+            if( setWidth > 0 ) {
+                sld_set_width.Value = setWidth;
+                setWidth = -1;
+            }
+            if (setHeight > 0 ) {
+                sld_set_height.Value = setHeight;
+                setHeight = -1;
+            }
+            if ( setValue != null ) {
+                if( Testling[Staged] is LedButton ) ( Testling[Staged] as LedButton ).State = setValue as Enum;
+                else if( Testling[Staged] is GuiSlider ) ( Testling[Staged] as GuiSlider ).Value = (float)setValue;
+                else if( Testling[Staged] is GuiMeter ) ( Testling[Staged] as GuiMeter ).Level = (float)setValue;
+                setValue = null;
+            }
         }
     }
 }

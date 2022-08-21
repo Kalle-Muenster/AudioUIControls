@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestContainer": {
+      "commandName": "Project",
+      "commandLineArgs": "--testrun --verbose"
+    }
+  }
+}

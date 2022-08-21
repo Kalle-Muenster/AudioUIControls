@@ -104,7 +104,7 @@ namespace Stepflow.Gui
             {
                 set = parentSheet;
                 img = sourceImage;
-                rec = (SystemDefault)sourceFrame.cast<SystemDefault>();
+                rec = (SystemDefault)sourceFrame.cast<SystemDefault,Rectangle>();
             }
 
             virtual public void Draw( Graphics g, System.Drawing.Rectangle dstRec )

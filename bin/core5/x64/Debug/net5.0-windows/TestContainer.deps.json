@@ -10,6 +10,7 @@
         "dependencies": {
           "MidiControls": "0.0.0.1",
           "Consola": "0.0.1.7",
+          "Consola.Test": "0.0.1.7",
           "ControlledValues": "0.0.0.3",
           "Int24Types": "0.0.0.3",
           "TaskAssist": "0.0.1.0"
@@ -36,6 +37,14 @@
           "Consola.dll": {
             "assemblyVersion": "0.0.1.7",
             "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "Consola.Test/0.0.1.7": {
+        "runtime": {
+          "Consola.Test.dll": {
+            "assemblyVersion": "0.0.1.7",
+            "fileVersion": "0.0.1.7"
           }
         }
       },
@@ -82,6 +91,11 @@
       "sha512": ""
     },
     "Consola/0.0.1.7": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Consola.Test/0.0.1.7": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

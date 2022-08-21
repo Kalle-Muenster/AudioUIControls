@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <StartupObject>TestContainer.Program</StartupObject>
+    <StartupObject>MidiGUI.Test.Container.Program</StartupObject>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <ApplicationIcon>ThereAreFourButtons.ico</ApplicationIcon>
   </PropertyGroup>
@@ -36,8 +36,12 @@
   <ItemGroup>
     <Reference Include="Consola">
       <HintPath>$(ConsolaBinRoot)\$(PlatformTarget)\$(Configuration)\Consola.dll</HintPath>
-      <Private>true</Private>
+	  <Private>true</Private>
     </Reference>
+    <Reference Include="Consola.Test">
+      <HintPath>$(ConsolaBinRoot)\$(PlatformTarget)\$(Configuration)\Consola.Test.dll</HintPath>
+      <Private>true</Private>
+	</Reference>
     <Reference Include="ControlledValues">
       <HintPath>$(ControlledValuesBinRoot)\$(PlatformTarget)\$(Configuration)\ControlledValues.dll</HintPath>
       <Private>true</Private>
@@ -49,15 +53,7 @@
     <Reference Include="TaskAssist">
       <HintPath>$(MotorsportBinRoot)\$(PlatformTarget)\$(Configuration)\TaskAssist.dll</HintPath>
       <Private>true</Private>
-    </Reference>  
-	<Reference Include="GuiControls">
-	  <HintPath>..\bin\core5\$(PlatformTarget)\$(Configuration)\GuiControls.dll</HintPath>
-	  <Private>true</Private>
-	</Reference>
-	<Reference Include="MidiControls">
-	  <HintPath>..\bin\core5\$(PlatformTarget)\$(Configuration)\MidiControls.dll</HintPath>
-	  <Private>true</Private>
-	</Reference>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

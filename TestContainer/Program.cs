@@ -3,21 +3,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Consola;
+using Consola.Test;
 
-namespace TestContainer
+namespace MidiGUI.Test.Container
 {
     static class Program
     {
+        private static TestResults isTestrun = TestResults.NONE;
+        private static Runner<Form1,Suite> testrunner = null;
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static int Main( string[] args )
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            List<string> Args = new List<string>( args );
+            if ( Args.Contains("--testrun") ) {
+                Application.ApplicationExit += Application_ApplicationExit;
+                isTestrun = Args.Contains("--verbose")|Args.Contains("-v")
+                          ? TestResults.Verbose
+                          : Args.Contains("--xmllog")|Args.Contains("-x")
+                          ? TestResults.XmlOutput
+                          : TestResults.TextOutput;
+                StdStream.Init( 
+                    CreationFlags.TryConsole 
+                   |CreationFlags.CreateLog
+                   |CreationFlags.NoInputLog
+                );
+                Form1 window = new Form1();
+                window.Paint += Window_Shown;
+                Application.Run( window );
+            } else {
+                Application.Run( new Form1() );
+            }
+
+            int returnvalue = 0;
+            if( isTestrun != TestResults.NONE ) {
+                Suite<Form1> test = testrunner.GetResult();
+                returnvalue = test.wasErrors() ? -1
+                            : test.getFailures();
+            } return returnvalue;
+        }
+
+        private static void Window_Shown( object sender, PaintEventArgs e )
+        {            
+            Form1 window = sender as Form1;
+            window.Paint -= Window_Shown;
+            testrunner = new Runner<Form1,Suite>(new Suite(window,isTestrun));
+            testrunner.Start();
+        }
+
+        private static void Application_ApplicationExit( object sender, EventArgs e )
+        {
+            Consola.Test.Test test = testrunner.GetResult();
+            Consola.StdStream.Out.WriteLine("...done ... test {0}", test.Results);
+            Consola.StdStream.Out.closeLog();
+            Consola.StdStream.Aux.Xml.closeLog();
         }
     }
 }
