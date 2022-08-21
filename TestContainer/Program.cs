@@ -26,11 +26,13 @@ namespace MidiGUI.Test.Container
             List<string> Args = new List<string>( args );
             if ( Args.Contains("--testrun") ) {
                 Application.ApplicationExit += Application_ApplicationExit;
-                isTestrun = Args.Contains("--verbose")|Args.Contains("-v")
-                          ? TestResults.Verbose
-                          : Args.Contains("--xmllog")|Args.Contains("-x")
-                          ? TestResults.XmlOutput
-                          : TestResults.TextOutput;
+                
+                isTestrun = TestResults.TextOutput;
+                if( Args.Contains("--verbose") | Args.Contains("-v") )
+                    isTestrun |= TestResults.Verbose;
+                if( Args.Contains("--xmllog") | Args.Contains("-x") )
+                    isTestrun |= TestResults.XmlOutput;
+
                 StdStream.Init( 
                     CreationFlags.TryConsole 
                    |CreationFlags.CreateLog
