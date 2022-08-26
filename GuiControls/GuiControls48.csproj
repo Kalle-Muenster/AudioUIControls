@@ -131,6 +131,9 @@
     <Compile Include="Gui\LedButton.designer.cs">
       <DependentUpon>LedButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\MenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\ValueDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
