@@ -71,7 +71,7 @@ namespace Stepflow.Gui
             } else {
                 Move = toTheSource.Move;
                 Lift = toTheSource.Lift;
-            } info &= IsTouching.AnElement;
+            } info &= ~IsTouching.AnElement;
             toTheSource.Down( this );
         }
         internal void ReturnToTheSource()
@@ -99,7 +99,7 @@ namespace Stepflow.Gui
 
         public void BelongsThere()
         {
-            info &= IsTouching.Here;
+            info &= ~IsTouching.Here;
             info |= IsTouching.There;
         }
 
@@ -183,6 +183,8 @@ namespace Stepflow.Gui
 
         public static FingerTip operator +( FingerTip self, FingerTip that )
         {
+            if( self == null ) return that;
+
             int count = self.Count;
             self.multiple |= that.Id;
             that.multiple = self.multiple;
@@ -209,7 +211,7 @@ namespace Stepflow.Gui
             while( self.NextHere.Id != prime.Id ) self = self.NextHere;
             for( int i=0; i < count; ++i ) {
                 if( self.NextHere.Id == that.Id ) {
-                    prime.multiple &= that.Id;
+                    prime.multiple = (ushort)(prime.multiple & ~that.Id);
                     that.multiple = that.Id;
                     self.NextHere = self.NextHere.NextHere;
                     break; }

@@ -47,7 +47,7 @@ namespace Stepflow.Gui
         AnElement = 0x0004,
 
         // The area (or the 'group of finger tips') where an actual ongoing primar hand operation is taking place 
-        Here = 0x0008,
+        Here      = 0x0008,
 
 
         // abstract identifiers for 'fingertips' 
@@ -65,9 +65,9 @@ namespace Stepflow.Gui
         Prime     = 0x0200,
 
         //unter erster hand
-        SubPrime   = FirstSub|SecondSub|ThirdSub|ThumbSub,
+        SubPrime  = FirstSub|SecondSub|ThirdSub|ThumbSub,
         // bit mask which can be used fore checking if an additional new touch down is determined being additional finger of the same one hand, for modifying that hands ongoing operation 
-        SubHere = SubPrime|Here, 
+        SubHere   = SubPrime|Here, 
         
         //unter anderer hand
         There     = 0x1000,  // , ...when touches appear too far away from an already recognized group of fingers of a first hand, 
@@ -226,12 +226,12 @@ namespace Stepflow.Gui
         static PointerInput()
         {
 #if DEBUG
-                std = new Consola.StdStreams( CreationFlags.NewConsole );
-                std.Out.WriteLine( "begin: PointerInput() Debug output:..." );
-                RETURN_CODE.LogAnyResult = false;
-                RETURN_CODE.SetLogOutWriter( std.Out.WriteLine );
+            std = new Consola.StdStreams( CreationFlags.NewConsole );
+            std.Out.WriteLine( "begin: PointerInput() Debug output:..." );
+            RETURN_CODE.LogAnyResult = false;
+            RETURN_CODE.SetLogOutWriter( std.Out.WriteLine );
 #endif
-            ThreasholdForDownCount = 300;// (uint)SystemMetrics.DOUBLECLICKTIME;
+            ThreasholdForDownCount = 300;
         }
 
         public PointerInput( Control panel, Form wind, int deviceNum ) 
@@ -300,8 +300,11 @@ namespace Stepflow.Gui
                         break;
                     }
                 case ActTyp.Rem: {
-                        touches[action.pid].Remove( action.pos );
+                        FingerTip tip = touches[action.pid];
+                        tip.info &= ~IsTouching.TrackKept;
+                        tip.info = IsTouching.LiftOff & ~tip.info;
                         touches.Remove( action.pid );
+                        tip.Remove( action.pos );
                         break;
                     }
             }
