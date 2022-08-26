@@ -136,8 +136,6 @@ namespace MidiGUI.Test
             Thread.Sleep(200);
             ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
             Thread.Sleep(200);
-            ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
-            Thread.Sleep(200);
 
             point = GetScreenArea( testling ).Center;
             InfoStep( "Sliding till maximum" );
