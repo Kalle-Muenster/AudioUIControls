@@ -129,6 +129,39 @@ namespace MidiGUI.Test
             } ConTrol.Click( ConTrol.Button.L|ConTrol.Button.UP );
             Thread.Sleep( 100 );
             MatchStep( testvalue.VAL, testvalue.MIN, CurrentCase+".Value", "...value changed to 0" );
+
+            Thread.Sleep( 100 );
+            Aut.SetControlValue( 50.0f );
+            ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
+            Thread.Sleep(200);
+            ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
+            Thread.Sleep(200);
+            ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
+            Thread.Sleep(200);
+
+            point = GetScreenArea( testling ).Center;
+            InfoStep( "Sliding till maximum" );
+            ConTrol.Mouse( ConTrol.Move.Absolute, point );
+            ConTrol.Click( ConTrol.Button.L | ConTrol.Button.DOWN );
+            for( int i = 0; i < 25; ++i ) {
+                point.Y -= 10;
+                Thread.Sleep(100);
+                ConTrol.Mouse( ConTrol.Move.Absolute, point );
+            }
+            ConTrol.Click( ConTrol.Button.L | ConTrol.Button.UP );
+            Thread.Sleep(100);
+            MatchStep( testvalue.VAL, testvalue.MIN, CurrentCase + ".Value", "...value changed to "+ testvalue.MIN.ToString() );
+            InfoStep( "Sliding down to minimum" );
+            ConTrol.Click(ConTrol.Button.L | ConTrol.Button.DOWN);
+            for( int i = 0; i < 50; ++i ) {
+                point.Y += 10;
+                Thread.Sleep(100);
+                ConTrol.Mouse(ConTrol.Move.Absolute, point);
+            }
+            ConTrol.Click(ConTrol.Button.L | ConTrol.Button.UP);
+            Thread.Sleep(100);
+            MatchStep( testvalue.VAL, testvalue.MAX, CurrentCase + ".Value", "...value changed to " + testvalue.MAX.ToString() );
+
         }
     }
 }

@@ -182,7 +182,6 @@ namespace MidiGUI.Test.Container
             // 
             // sld_set_width
             // 
-            this.sld_set_width.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_width.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.sld_set_width.Behavior = Stepflow.Gui.MixAndFeel.Acurate;
             this.sld_set_width.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -213,7 +212,6 @@ namespace MidiGUI.Test.Container
             // 
             // sld_set_height
             // 
-            this.sld_set_height.BackColor = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
             this.sld_set_height.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.sld_set_height.Behavior = Stepflow.Gui.MixAndFeel.Acurate;
             this.sld_set_height.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -309,8 +307,7 @@ namespace MidiGUI.Test.Container
             // btn_set_style
             // 
             this.btn_set_style.AutoText = false;
-            this.btn_set_style.BackColor = System.Drawing.SystemColors.Control;
-            this.btn_set_style.BackgroundImage = ( (System.Drawing.Image)( GuiControls.Properties.Resources.kein_bild ) );
+            this.btn_set_style.BackColor = System.Drawing.Color.FromArgb(255, 32, 32, 32);
             this.btn_set_style.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_style.CausesValidation = false;
             this.btn_set_style.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -406,7 +403,7 @@ namespace MidiGUI.Test.Container
             // 
             this.lbl_set_Orientation.AutoSize = true;
             this.lbl_set_Orientation.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_set_Orientation.Location = new System.Drawing.Point(948, 777);
+            this.lbl_set_Orientation.Location = new System.Drawing.Point(948, 888);
             this.lbl_set_Orientation.Name = "lbl_set_Orientation";
             this.lbl_set_Orientation.Size = new System.Drawing.Size(67, 15);
             this.lbl_set_Orientation.TabIndex = 16;
@@ -416,7 +413,7 @@ namespace MidiGUI.Test.Container
             // 
             this.lbl_set_Led.AutoSize = true;
             this.lbl_set_Led.ForeColor = System.Drawing.Color.Wheat;
-            this.lbl_set_Led.Location = new System.Drawing.Point(1059, 777);
+            this.lbl_set_Led.Location = new System.Drawing.Point(1059, 888);
             this.lbl_set_Led.Name = "lbl_set_Led";
             this.lbl_set_Led.Size = new System.Drawing.Size(55, 15);
             this.lbl_set_Led.TabIndex = 17;
@@ -447,7 +444,7 @@ namespace MidiGUI.Test.Container
             // btn_set_Orientation
             // 
             this.btn_set_Orientation.AutoText = false;
-            this.btn_set_Orientation.BackColor = System.Drawing.SystemColors.Control;
+            this.btn_set_Orientation.BackColor = System.Drawing.Color.FromArgb(255, 32, 32, 32);
             this.btn_set_Orientation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_Orientation.CausesValidation = false;
             this.btn_set_Orientation.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -468,7 +465,7 @@ namespace MidiGUI.Test.Container
             // btn_set_Led
             // 
             this.btn_set_Led.AutoText = false;
-            this.btn_set_Led.BackColor = System.Drawing.SystemColors.Control;
+            this.btn_set_Led.BackColor = System.Drawing.Color.FromArgb(255, 32, 32, 32);
             this.btn_set_Led.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btn_set_Led.CausesValidation = false;
             this.btn_set_Led.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);

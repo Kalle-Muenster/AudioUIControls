@@ -33,6 +33,11 @@ namespace MidiGUI.Test.Container
         }
     }
 
+    public enum ControlFlags
+    {
+        Cycled, Inverted, Normal
+    }
+
     public partial class Form1 : Form
     {
         public delegate void SetInt32Value(int setValue);
@@ -45,6 +50,8 @@ namespace MidiGUI.Test.Container
         private event SetEnumValue  SetStylo;
         private event SetEnumValue  SetOrientation;
         private event SetEnumValue  SetLed;
+        private event SetEnumValue  SetCycled;
+        private event SetEnumValue  SetInvert;
 
         private SetMainValue  SetValue;
 
@@ -56,14 +63,46 @@ namespace MidiGUI.Test.Container
         private int                  setWidth;
         private object               setValue;
 
+        private LedButton            btn_Invert;
+        private LedButton            btn_Cycled;
+
+        private LedButton AddButton( Point32 position, string name, string text )
+        {
+            LedButton button = new LedButton();
+            button.AutoText = false;
+            button.BackColor = System.Drawing.Color.FromArgb(255,32,32,32);
+            button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            button.CausesValidation = false;
+            button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            button.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            button.LedLevel = 1F;
+            button.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
+            button.Location = new System.Drawing.Point(position.X,position.Y);
+            button.Margin = new System.Windows.Forms.Padding(2);
+            button.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
+            button.Name = name;
+            button.NumberOfStates = ( (byte)( 2 ) );
+            button.SideChain = 0.95F;
+            button.Size = new System.Drawing.Size(96,96);
+            button.State = Stepflow.Gui.LedButton.Default.OFF;
+            button.Style = Stepflow.Gui.Style.Dark;
+
+            Controls.Add( button );
+            button.SetUp( LED.Red, LED.off, LED.Gelb );
+            button.Text = text;
+
+            return button;
+        } 
+
         private void Connect( Control staged )
         {
             if ( Controls.ContainsKey( Staged ) ) {
                 SetWidth = null;
                 SetHeight = null;
                 SetStylo = null;
-            //    SetValue = null;
-                IDisposable contrl = Controls.Find( Staged, false)[0];
+                SetInvert = null;
+                SetCycled = null;
+                IDisposable contrl = Controls.Find( Staged, false )[0];
                 contrl.Dispose();
                 Controls.Remove( contrl as Control );
             } Staged = staged.Name;
@@ -87,21 +126,21 @@ namespace MidiGUI.Test.Container
                 SetOrientation += (Enum set) => { slider.Orientation = (Stepflow.Gui.Orientation)set; if( slider.Orientation == Stepflow.Gui.Orientation.Vertical ) slider.Inverted = true; };
                 SetLed += (Enum set) => { slider.LedColor = (LED)set; };
                 SetStylo += (Enum set) => { slider.Style = (Style)set; };
-             //   SetValue += ( object val ) => { slider.Value = (float)val; };
+                SetCycled += ( Enum set ) => { slider.Cycled = ( (LedButton.Default)set == LedButton.Default.ON ); };
+                SetInvert += ( Enum set ) => { slider.Inverted = ( (LedButton.Default)set == LedButton.Default.ON ); };
                 val_element_Val.Wrap( slider );
             } else if (staged is LedButton) {
                 LedButton button = staged as LedButton;
                 SetLed += (Enum set) => { button.DefineState( button.Index, button.State, (LED)set ); };
                 SetStylo += (Enum set) => { button.Style = (Style)set; };
-              //  SetValue += ( object val ) => { button.State = (Enum)val; };
                 val_element_Val.Wrap( button );
             } else if ( staged is GuiMeter ) {
                 GuiMeter meter = staged as GuiMeter;
-                SetOrientation += (Enum set) => { meter.Orientation = (Stepflow.Gui.Orientation)set; if( meter.Orientation == Stepflow.Gui.Orientation.Vertical ) meter.Direction = DirectionalOrientation.Up; 
-                      };
+                SetOrientation += (Enum set) => { meter.Orientation = (Stepflow.Gui.Orientation)set; if( meter.Orientation == Stepflow.Gui.Orientation.Vertical ) meter.Direction = DirectionalOrientation.Up; };
                 SetStylo += (Enum set) => { meter.Style = (Style)set; };
                 SetLed += (Enum set) => { meter.ForeColor = Color.FromArgb( (int)Stepflow.Gui.Helpers.LedGlower.ledCol[set.ToInt32()] ); };
-             //   SetValue += ( object val ) => { meter.Level = (float)val; };
+                SetCycled += ( Enum set ) => { meter.Cycled = ( (LedButton.Default)set == LedButton.Default.ON ); };
+                SetInvert += ( Enum set ) => { meter.Inverted = ( (LedButton.Default)set == LedButton.Default.ON ); };
                 val_element_Val.Wrap( meter );
             } else if( staged is JogDial ) {
                 JogDial dial = staged as JogDial;
@@ -182,8 +221,16 @@ namespace MidiGUI.Test.Container
             val_element_Max.Maximum = float.MaxValue;
             val_element_Max.Minimum = float.MinValue;
 
+            btn_Cycled = AddButton( new Point32(1059, 678),"btn_Cycled", "Cycled" );
+            btn_Invert = AddButton( new Point32(948, 678), "btn_Invert", "Invert" );
+
+            btn_Cycled.Changed += Btn_Cycled_Changed;
+            btn_Invert.Changed += Btn_Invert_Changed;
+
             Load += Form1_Load;
         }
+
+
 
         private void UpdateScreenLocation()
         {
@@ -251,6 +298,16 @@ namespace MidiGUI.Test.Container
             CenterAndScale area = CenterAndScale.FromRectangle( (Testling[Staged] as Control).Bounds );
             area.Center += location.Corner;
             return area;
+        }
+
+        private void Btn_Invert_Changed( object sender, ValueChangeArgs<Enum> value )
+        {
+            SetInvert?.Invoke( value );
+        }
+
+        private void Btn_Cycled_Changed( object sender, ValueChangeArgs<Enum> value )
+        {
+            SetCycled?.Invoke( value );
         }
 
         private void Btn_set_Led_Changed(object sender, ValueChangeArgs<Enum> value)
@@ -335,6 +392,7 @@ namespace MidiGUI.Test.Container
         {
             destruct?.Invoke();
             LedButton button = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiButton() : new LedButton();
+            button.BackColor = BackColor;
             button.Location = new Point(200, 200);
             button.Size = new Size(64, 64);
             button.SetUp(LED.Green, LED.Red, LED.Gelb);
@@ -355,6 +413,7 @@ namespace MidiGUI.Test.Container
             dings.Style = Style.Dark;
             dings.Interaction = GuiSlider.InteractionMode.Directional;
             dings.LedColor = LED.Pink;
+            dings.BackColor = BackColor;
             dings.Tag = 1;
             Connect( dings );
             destruct = () => { dings.Dispose(); };
@@ -401,6 +460,7 @@ namespace MidiGUI.Test.Container
         {
             destruct?.Invoke();
             GuiRanger dings = new GuiRanger();
+            dings.BackColor = Color.FromArgb(255, 32, 32, 32);
             dings.Location = new Point(100, 300);
             dings.Size = new Size(512, 128);
             dings.Tag = 1;
