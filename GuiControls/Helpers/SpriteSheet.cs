@@ -479,7 +479,7 @@ namespace Stepflow.Gui
         }
 
         public Color Color {
-            get { return attributes == null? Color.Transparent : Color.FromArgb((int)(color.Matrix00*255),(int)(color.Matrix11*255),(int)(color.Matrix22*255),(int)(color.Matrix33*255)); }
+            get { return attributes == null? Color.Transparent : Color.FromArgb((int)(color.Matrix33*255),(int)(color.Matrix00*255),(int)(color.Matrix11*255),(int)(color.Matrix22*255)); }
             set { SetColor(value); }
         }
 

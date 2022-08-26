@@ -400,10 +400,9 @@ namespace Stepflow.Gui
         private P l1,l2;
         private void GuiSlider_TouchDown( object sender, FingerTip tip )
         {
-            if( tip.HasFlags( IsTouching.FirstSub ) ) {
-                if( Orientation != Orientation.Rondeal ) {
-                    mnu_context.Show();
-                } else {
+            if( tip.HasFlags( IsTouching.Prime ) ) {
+                
+                if( Orientation == Orientation.Rondeal ) {
                     l1 = tip.Position;
                     l2 = tip.NextHere.Position;
                 }
@@ -519,7 +518,7 @@ namespace Stepflow.Gui
             Rectangle a = Nuppsi.Bounds;
             float  angle = (Inverted ? (1.0f-Proportion) : Proportion) * PixelRange
                          - (Cycled ? 0 : 135);
- 
+
             GraphicsState pushed = g.Save();
 
                 rotate.Reset();
@@ -864,8 +863,8 @@ namespace Stepflow.Gui
 
             bgimg = new SpriteSheet( images, source[0] );
             nippl = new SpriteSheet( images, source[1] );
-            bgimg.SetColor( Color.White );
-            nippl.SetColor( Color.White );
+            bgimg.SetColor( Color.White ); //Color.FromArgb(255,32,32,32) );
+            nippl.SetColor( Color.White ); //Color.FromArgb(255,32,32,32) );
 
             fastmove = 0;
             lastMouse = 0;
@@ -924,20 +923,21 @@ namespace Stepflow.Gui
 
         private void AdjustSpriteColor( object sender, EventArgs e )
         {
-            base.BackColor = Color.Transparent;
-            base.ForeColor = Color.Transparent;
-            bgimg.SetColor( Color.White );
-            nippl.SetColor( Color.White );
+            Color bg = Parent.FindForm().BackColor;
+            base.BackColor = bg;
+            base.ForeColor = bg;
+            //bgimg.SetColor( bg );
+            //nippl.SetColor( bg );
             Load -= AdjustSpriteColor;
             Invalidate( true );
         }
 
-        public override Color BackColor {
+        public Color DrawColor {
             get { return bgimg.Color; }
             set { bgimg.Color = value; }
         }
 
-        public override Color ForeColor {
+        public Color KnobColor {
             get { return nippl.Color; }
             set { nippl.Color = value; }
         }
@@ -1119,7 +1119,9 @@ namespace Stepflow.Gui
         {}
 
         virtual public void OnTouchDupple( FingerTip tipple )
-        {}
+        {
+            mnu_context.Show( this, tipple.Position );
+        }
         virtual public void OnTouchTapped( FingerTip tapple )
         {}
         virtual public void OnTouchTrippl( FingerTip triple )
@@ -1159,7 +1161,7 @@ namespace Stepflow.Gui
 
         private bool touchToMouse = false;
         public bool RouteTouchesToMouseEvents {
-            get {return touchToMouse; }
+            get { return touchToMouse; }
             set { if ( value != touchToMouse ) {
                     touchToMouse = value;
                 }
