@@ -13,6 +13,9 @@
     <Compile Update="Gui\LedButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Gui\MenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Gui\ValueDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
