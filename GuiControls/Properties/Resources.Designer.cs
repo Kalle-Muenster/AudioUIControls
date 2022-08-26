@@ -19,7 +19,7 @@ namespace GuiControls.Properties {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -349,7 +349,7 @@ namespace GuiControls.Properties {
         ///            &lt;sprite name=&quot;Lite&quot;&gt;
         ///                &lt;X&gt;32&lt;/X&gt;
         ///                &lt;Y&gt;0&lt;/Y&gt;
-        ///                &lt;W&gt;31&lt; [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///         [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string slider_Vertical_xml {
             get {
