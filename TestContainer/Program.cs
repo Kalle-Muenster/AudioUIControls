@@ -11,7 +11,7 @@ namespace MidiGUI.Test.Container
     static class Program
     {
         private static TestResults isTestrun = TestResults.NONE;
-        private static Runner<Form1,Suite> testrunner = null;
+        private static Runner<Form1,MidiGUIControls> testrunner = null;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -28,9 +28,9 @@ namespace MidiGUI.Test.Container
                 Application.ApplicationExit += Application_ApplicationExit;
                 
                 isTestrun = TestResults.TextOutput;
-                if( Args.Contains("--verbose") | Args.Contains("-v") )
+                if( Args.Contains("--verbose") || Args.Contains("-v") )
                     isTestrun |= TestResults.Verbose;
-                if( Args.Contains("--xmllog") | Args.Contains("-x") )
+                if( Args.Contains("--xmllog") || Args.Contains("-x") )
                     isTestrun |= TestResults.XmlOutput;
 
                 StdStream.Init( 
@@ -57,7 +57,7 @@ namespace MidiGUI.Test.Container
         {            
             Form1 window = sender as Form1;
             window.Paint -= Window_Shown;
-            testrunner = new Runner<Form1,Suite>(new Suite(window,isTestrun));
+            testrunner = new Runner<Form1,MidiGUIControls>( new MidiGUIControls(window,isTestrun) );
             testrunner.Start();
         }
 

@@ -53,7 +53,7 @@ namespace MidiGUI.Test.Container
         private event SetEnumValue  SetCycled;
         private event SetEnumValue  SetInvert;
 
-        private SetMainValue  SetValue;
+        private SetMainValue         SetValue;
 
         private string               Staged;
         public  Dictionary<string,IInterValuable> Testling;
@@ -123,7 +123,14 @@ namespace MidiGUI.Test.Container
             
             if (staged is GuiSlider) {
                 GuiSlider slider = staged as GuiSlider;
-                SetOrientation += (Enum set) => { slider.Orientation = (Stepflow.Gui.Orientation)set; if( slider.Orientation == Stepflow.Gui.Orientation.Vertical ) slider.Inverted = true; };
+                SetOrientation += (Enum set) => {
+                    slider.Orientation = (Stepflow.Gui.Orientation)set;
+                    if( slider.Orientation == Stepflow.Gui.Orientation.Vertical )
+                        slider.Inverted = true;
+                    btn_Invert.State = slider.Inverted 
+                                     ? LedButton.Default.ON
+                                     : LedButton.Default.OFF;
+                };
                 SetLed += (Enum set) => { slider.LedColor = (LED)set; };
                 SetStylo += (Enum set) => { slider.Style = (Style)set; };
                 SetCycled += ( Enum set ) => { slider.Cycled = ( (LedButton.Default)set == LedButton.Default.ON ); };
@@ -136,7 +143,14 @@ namespace MidiGUI.Test.Container
                 val_element_Val.Wrap( button );
             } else if ( staged is GuiMeter ) {
                 GuiMeter meter = staged as GuiMeter;
-                SetOrientation += (Enum set) => { meter.Orientation = (Stepflow.Gui.Orientation)set; if( meter.Orientation == Stepflow.Gui.Orientation.Vertical ) meter.Direction = DirectionalOrientation.Up; };
+                SetOrientation += (Enum set) => {
+                    meter.Orientation = (Stepflow.Gui.Orientation)set;
+                    if( meter.Orientation == Stepflow.Gui.Orientation.Vertical )
+                        meter.Direction = DirectionalOrientation.Up;
+                    btn_Invert.State = meter.Inverted 
+                                     ? LedButton.Default.ON
+                                     : LedButton.Default.OFF;
+                };
                 SetStylo += (Enum set) => { meter.Style = (Style)set; };
                 SetLed += (Enum set) => { meter.ForeColor = Color.FromArgb( (int)Stepflow.Gui.Helpers.LedGlower.ledCol[set.ToInt32()] ); };
                 SetCycled += ( Enum set ) => { meter.Cycled = ( (LedButton.Default)set == LedButton.Default.ON ); };
