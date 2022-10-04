@@ -53,7 +53,6 @@ namespace MidiGUI.Test.Container
         private event SetEnumValue  SetCycled;
         private event SetEnumValue  SetInvert;
 
-        private SetMainValue         SetValue;
 
         private string               Staged;
         public  Dictionary<string,IInterValuable> Testling;
@@ -62,6 +61,7 @@ namespace MidiGUI.Test.Container
         private int                  setHeight;
         private int                  setWidth;
         private object               setValue;
+        private Rectangle            area;
 
         private LedButton            btn_Invert;
         private LedButton            btn_Cycled;
@@ -70,22 +70,22 @@ namespace MidiGUI.Test.Container
         {
             LedButton button = new LedButton();
             button.AutoText = false;
-            button.BackColor = System.Drawing.Color.FromArgb(255,32,32,32);
-            button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            button.BackColor = Color.FromArgb(255,32,32,32);
+            button.BackgroundImageLayout = ImageLayout.Stretch;
             button.CausesValidation = false;
-            button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            button.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            button.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            button.ImeMode = ImeMode.NoControl;
             button.LedLevel = 1F;
-            button.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
-            button.Location = new System.Drawing.Point(position.X,position.Y);
-            button.Margin = new System.Windows.Forms.Padding(2);
-            button.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
+            button.LedValue = Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
+            button.Location = new Point(position.X,position.Y);
+            button.Margin = new Padding(2);
+            button.Mode = LedButton.Transit.OnRelease;
             button.Name = name;
             button.NumberOfStates = ( (byte)( 2 ) );
             button.SideChain = 0.95F;
-            button.Size = new System.Drawing.Size(96,96);
-            button.State = Stepflow.Gui.LedButton.Default.OFF;
-            button.Style = Stepflow.Gui.Style.Dark;
+            button.Size = new Size(96,96);
+            button.State = LedButton.Default.OFF;
+            button.Style = Style.Dark;
 
             Controls.Add( button );
             button.SetUp( LED.Red, LED.off, LED.Gelb );
@@ -240,6 +240,7 @@ namespace MidiGUI.Test.Container
 
             btn_Cycled.Changed += Btn_Cycled_Changed;
             btn_Invert.Changed += Btn_Invert_Changed;
+            area = new Rectangle(0, 0, Width, Height);
 
             Load += Form1_Load;
         }
@@ -248,7 +249,8 @@ namespace MidiGUI.Test.Container
 
         private void UpdateScreenLocation()
         {
-            location = CornerAndSize.FromRectangle( RectangleToScreen( new Rectangle(0,0, Width, Height) ) );
+            area.Size = this.Size;
+            location = CornerAndSize.FromRectangle( RectangleToScreen( area ) );
         }
 
         private void Form1_Load( object sender, EventArgs e )
@@ -300,7 +302,7 @@ namespace MidiGUI.Test.Container
                         return CenterAndScale.FromRectangle( rect ).Center + offset;
                     } else {
                         offset.y += (short)( item.Bounds.Height );
-                        return FindMenuPosition(path[1], item.DropDownItems, offset);
+                        return FindMenuPosition( path[1], item.DropDownItems, offset );
                     }
                 }
             }
@@ -439,9 +441,12 @@ namespace MidiGUI.Test.Container
             GuiMeter dings = (sender as ToolStripItem).Text.Contains("Midi") ? new MidiMeter() : new GuiMeter();
             dings.Location = new Point(200, 200);
             dings.Size = new Size(64,256);
-            dings.Orientation = Stepflow.Gui.Orientation.Horizontal;
-            dings.Style = Style.Dark;
-            dings.Damped = true;
+            dings.Orientation = Stepflow.Gui.Orientation.Vertical;
+            dings.Style = Style.Lite;
+            dings.Damped = false;
+            dings.Cycled = false;
+            dings.Clamped = true;
+            dings.Unsigned = false;
             dings.Tag = 1;
             Connect( dings );
             destruct = () => { dings.Dispose(); };
