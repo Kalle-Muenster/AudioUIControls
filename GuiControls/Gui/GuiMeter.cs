@@ -293,8 +293,8 @@ namespace Stepflow.Gui
 
         public int PixelRange {
             get { switch(Orientation) {
-                    case Orientation.Horizontal: return ( Unsigned ? Bounds.Width : Bounds.Width / 2 ) - border.Summ();
-                    case Orientation.Vertical: return ( Unsigned ? Bounds.Height : Bounds.Height / 2 ) - border.Summ();
+                    case Orientation.Horizontal: return ( Unsigned ? Bounds.Width - border.Summ() : (Bounds.Width / 2) - border.X );
+                    case Orientation.Vertical: return ( Unsigned ? Bounds.Height - border.Summ() : (Bounds.Height / 2 ) - border.Y );
                 } return 270;
             }
         }
@@ -309,9 +309,18 @@ namespace Stepflow.Gui
             } return actual;
         }
         public virtual float ClipFactor {
-            get { return clipo = triggerLevelSafe( value.VAL == value.MAX
-                               ? ( ( ClipValue - value.MAX ) - value.MIN ) / ( value.MAX - value.MIN )
-                               : 0                  );
+            get { float val = value.VAL;
+                if( Unsigned ) {
+                    return clipo = triggerLevelSafe( val == value.MAX
+                                   ? ( ( ClipValue - value.MAX ) / value.MAX )
+                                   : 0 );
+                } else {
+                    return clipo = triggerLevelSafe( val == value.MAX
+                                   ? ( ( ClipValue - value.MAX ) / value.MAX )
+                                                   : val == value.MIN
+                                   ? ( ( ClipValue - value.MIN ) / value.MIN )
+                                   : 0 );
+                }
             }
         }
 
