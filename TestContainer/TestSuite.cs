@@ -24,6 +24,7 @@ namespace MidiGUI.Test
                   , args.HasFlag(TestResults.XmlOutput)
                   ) {
             AddTestCase( "LedButton", Test_LedButton );
+            AddTestCase( "GuiMeter", Test_GuiMeter );
             AddTestCase( "GuiSlider", Test_GuiSlider );
         }
 
@@ -65,6 +66,56 @@ namespace MidiGUI.Test
         }
 
 
+        private void Test_GuiMeter()
+        {
+            SelectControlType( typeof(GuiMeter) );
+            Thread.Sleep( 1000 );
+            GuiMeter testling = Aut.GetStagedControl() as GuiMeter;
+            CheckStep( testling != null, "{0} instanciated", CurrentCase );
+            testling.Damped = false;
+            while( testling.Style != Style.Flat ) {
+                ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_set_Style").Center );
+                Thread.Sleep( 200 );
+            }
+            testling.Range = 100.0f;
+            Aut.SetControlValue( 0.0f );
+            Thread.Sleep( 2000 );
+            float level = testling.Level;
+            Aut.SetControlValue( 120.0f );
+            Thread.Sleep( 2000 );
+            level = testling.ClipValue;
+            CheckStep( level == 120.0f, "meter level expected ({0}) clip value is: {1}", 120, level );
+            level = testling.ClipFactor;
+            CheckStep( level == 0.2f, "meter level expected ({0}) clip factor is: {1}", 0.2f, level );
+            level = testling.Level;
+            CheckStep( level == 100.0f, "meter level ({0}) clamped to maximum: {1}", level, testling.valence().controller().MAX );
+            Aut.SetControlValue( -120.0f );
+            Thread.Sleep(2000);
+            level = testling.Level;
+            CheckStep( level == -100.0f, "meter level ({0}) clamped to minimum: {1}", level, testling.valence().controller().MIN );
+            Thread.Sleep(1000);
+
+            testling.Unsigned = true;
+            Aut.SetControlValue( 0.0f );
+            Thread.Sleep( 2000 );
+            level = testling.Level;
+            Aut.SetControlValue( 120.0f );
+            Thread.Sleep( 2000 );
+            level = testling.ClipValue;
+            CheckStep(level == 120.0f, "meter level expected ({0}) clip value is: {1}", 120, level);
+            level = testling.ClipFactor;
+            CheckStep(level == 0.2f, "meter level expected ({0}) clip factor is: {1}", 0.2f, level);
+            level = testling.Level;
+            CheckStep(level == 100.0f, "meter level ({0}) clamped to maximum: {1}", level, testling.valence().controller().MAX);
+            Aut.SetControlValue( 0.0f );
+            Thread.Sleep( 2000 );
+            Aut.SetControlValue( -10.0f );
+            Thread.Sleep( 500 );
+            level = testling.Level;
+            CheckStep( level == 10.0f, "set level to (-10) treated as: {0}", level );
+            Thread.Sleep( 1000 );
+        }
+
         private void Test_LedButton()
         {
             SelectControlType( typeof(LedButton) );
@@ -88,7 +139,7 @@ namespace MidiGUI.Test
         }
 
         private int counter = 0;
-        private void SliderMarkerPassed(object sender, GuiSlider.MarkerPassedEventArgs e)
+        private void SliderMarkerPassed( object sender, GuiSlider.MarkerPassedEventArgs e )
         {
             GuiSlider slider = sender as GuiSlider;
             PassStep("Slider {0} (now at value {1}) has passed '{2}' value {3} at a speed of {4} units per move", slider.Name, slider.Value, e.Named, e.Value, e.Speed );
