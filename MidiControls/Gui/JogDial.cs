@@ -158,30 +158,32 @@ namespace Midi
                 actual = flow.VAL;
                 valence( Relative ).SetDirty( ValenceFieldState.Flags.VAL );
             }
+            float flowMov = flow.MOV;
             if( actual != fLast ) {
                 midiIO.automate().OnValueChange( this, MidiValue );
                 ValueChanged?.Invoke( this, new ValueChangeArgs<float>(actual) );
                 if( canStop == false ) {
                     canStop = Math.Abs(actual) > IsDownBelow;
-                    if (canStop)
-                        lastDir = flow.MOV > 0 
-                                ? Direction.Clockwise
-                                : Direction.CounterClock;
+                    if( canStop ) {
+                        if( actual > 0 && flowMov > 0 )
+                            lastDir = Direction.Clockwise;
+                        else if ( actual < 0 && flowMov < 0 )
+                            lastDir = Direction.CounterClock;
+                    }
                 }
             }
             if ( WheelReverse != null || (TurningStopt != null && canStop) ) {
                 if ( (fLast <= 0 && actual > 0) || (actual < 0 && fLast >= 0) ) {
-                    Direction newDir = actual > 0
-                                     ? Direction.Clockwise
-                                     : Direction.CounterClock;
-                    if (newDir!=lastDir) {
+                        // maybe fLast < 0 / fLast > 0 ... not fLast <= 0 / fLast >= 0...
+                        Direction newDir = actual > 0
+                                         ? Direction.Clockwise
+                                         : Direction.CounterClock;
+                    if (newDir != lastDir) {
                         WheelReverse( this, new ValueChangeArgs<Direction>( lastDir = newDir ) );
                         canStop = true;
                     } 
-                } else if ( canStop && Math.Abs(actual) < IsDownBelow && flow.MOV == 0 ) {
-                    TurningStopt( this, new ValueChangeArgs<Direction>( fLast > 0
-                                                          ? Direction.Clockwise
-                                                          : Direction.CounterClock ) );
+                } else if ( canStop && Math.Abs(actual) < IsDownBelow && flowMov == 0 ) {
+                    TurningStopt( this, new ValueChangeArgs<Direction>( lastDir ) );
                     useracces = canStop = false;
                 }
             }
@@ -266,13 +268,14 @@ namespace Midi
                     } else {
                         task().StoptAssist();
                         if( !useracces ) {
+                            float last = flow.VAL; 
                             flow.VAL = 0;
                             valence( Relative ).SetDirty( ValenceFieldState.Flags.VAL );
                             if( ValueChanged != null ) {
                                 ValueChanged( this, new ValueChangeArgs<float>( flow ) );
                             }
                             if( TurningStopt != null && canStop ) {
-                                TurningStopt( this, new ValueChangeArgs<Direction>( flow.MOV > 0
+                                TurningStopt( this, new ValueChangeArgs<Direction>( last > 0
                                             ? Direction.Clockwise
                                             : Direction.CounterClock ) );
                                 canStop = false;
