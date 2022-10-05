@@ -60,10 +60,7 @@ namespace Stepflow.Gui
 
         private static Bitmap[]  background;
         private static Bitmap    buttonLeds;
-
-//        private static SpriteSheet[] images;
-
-        public const   sbyte    MaxNumState = 10;
+        public const   sbyte     MaxNumState = 10;
 
         public event ValueChangeDelegate<Enum> Changed;
         public event ValueChangeDelegate<Enum> Pressed;
@@ -76,7 +73,7 @@ namespace Stepflow.Gui
         private ButtonValenceField joints;
 
         private byte               highest;
-        private System.Drawing.Rectangle          leDrect;
+        private Rectangle          leDrect;
         private LED[]              led = new LED[MaxNumState];
         private bool               glimme = false;
         private int                tackte = 0;
@@ -199,7 +196,6 @@ namespace Stepflow.Gui
             Valence.RegisterIntervaluableType<Controlled.Int8>();
             Valence.RegisterIntervaluableType<Controlled.Float32>();
 
-            //images = SpriteSheet.loadSheetFromXml( Stepflow.Properties.Resources.button_leds_xml );
             buttonLeds = Resources.LedButton_LEDs;
             background = new Bitmap[6] { Resources.LedButton_Flat,
                                          Resources.button_hover_Lite,
@@ -285,7 +281,7 @@ namespace Stepflow.Gui
             Disposed += LedButton_Disposed;
         }
 
-        private void LedButton_Disposed(object sender, EventArgs e)
+        private void LedButton_Disposed( object sender, EventArgs e )
         {
             Valence.UnRegisterIntervaluableElement( this );
             PointerInput.Dispatcher?.UnRegisterTouchableElement( this );
