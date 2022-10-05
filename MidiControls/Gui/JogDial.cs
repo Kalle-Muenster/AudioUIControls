@@ -67,8 +67,7 @@ namespace Midi
         public event DirectionHasChanged WheelReverse;
         public event DirectionHasChanged TurningStopt;
 
-        private MouseEventDelegator           SlopeDown;
-        
+        private MouseEventDelegator SlopeDown;
         private Controlled.Float32 flow;
         private Controlled.Float32 pos;
 
@@ -83,7 +82,7 @@ namespace Midi
         private bool?      quadrants;
         private bool       canStop;
         private Direction  lastDir;
-        private MidiInOut     midiIO = null;
+        private MidiInOut  midiIO = null;
         private TaskAssist<SteadyAction,Action,Action> propellor;
 
         private static Rectangle rectFromXmlSheet(System.Xml.XPath.XPathNavigator xpath, string name)
@@ -130,7 +129,6 @@ namespace Midi
             };
 
             TaskAssist<SteadyAction,Action,Action>.Init( PropellorSpeed );
-            //Resources.ResourceManager.ReleaseAllResources();
 
             if( !PointerInput.isInitialized() ) {
                 PointerInput.AutoRegistration = AutoRegistration.Enabled;
@@ -150,7 +148,8 @@ namespace Midi
                 pos.VAL = (pLast + (actual * scaleFactor));
                 pos.Check();
                 valence( Absolute ).SetDirty( ValenceFieldState.Flags.VAL );
-            } else { // if byPosition
+            } else { 
+                // if byPosition
                 unsafe { pLast = *(float*)pos.GetPin( ElementValue.LAST ).ToPointer(); }
                 pos.Check();
                 flow.VAL = (pos.MOV / scaleFactor);

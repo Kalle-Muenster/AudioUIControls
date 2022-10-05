@@ -84,23 +84,23 @@ namespace Stepflow.Gui
         ITaskAssistor<Action, Action> ITaskAsistableVehicle<Action, Action>.assist { get; set; }
         int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StartAssist()
         {
-           #if DEBUG
-            int placement = task().assist.GetAssistence( task().assist.action );  
-            Consola.StdStream.Out.WriteLine( "DampfDruck now at {0} cylinders", placement );
-            return placement;
-#else
+//#if DEBUG
+//            int placement = task().assist.GetAssistence( task().assist.action );  
+//            Consola.StdStream.Out.WriteLine( "DampfDruck now at {0} cylinders", placement );
+//            return placement;
+//#else
             return task().assist.GetAssistence( task().assist.action );   
-#endif
+//#endif
         }
         int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist()
         {
-           #if DEBUG
-            int placement = task().assist.ReleaseAssist( task().assist.action );
-            Consola.StdStream.Out.WriteLine( "DampfStopt! no cylinders anymore", placement );
-            return placement;
-#else
+//#if DEBUG
+//            int placement = task().assist.ReleaseAssist( task().assist.action );
+//            Consola.StdStream.Out.WriteLine( "DampfStopt! no cylinders anymore", placement );
+//            return placement;
+//#else
             return task().assist.ReleaseAssist( task().assist.action );
-#endif
+//#endif
         }
         #endregion
 
@@ -189,10 +189,10 @@ namespace Stepflow.Gui
 
         static LedButton()
         {
-#if DEBUG
-            Consola.StdStream.Init( Consola.CreationFlags.TryConsole );
-            Win32Imports.RETURN_CODE.SetLogOutWriter(Consola.StdStream.Out.WriteLine);
-#endif
+//#if DEBUG
+//            Consola.StdStream.Init( Consola.CreationFlags.TryConsole );
+//            Win32Imports.RETURN_CODE.SetLogOutWriter( Consola.StdStream.Out.WriteLine );
+//#endif
             Valence.RegisterIntervaluableType<Controlled.Int8>();
             Valence.RegisterIntervaluableType<Controlled.Float32>();
 

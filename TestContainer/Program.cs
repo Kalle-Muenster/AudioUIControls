@@ -11,6 +11,7 @@ namespace MidiGUI.Test.Container
     static class Program
     {
         private static TestResults isTestrun = TestResults.NONE;
+        private static string testcase = string.Empty;
         private static Runner<Form1,MidiGUIControls> testrunner = null;
 
         /// <summary>
@@ -32,7 +33,12 @@ namespace MidiGUI.Test.Container
                     isTestrun |= TestResults.Verbose;
                 if( Args.Contains("--xmllog") || Args.Contains("-x") )
                     isTestrun |= TestResults.XmlOutput;
-
+                if( Args.Contains("--testcase") ) {
+                    int casearg = Args.IndexOf( "--testcase" );
+                    if( casearg < Args.Count-1 ) {
+                        testcase = Args[casearg+1];
+                    }
+                }
                 StdStream.Init( 
                     CreationFlags.TryConsole 
                    |CreationFlags.CreateLog
@@ -57,7 +63,7 @@ namespace MidiGUI.Test.Container
         {            
             Form1 window = sender as Form1;
             window.Paint -= Window_Shown;
-            testrunner = new Runner<Form1,MidiGUIControls>( new MidiGUIControls(window,isTestrun) );
+            testrunner = new Runner<Form1,MidiGUIControls>( new MidiGUIControls(window,isTestrun,testcase) );
             testrunner.Start();
         }
 

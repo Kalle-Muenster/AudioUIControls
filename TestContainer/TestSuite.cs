@@ -12,20 +12,51 @@ using Stepflow.Gui.Geometry;
 using System.Windows.Forms;
 using System.Drawing;
 using MidiGUI.Test.Container;
+using static Consola.Test.ConTrol;
+using static System.Threading.Thread;
+using Button = Consola.Test.ConTrol.Button;
 
 namespace MidiGUI.Test
 {
-    public class MidiGUIControls
-        : Suite<Container.Form1>
+    public static class Extensions
     {
-        public MidiGUIControls( Container.Form1 mainwindow, TestResults args )
+        public static ConTrol.Point ToPoint( this Point32 cast )
+        {
+            return new ConTrol.Point( cast.X, cast.Y );
+        }
+
+        public static Point32 ToPoint32( this ConTrol.Point cast )
+        {
+            return new Point32( cast.X, cast.Y );
+        }
+
+    }
+
+
+    public class MidiGUIControls
+        : Suite<Form1>
+    {
+        public MidiGUIControls( Form1 mainwindow, TestResults args )
+            : this( mainwindow, args, string.Empty )
+        {}
+
+        public MidiGUIControls( Form1 mainwindow, TestResults args, string testcase )
             : base( mainwindow
                   , args.HasFlag(TestResults.Verbose)
                   , args.HasFlag(TestResults.XmlOutput)
                   ) {
-            AddTestCase( "LedButton", Test_LedButton );
-            AddTestCase( "GuiMeter", Test_GuiMeter );
-            AddTestCase( "GuiSlider", Test_GuiSlider );
+            switch( testcase ) {
+                case "LedButton": AddTestCase( testcase, Test_LedButton ); break;
+                case "GuiMeter":  AddTestCase( testcase, Test_GuiMeter ); break;
+                case "GuiSlider": AddTestCase( testcase, Test_GuiSlider ); break;
+                case "JogDial":   AddTestCase( testcase, Test_JogDial ); break;
+                default:
+                    AddTestCase( "LedButton", Test_LedButton );
+                    AddTestCase( "GuiMeter", Test_GuiMeter );
+                    AddTestCase( "GuiSlider", Test_GuiSlider );
+                    AddTestCase( "JogDial", Test_JogDial );
+                break;
+            }
         }
 
         protected override ConTrol.Point GetMenuPoint( string menupath )
@@ -58,11 +89,11 @@ namespace MidiGUI.Test
 
         private void SelectControlType( Type controltype )
         {
-            ConTrol.Click( ConTrol.Button.L, GetMenuPoint("Controlls") );
-            Thread.Sleep( 2000 );
+            Click( Button.L, GetMenuPoint("Controlls") );
+            Sleep( 2000 );
             ConTrol.Point point = GetMenuPoint( "Controlls." + controltype.Name );
-            ConTrol.Click( ConTrol.Button.L, point );
-            Thread.Sleep( 2000 );
+            Click( Button.L, point );
+            Sleep( 2000 );
         }
 
 
@@ -74,7 +105,7 @@ namespace MidiGUI.Test
             CheckStep( testling != null, "{0} instanciated", CurrentCase );
             testling.Damped = false;
             while( testling.Style != Style.Flat ) {
-                ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_set_Style").Center );
+                Click( Button.L, GetScreenArea("btn_set_Style").Center );
                 Thread.Sleep( 200 );
             }
             testling.Range = 100.0f;
@@ -102,11 +133,11 @@ namespace MidiGUI.Test
             Aut.SetControlValue( 120.0f );
             Thread.Sleep( 2000 );
             level = testling.ClipValue;
-            CheckStep(level == 120.0f, "meter level expected ({0}) clip value is: {1}", 120, level);
+            CheckStep(level == 120.0f, "meter level expected ({0}) clip value is: {1}", 120, level );
             level = testling.ClipFactor;
-            CheckStep(level == 0.2f, "meter level expected ({0}) clip factor is: {1}", 0.2f, level);
+            CheckStep(level == 0.2f, "meter level expected ({0}) clip factor is: {1}", 0.2f, level );
             level = testling.Level;
-            CheckStep(level == 100.0f, "meter level ({0}) clamped to maximum: {1}", level, testling.valence().controller().MAX);
+            CheckStep(level == 100.0f, "meter level ({0}) clamped to maximum: {1}", level, testling.valence().controller().MAX );
             Aut.SetControlValue( 0.0f );
             Thread.Sleep( 2000 );
             Aut.SetControlValue( -10.0f );
@@ -151,14 +182,14 @@ namespace MidiGUI.Test
             SelectControlType( typeof(GuiSlider) );
             GuiSlider testling = Aut.GetStagedControl() as GuiSlider;
             CheckStep(testling != null, "{0} instanciated", CurrentCase );
-            Thread.Sleep( 1000 );
+            Sleep( 1000 );
 
             while( testling.Orientation != Stepflow.Gui.Orientation.Vertical ) {
-                ConTrol.Click( ConTrol.Button.L, GetScreenArea("btn_set_Orientation").Center );
+                Click( Button.L, GetScreenArea("btn_set_Orientation").Center );
                 Thread.Sleep( 200 );
             }
 
-            InfoStep("Set {0} range: 0 to 100", CurrentCase);
+            InfoStep( "Set {0} range: 0 to 100", CurrentCase );
             Controlled.Float32 testvalue = testling.valence().controller();
             testvalue.MIN = 0;
             testvalue.MAX = 100;
@@ -167,14 +198,14 @@ namespace MidiGUI.Test
             Aut.SetControlHeight( 512 );
             InfoStep( "Assigning value 50 to {0}", CurrentCase );
             Aut.SetControlValue( 50.0f );
-            Thread.Sleep ( 1000 );
+            Sleep ( 1000 );
             ConTrol.Point point = GetScreenArea( testling ).Center;
             InfoStep( "Sliding to topmost position" );
-            ConTrol.Mouse( ConTrol.Move.Absolute, point );
-            ConTrol.Click( ConTrol.Button.L|ConTrol.Button.DOWN );
+            Mouse( Move.Absolute, point );
+            Click( Button.L|Button.DOWN );
             for( int i = 0; i < 25; ++i ) {
                 point.Y -= 10;
-                Thread.Sleep( 100 );
+                Thread.Sleep( 25 );
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             } ConTrol.Click( ConTrol.Button.L|ConTrol.Button.UP );
             Thread.Sleep( 100 );
@@ -183,7 +214,7 @@ namespace MidiGUI.Test
             ConTrol.Click( ConTrol.Button.L|ConTrol.Button.DOWN );
             for( int i = 0; i < 50; ++i ) {
                 point.Y += 10;
-                Thread.Sleep( 100 );
+                Thread.Sleep( 25 );
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             } ConTrol.Click( ConTrol.Button.L|ConTrol.Button.UP );
             Thread.Sleep( 100 );
@@ -204,7 +235,7 @@ namespace MidiGUI.Test
             ConTrol.Click( ConTrol.Button.L | ConTrol.Button.DOWN );
             for( int i = 0; i < 25; ++i ) {
                 point.Y -= 10;
-                Thread.Sleep( 100 );
+                Thread.Sleep( 25 );
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             }
             ConTrol.Click( ConTrol.Button.L | ConTrol.Button.UP );
@@ -214,7 +245,7 @@ namespace MidiGUI.Test
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.DOWN);
             for( int i = 0; i < 50; ++i ) {
                 point.Y += 10;
-                Thread.Sleep( 100 );
+                Thread.Sleep( 25 );
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             }
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.UP);
@@ -239,7 +270,7 @@ namespace MidiGUI.Test
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.DOWN);
             for( int i = 0; i < 25; ++i ) {
                 point.Y -= 10;
-                Thread.Sleep( 100 );
+                Thread.Sleep( 25 );
                 ConTrol.Mouse( ConTrol.Move.Absolute, point );
             }
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.UP);
@@ -248,13 +279,14 @@ namespace MidiGUI.Test
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.DOWN);
             for( int i = 0; i < 50; ++i ) {
                 point.Y += 10;
-                Thread.Sleep(100);
-                ConTrol.Mouse(ConTrol.Move.Absolute, point);
+                Thread.Sleep( 25 );
+                ConTrol.Mouse( ConTrol.Move.Absolute, point );
             }
             ConTrol.Click(ConTrol.Button.L | ConTrol.Button.UP);
             Thread.Sleep(100);
 
             MatchStep( counter, 3, "times a marker was passed", "times" );
+            Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
         }
     }
 }
