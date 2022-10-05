@@ -147,6 +147,121 @@ namespace MidiGUI.Test
             Thread.Sleep( 1000 );
         }
 
+
+        private bool touched = false;
+        private bool reversed = false;
+        private float movement = 0.0f;
+        private JogDial.Direction direction = (JogDial.Direction)0;
+        private float angel = 0.0f;
+        private float accelleration = 0.0f;
+        private bool fast = false;
+        private int stops = 0;
+
+        private void Test_JogDial()
+        {
+            SelectControlType( typeof(JogDial) );
+
+            JogDial jogdial = Aut.GetStagedControl() as JogDial;
+            CheckStep( jogdial != null, "{0} instanciated", CurrentCase );
+            Sleep( 1000 );
+
+            jogdial.WheelTouched += Jogdial_WheelTouched;
+            jogdial.WheelReverse += Jogdial_WheelReverse;
+            jogdial.TurningStopt += Jogdial_TurningStopt;
+            jogdial.WheelRelease += Jogdial_WheelRelease;
+            jogdial.MovementFast += Jogdial_MovementFast;
+
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
+
+            IRectangle globs = Aut.GetTestlingArea();
+            Point32 point = globs.Center;
+            float h = ( globs.Scale.X - 20 );
+            Mouse( Move.Absolute, point.X-(int)h, point.Y );
+            float H = (float)Math.Pow(h,2);
+            float stueck = H/200.0f;
+            float A = H;
+            float B = 0;
+            Click( Button.L | Button.DOWN );
+            Sleep( 100 );
+            CheckStep( touched, "wheel interacted" );
+            touched = true;
+            TimeSpan step = new TimeSpan((long)(System.Diagnostics.Stopwatch.Frequency * (1.5/1000.0) ));
+            for( int i=0; i<98; ++i ) {
+                stueck *= 1.01f;
+                A -= stueck; B += stueck;
+                Mouse( Move.Absolute, (int)(point.X - Math.Sqrt(A)), (int)(point.Y - Math.Sqrt(B)) );
+                Sleep( step );
+            }
+            A -= stueck; B += stueck;
+            Click( Button.L|Button.UP, (int)( point.X - Math.Sqrt(A) ), (int)( point.Y - Math.Sqrt(B) ));
+            point.Y = (int)( point.Y - Math.Sqrt(B) );
+            stueck = (float)Math.Sqrt(stueck);
+            for( int i = 0; i < 98; ++i ) {
+                point.x += 3;
+                Mouse( Move.Absolute, point.X, point.Y );
+                Sleep( step );
+            }
+            CheckStep( movement > 0, "wheel movement (expected greater 0) is: {0}", movement );
+            Sleep( 100 );
+            CheckStep( touched == false, "wheel released" );
+            CheckStep( stops == 0, "wheel triggered {0} 'stoped' events during move", stops );
+            Sleep( 3000 );
+            CheckStep( stops > 0 && reversed == false && direction == JogDial.Direction.Clockwise && movement == 0,
+                "wheel triggered '{0}' event (expected {1}) from turning '{2}' (expected {3})", 
+                reversed ? "reverse" : "stoped", "stoped", direction, JogDial.Direction.Clockwise );
+            Sleep( 2000 );
+        }
+
+        private void Jogdial_MovementFast( object sender, ValueChangeArgs<float> value )
+        {
+            fast = true;
+        }
+
+        private void Jogdial_WheelRelease( object sender, ValueChangeArgs<float> value )
+        {
+            touched = false;
+            JogDial dial = sender as JogDial;
+            movement = dial.Movement;
+            accelleration = dial.Accellaration;
+            angel = dial.Position;
+        }
+
+        private void Jogdial_TurningStopt( object sender, ValueChangeArgs<JogDial.Direction> data )
+        {
+            ++stops;
+            direction = data;
+            JogDial dial = sender as JogDial;
+            movement = dial.Movement;
+            accelleration = dial.Accellaration;
+            angel = dial.Position;
+        }
+
+        private void Jogdial_WheelReverse( object sender, ValueChangeArgs<JogDial.Direction> data )
+        {
+            reversed = true;
+            direction = data;
+            JogDial dial = sender as JogDial;
+            movement = dial.Movement;
+            accelleration = dial.Accellaration;
+            angel = dial.Position;
+        }
+
+        private void Jogdial_WheelTouched( object sender, ValueChangeArgs<float> value )
+        {
+            touched = true;
+            JogDial dial = sender as JogDial;
+            movement = dial.Movement;
+            accelleration = dial.Accellaration;
+            angel = dial.Position;
+        }
+
         private void Test_LedButton()
         {
             SelectControlType( typeof(LedButton) );
