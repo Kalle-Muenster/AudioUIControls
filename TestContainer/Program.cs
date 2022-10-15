@@ -31,7 +31,7 @@ namespace MidiGUI.Test.Container
                 isTestrun = TestResults.TextOutput;
                 if( Args.Contains("--verbose") || Args.Contains("-v") )
                     isTestrun |= TestResults.Verbose;
-                if( Args.Contains("--xmllog") || Args.Contains("-x") )
+                if( Args.Contains("--xmllogs") || Args.Contains("-x") )
                     isTestrun |= TestResults.XmlOutput;
                 if( Args.Contains("--testcase") ) {
                     int casearg = Args.IndexOf( "--testcase" );

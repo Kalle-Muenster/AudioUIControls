@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using Consola;
+using System.Threading.Tasks;
 using Consola.Test;
 using Stepflow;
 using Stepflow.Gui;
 using Stepflow.Midi;
+using Stepflow.Gui.Automation;
 using Stepflow.Gui.Geometry;
 using System.Windows.Forms;
 using System.Drawing;
@@ -15,6 +13,7 @@ using MidiGUI.Test.Container;
 using static Consola.Test.ConTrol;
 using static System.Threading.Thread;
 using Button = Consola.Test.ConTrol.Button;
+using Win32Imports.Midi;
 
 namespace MidiGUI.Test
 {
@@ -32,10 +31,12 @@ namespace MidiGUI.Test
 
     }
 
-
     public class MidiGUIControls
         : Suite<Form1>
+        , IMidiControlElement<MidiInOut>
     {
+        private MidiInOut midiInOut;
+
         public MidiGUIControls( Form1 mainwindow, TestResults args )
             : this( mainwindow, args, string.Empty )
         {}
@@ -57,6 +58,11 @@ namespace MidiGUI.Test
                     AddTestCase( "JogDial", Test_JogDial );
                 break;
             }
+            midiInOut = new MidiInOut();
+            midi().binding.AutomationEvent += midi().OnIncommingMidiControl;
+            
+            midipoller = new Task( midiQueueAction );
+            midipoller.Start();
         }
 
         protected override ConTrol.Point GetMenuPoint( string menupath )
@@ -74,7 +80,7 @@ namespace MidiGUI.Test
             } else if( descriptor is string ) {
                 string name = (string)descriptor;
                 if( name == "Testling" ) return Aut.GetTestlingArea().ConTrolArea();
-                else rect = CenterAndScale.FromRectangle(Aut.Controls.Find((string)descriptor, false)[0].Bounds);
+                else rect = CenterAndScale.FromRectangle( Aut.Controls.Find( (string)descriptor, false )[0].Bounds );
             } else if( descriptor is Control ) {
                 rect = new SystemDefault(( descriptor as Control ).Bounds);
             } else rect = CenterAndScale.Empty;
@@ -156,6 +162,22 @@ namespace MidiGUI.Test
         private float accelleration = 0.0f;
         private bool fast = false;
         private int stops = 0;
+        private Win32Imports.Midi.Message ExpectedMidi = new Win32Imports.Midi.Message(0u);
+        private ExpectedEvent NextExpected = 0;
+        private enum ExpectedEvent : int
+        {
+            NoneExpected = 0,
+            TurningStopt = 1,
+            WheelReverse = 2,
+            WheelRelease = 3,
+            MovementFast = 4,
+            WheelTouched = 5
+        }
+
+        float lerp( float pos, float bis, float val )
+        {
+            return val * (pos / bis);
+        }
 
         private void Test_JogDial()
         {
@@ -179,43 +201,88 @@ namespace MidiGUI.Test
             Sleep( 1000 );
             Click( Button.L, GetScreenArea("btn_set_Led").Center );
             Sleep( 1000 );
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
+            Click( Button.L, GetScreenArea("btn_set_Led").Center );
+            Sleep( 1000 );
 
-            IRectangle globs = Aut.GetTestlingArea();
-            Point32 point = globs.Center;
-            float h = ( globs.Scale.X - 20 );
-            Mouse( Move.Absolute, point.X-(int)h, point.Y );
-            float H = (float)Math.Pow(h,2);
-            float stueck = H/200.0f;
-            float A = H;
-            float B = 0;
+            IRectangle dialarea = Aut.GetTestlingArea();
+            Point32 point = dialarea.Center;
+            float r = ( dialarea.Scale.X - 20 );
+            
+            TimeSpan step = new TimeSpan( (long)(System.Diagnostics.Stopwatch.Frequency * (1.5/1000.0) ));
+            float Hypothenuse = (float)Math.Pow(r,2);
+            float Ankathete = Hypothenuse;
+            float Gegenkathete = 0;
+
+            Mouse( Move.Absolute, point.X - (int)r, point.Y );
+            NextExpected = ExpectedEvent.WheelTouched;
             Click( Button.L | Button.DOWN );
             Sleep( 100 );
-            CheckStep( touched, "wheel interacted" );
+            
+            // set touched flag to true - to ensure a later 'WheelRelease'
+            // test can recognize state changing back to not-touched anymore
+            // even if 'WheelTouched' maybe not was triggered with this teststep
             touched = true;
-            TimeSpan step = new TimeSpan((long)(System.Diagnostics.Stopwatch.Frequency * (1.5/1000.0) ));
-            for( int i=0; i<98; ++i ) {
-                stueck *= 1.01f;
-                A -= stueck; B += stueck;
-                Mouse( Move.Absolute, (int)(point.X - Math.Sqrt(A)), (int)(point.Y - Math.Sqrt(B)) );
+
+            // doing vorwärts 'anschups' gesture
+            for( int i=0; i < 99; ++i ) {
+                Gegenkathete = lerp( i, 100, Hypothenuse );
+                Ankathete = Hypothenuse - Gegenkathete;
+                Mouse( Move.Absolute, (int)(point.X - Math.Sqrt(Ankathete)), (int)(point.Y - Math.Sqrt(Gegenkathete)) );
                 Sleep( step );
-            }
-            A -= stueck; B += stueck;
-            Click( Button.L|Button.UP, (int)( point.X - Math.Sqrt(A) ), (int)( point.Y - Math.Sqrt(B) ));
-            point.Y = (int)( point.Y - Math.Sqrt(B) );
-            stueck = (float)Math.Sqrt(stueck);
-            for( int i = 0; i < 98; ++i ) {
-                point.x += 3;
+            } Ankathete = 0; Gegenkathete = Hypothenuse;
+            NextExpected = ExpectedEvent.WheelRelease;
+            point.Y = (int)( point.Y - Math.Sqrt(Gegenkathete) );
+            Click( Button.L|Button.UP, point.X, point.Y );
+            Sleep( step );
+            for( int i = 0; i < 33; ++i ) {
+                point.x += 5;
                 Mouse( Move.Absolute, point.X, point.Y );
                 Sleep( step );
             }
-            CheckStep( movement > 0, "wheel movement (expected greater 0) is: {0}", movement );
-            Sleep( 100 );
-            CheckStep( touched == false, "wheel released" );
-            CheckStep( stops == 0, "wheel triggered {0} 'stoped' events during move", stops );
+            NextExpected = ExpectedEvent.TurningStopt;
             Sleep( 3000 );
-            CheckStep( stops > 0 && reversed == false && direction == JogDial.Direction.Clockwise && movement == 0,
-                "wheel triggered '{0}' event (expected {1}) from turning '{2}' (expected {3})", 
-                reversed ? "reverse" : "stoped", "stoped", direction, JogDial.Direction.Clockwise );
+            touched = false;
+            movement = 0;
+            stops = 0;
+            angel = 0;
+            accelleration = 0;
+            direction = 0;
+            point = dialarea.Center;
+            Mouse( Move.Absolute, point.x + (int)r, point.y );
+            Sleep( 100 );
+            NextExpected = ExpectedEvent.WheelTouched;
+            Click( Button.L|Button.DOWN );
+            Sleep( 100 );
+            for( int i = 0; i < 99; ++i ) {
+                Ankathete = Hypothenuse - ( Gegenkathete = lerp( i, 100, Hypothenuse ) );
+                Mouse( Move.Absolute, (int)( point.X + Math.Sqrt(Ankathete) ), (int)( point.Y - Math.Sqrt(Gegenkathete) ));
+                Sleep( step );
+            }
+            Gegenkathete = Hypothenuse; Ankathete = 0;
+            Mouse( Move.Absolute, point.X, (int)(point.Y-r) );
+            Sleep( step );
+            for( int i = 1; i < 100; ++i ) {
+                Gegenkathete = Hypothenuse - ( Ankathete = lerp( i, 100, Hypothenuse ) );
+                Mouse( Move.Absolute, (int)( point.X - Math.Sqrt(Ankathete) ), (int)( point.Y - Math.Sqrt(Gegenkathete) ));
+                Sleep( step );
+            } 
+            NextExpected = ExpectedEvent.WheelReverse;
+            for( int i = 1; i < 99; ++i ) {
+                Ankathete = Hypothenuse - ( Gegenkathete = lerp( i, 100, Hypothenuse ) );
+                Mouse( Move.Absolute, (int)( point.X - Math.Sqrt(Ankathete) ), (int)( point.Y - Math.Sqrt(Gegenkathete) ) );
+                Sleep( step );
+            } Ankathete = 0; Gegenkathete = Hypothenuse;
+            NextExpected = ExpectedEvent.WheelRelease;
+            point.y = (short)( point.y - r );
+            Click( Button.L|Button.UP, point.X, point.Y );
+            Sleep( step );
+            for( int i = 0; i < 10; ++i ) {
+                point.x += 10;
+                Mouse( Move.Absolute, point.X, point.Y );
+                Sleep( step );
+            } 
             Sleep( 2000 );
         }
 
@@ -226,11 +293,17 @@ namespace MidiGUI.Test
 
         private void Jogdial_WheelRelease( object sender, ValueChangeArgs<float> value )
         {
-            touched = false;
             JogDial dial = sender as JogDial;
+            touched = dial.IsTouched;
             movement = dial.Movement;
             accelleration = dial.Accellaration;
-            angel = dial.Position;
+            angel = value.Value;
+            if( NextExpected == ExpectedEvent.WheelRelease ) {
+                CheckStep( touched == false,
+                    "wheel triggered 'WheelRelease' at {0}° from rotating '{1}'", angel,
+                    direction);
+                NextExpected = ExpectedEvent.TurningStopt;
+            } else FailStep( "wheel unexpectedly triggered a 'WheelRelease' event" );
         }
 
         private void Jogdial_TurningStopt( object sender, ValueChangeArgs<JogDial.Direction> data )
@@ -241,16 +314,26 @@ namespace MidiGUI.Test
             movement = dial.Movement;
             accelleration = dial.Accellaration;
             angel = dial.Position;
+            if( NextExpected == ExpectedEvent.TurningStopt ) {
+                CheckStep(movement == 0.0f, "wheel triggered 'TurningStopt' from rotating '{0}'", direction);
+                NextExpected = ExpectedEvent.NoneExpected;
+            } else FailStep("wheel unexpectedly triggered a 'TurningStopt' event");
         }
 
         private void Jogdial_WheelReverse( object sender, ValueChangeArgs<JogDial.Direction> data )
         {
             reversed = true;
-            direction = data;
             JogDial dial = sender as JogDial;
             movement = dial.Movement;
             accelleration = dial.Accellaration;
             angel = dial.Position;
+            if( NextExpected == ExpectedEvent.WheelReverse ) {
+                CheckStep(direction != data.Value,
+                    "wheel triggered 'WheelReverse' event changing direction from '{0}' to '{1}'",
+                           direction, data.Value);
+                NextExpected = ExpectedEvent.NoneExpected;
+            } else FailStep("wheel unexpectedly triggered a 'WheelReverse' event");
+            direction = data;
         }
 
         private void Jogdial_WheelTouched( object sender, ValueChangeArgs<float> value )
@@ -260,6 +343,10 @@ namespace MidiGUI.Test
             movement = dial.Movement;
             accelleration = dial.Accellaration;
             angel = dial.Position;
+            if( NextExpected == ExpectedEvent.WheelTouched ) {
+                CheckStep( touched, "wheel triggered 'WheelTouched' at {0}° degree", value.Value );
+                NextExpected = ExpectedEvent.NoneExpected;
+            } else FailStep( "wheel unexpectedly triggered a 'WheelTouched' event" );
         }
 
         private void Test_LedButton()
@@ -285,6 +372,10 @@ namespace MidiGUI.Test
         }
 
         private int counter = 0;
+
+
+
+
         private void SliderMarkerPassed( object sender, GuiSlider.MarkerPassedEventArgs e )
         {
             GuiSlider slider = sender as GuiSlider;
@@ -402,6 +493,46 @@ namespace MidiGUI.Test
 
             MatchStep( counter, 3, "times a marker was passed", "times" );
             Click( ConTrol.Button.L, GetScreenArea("btn_Invert").Center );
+        }
+
+
+        private AutomationlayerAddressat[] midisettings = new AutomationlayerAddressat[1];
+        public Value MidiValue { get; set; }
+        public MidiInOut binding { get { return midiInOut; } }
+        public MidiInputMenu<MidiInOut> inputMenu { get; set; }
+        public MidiOutputMenu<MidiInOut> outputMenu { get; set; }
+
+        public AutomationlayerAddressat[] channels { get { return midisettings; } }
+
+        private bool midiloop = true;
+        private Task midipoller;
+        public void midiQueueAction()
+        {
+            EventArgs e = new EventArgs();
+            while( midiloop ) {
+                if( midi().binding.automation().messageAvailable() )
+                    midi().binding.automation().ProcessMessageQueue( this, e );
+                midipoller.Wait( 10 );
+            }
+        }
+
+        public void BindMidiControl()
+        {
+            //AutomationlayerAddressat autput = new AutomationlayerAddressat();
+            //(Aut.GetStagedControl() as IAutomationController<Win32Imports.Midi.Message>).ConfigureAsMessagingAutomat()
+        }
+
+        public void OnIncommingMidiControl( object sender, Win32Imports.Midi.Message value )
+        {
+            if( value.Value == ExpectedMidi.Value )
+                PassStep( "Received expected Midi Message: {0}", value );
+            else
+                FailStep( "Received nonsense: {0}", value );
+        }
+
+        public IMidiControlElement<MidiInOut> midi()
+        {
+            return this;
         }
     }
 }
