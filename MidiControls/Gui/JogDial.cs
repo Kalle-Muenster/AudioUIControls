@@ -81,7 +81,7 @@ namespace Midi
         private float      angleOffset = 0;
         private bool?      quadrants;
         private bool       canStop;
-        private Direction  lastDir;
+        private Direction  currentDir;
         private MidiInOut  midiIO = null;
         private TaskAssist<SteadyAction,Action,Action> propellor;
 
@@ -138,14 +138,17 @@ namespace Midi
 
         private void TriggerEvents( bool byFlow ) 
         {
-            bool state;
-            float fLast, pLast, actual;
+            bool  state;
+            float fLast;
+            float pLast;
+            float actual;
+
             if( byFlow ) { unsafe { 
                 fLast = *(float*)flow.GetPin( ElementValue.LAST ).ToPointer();
                     pLast = pos.VAL; 
                 } state = flow.Check();
                 actual = flow.VAL;
-                pos.VAL = (pLast + (actual * scaleFactor));
+                pos.VAL = ( pLast + (actual * scaleFactor) );
                 pos.Check();
                 valence( Absolute ).SetDirty( ValenceFieldState.Flags.VAL );
             } else { 
@@ -161,39 +164,36 @@ namespace Midi
             float flowMov = flow.MOV;
             if( actual != fLast ) {
                 midiIO.automate().OnValueChange( this, MidiValue );
-                ValueChanged?.Invoke( this, new ValueChangeArgs<float>(actual) );
                 if( canStop == false ) {
-                    canStop = Math.Abs(actual) > IsDownBelow;
+                    canStop = Math.Abs( actual ) > IsDownBelow;
                     if( canStop ) {
                         if( actual > 0 && flowMov > 0 )
-                            lastDir = Direction.Clockwise;
+                            currentDir = Direction.Clockwise;
                         else if ( actual < 0 && flowMov < 0 )
-                            lastDir = Direction.CounterClock;
+                            currentDir = Direction.CounterClock;
                     }
-                }
+                } ValueChanged?.Invoke( this, new ValueChangeArgs<float>( actual ) );
             }
             if ( WheelReverse != null || (TurningStopt != null && canStop) ) {
                 if ( (fLast <= 0 && actual > 0) || (actual < 0 && fLast >= 0) ) {
-                        // maybe fLast < 0 / fLast > 0 ... not fLast <= 0 / fLast >= 0...
                         Direction newDir = actual > 0
                                          ? Direction.Clockwise
                                          : Direction.CounterClock;
-                    if (newDir != lastDir) {
-                        WheelReverse( this, new ValueChangeArgs<Direction>( lastDir = newDir ) );
+                    if( newDir != currentDir ) {
+                        WheelReverse?.Invoke( this, new ValueChangeArgs<Direction>( currentDir = newDir ) );
                         canStop = true;
                     } 
-                } else if ( canStop && Math.Abs(actual) < IsDownBelow && flowMov == 0 ) {
-                    TurningStopt( this, new ValueChangeArgs<Direction>( lastDir ) );
+                } else if ( canStop && Math.Abs( actual ) < IsDownBelow && flowMov == 0 ) {
                     useracces = canStop = false;
+                    TurningStopt?.Invoke( this, new ValueChangeArgs<Direction>( currentDir ) );
                 }
             }
             if ( MovementFast != null ) unsafe {
-                int m = (360 - (int)Math.Abs(pos.VAL - pLast)) % 360;
+                int m = ( 360 - (int)Math.Abs( pos.VAL - pLast ) ) % 360;
                 if ( m > (flow.MAX * scaleFactor) ) {
                     MovementFast( this, new ValueChangeArgs<float>( actual > 0 ? m : -m ) );
-                } 
+                }
             }
-
             flow.Active = state;
             pos.Active = state;
         }
@@ -351,11 +351,10 @@ namespace Midi
 
             interaction = InteractionMode.FlowByQuadrants;
             InitializeComponent();
-            midi().binding.InitializeComponent( this, components, Invalidate );
-            midi().binding.AutomationEvent += midi().OnIncommingMidiControl;
+            InitMidi( components );
 
-            // maybe this could be done by a timer thread better
-            Paint += midi().binding.automation().ProcessMessageQueue;
+            // maybe this could be done by a timer thread better - DONE
+            // Paint += midi().binding.automation().ProcessMessageQueue;
 
             style = (int)Style.Lite;
             BackgroundImage = image[style][0];
@@ -804,6 +803,8 @@ namespace Midi
 #endregion
 
 #region Midi Interface
+        private int    messageReadCount = 0;
+        private Action messageLoopTrigger;
         AutomationlayerAddressat[] IAutomat.channels {
             get { Message.Filter filter = midi().binding.MessageFilter;
                 return new AutomationlayerAddressat[] {
@@ -825,7 +826,33 @@ namespace Midi
         }
         MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu { get; set; }
         MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu { get; set; }
-#endregion
+            private void readMessageQueue()
+            {
+                bool read = midi().binding.automation().messageAvailable();
+                if( !read ) { if( --messageReadCount <= 0 ) task().assist.ReleaseAssist( messageLoopTrigger ); } else {
+                    midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
+                    messageReadCount = 10;
+                }if( read ) Invalidate();
+            }
 
+            // called by some outer thread driving the massage pump on incomming midi message to let start
+            // applications own thread polling from the queue which the pump actually is filling up
+            private void emptyMessageQueue()
+            {
+                if( messageReadCount == 0 ) {
+                    messageReadCount = 10;
+                    task().assist.GetAssistence( messageLoopTrigger );
+                } else messageReadCount = 10;
+            }
+
+            protected void InitMidi( IContainer connector )
+            {
+                messageLoopTrigger = readMessageQueue;
+                midi().binding.InitializeComponent( this, connector, emptyMessageQueue );
+                midi().binding.automation().AutomationEvent += midi().OnIncommingMidiControl;
+                messageReadCount = 0;
+            }
+#endregion
         }
-    }}
+    }
+}
