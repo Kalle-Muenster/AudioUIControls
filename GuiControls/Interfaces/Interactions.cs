@@ -7,10 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-//using Windows.Devices.Input;
-//using Windows.Devices.HumanInterfaceDevice;
-//using Windows.Foundation;
-
 using Stepflow;
 using Stepflow.Gui.Helpers;
 

@@ -17,20 +17,6 @@ using Win32Imports.Midi;
 
 namespace MidiGUI.Test
 {
-    public static class Extensions
-    {
-        public static ConTrol.Point ToPoint( this Point32 cast )
-        {
-            return new ConTrol.Point( cast.X, cast.Y );
-        }
-
-        public static Point32 ToPoint32( this ConTrol.Point cast )
-        {
-            return new Point32( cast.X, cast.Y );
-        }
-
-    }
-
     public class MidiGUIControls
         : Suite<Form1>
         , IMidiControlElement<MidiInOut>

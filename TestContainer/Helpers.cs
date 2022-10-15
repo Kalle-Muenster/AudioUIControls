@@ -21,7 +21,17 @@ namespace MidiGUI.Test.Container
 
         public static Consola.Test.Area ConTrolArea( this IRectangle rectangle )
         {
-            return new Consola.Test.Area(rectangle.Corner.ConTrolPoint(), rectangle.Sizes.ConTrolPoint());
+            return new Consola.Test.Area( rectangle.Corner.ConTrolPoint(), rectangle.Sizes.ConTrolPoint() );
+        }
+
+        public static Consola.Test.ConTrol.Point ToPoint( this Point32 cast )
+        {
+            return new Consola.Test.ConTrol.Point(cast.X, cast.Y);
+        }
+
+        public static Point32 ToPoint32( this Consola.Test.ConTrol.Point cast )
+        {
+            return new Point32(cast.X, cast.Y);
         }
     }
 
