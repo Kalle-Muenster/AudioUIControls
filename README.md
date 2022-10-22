@@ -12,7 +12,7 @@ Set of control elements which 'out of the box' support MIDI automation
 
 A small preebuilt, runnable demo can be found here:
 
-https://github.com/Kalle-Muenster/AudioUIControls/tree/main/bin/core5/x64/Debug/net5.0-windows
+https://github.com/Kalle-Muenster/AudioUIControls/tree/main/bin/core5/x64/Release
 
 It can be run at best by calling TestContainer.exe by command line. Without any parameters, it
 starts up as free manually testable demo. To let execute an automated testrun which generates result log output, these following parameters can be addded:
