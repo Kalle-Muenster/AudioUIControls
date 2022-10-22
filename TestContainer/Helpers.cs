@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Stepflow.Gui.Geometry;
 
-namespace MidiGUI.Test.Container
+namespace MidiGUI.Test
 {
     public static class Extensions
     {
@@ -35,11 +35,20 @@ namespace MidiGUI.Test.Container
         }
     }
 
+    public static class Helper
+    {
+        public static float lerp( float pos, float bis, float val )
+        {
+            return val * ( pos / bis );
+        }
+    }
+
     public enum ControlFlags
     {
         Cycled, Inverted, Normal
     }
 
+    /*
     public class EventLog : IList
     {
         public class Enumerator : IEnumerator<string>
@@ -216,4 +225,5 @@ namespace MidiGUI.Test.Container
             }
         }
     }
+    */
 }

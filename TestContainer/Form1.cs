@@ -12,6 +12,7 @@ using Stepflow.Gui;
 using Stepflow.Midi;
 using Stepflow.Gui.Geometry;
 
+
 namespace MidiGUI.Test.Container
 {
     public partial class Form1 : Form
@@ -33,7 +34,7 @@ namespace MidiGUI.Test.Container
         private GuiSlider sld_set_height;
         private ValueDisplay val_set_width;
         private ValueDisplay val_set_height;
-        private LedButton btn_set_style;
+        private LedButton btn_set_Style;
         private ValueDisplay val_element_Val;
         private ValueDisplay val_element_Min;
         private ValueDisplay val_element_Max;
@@ -150,8 +151,8 @@ namespace MidiGUI.Test.Container
             //    meter.LevelClipped += ( object sender, ValueChangeArgs<float> e ) => { log_data.Log($"{( sender as GuiMeter ).Name} level clipped: {e.Value}"); };
             //    meter.LevelRegular += ( object sender, ValueChangeArgs<float> e ) => { log_data.Log($"{( sender as GuiMeter ).Name} level regular: {e.Value}"); };
                 val_element_Val.Wrap( meter );
-            } else if( staged is JogDial ) {
-                JogDial dial = staged as JogDial;
+            } else if( staged is Stepflow.Midi.JogDial ) {
+                Stepflow.Midi.JogDial dial = staged as Stepflow.Midi.JogDial;
                 SetStylo += (Enum set) => { dial.Style = (Style)set; };
                 SetLed += (Enum set) => { dial.LedColor = (LED)set; };
                 //dial.TurningStopt += ( object sender, ValueChangeArgs<JogDial.Direction> e ) => { log_data.Log($"{( sender as JogDial ).Name} stopped turning: {e.Value}"); };
@@ -184,7 +185,7 @@ namespace MidiGUI.Test.Container
             this.sld_set_height = new Stepflow.Gui.GuiSlider();
             this.val_set_width = new Stepflow.Gui.ValueDisplay();
             this.val_set_height = new Stepflow.Gui.ValueDisplay();
-            this.btn_set_style = new Stepflow.Gui.LedButton();
+            this.btn_set_Style = new Stepflow.Gui.LedButton();
             this.val_element_Val = new Stepflow.Gui.ValueDisplay();
             this.val_element_Min = new Stepflow.Gui.ValueDisplay();
             this.val_element_Max = new Stepflow.Gui.ValueDisplay();
@@ -261,24 +262,24 @@ namespace MidiGUI.Test.Container
             // 
             // btn_set_style
             // 
-            this.btn_set_style.AutoText = false;
-            this.btn_set_style.BackColor = System.Drawing.Color.FromArgb(255, 32, 32, 32);
-            this.btn_set_style.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btn_set_style.CausesValidation = false;
-            this.btn_set_style.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.btn_set_style.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.btn_set_style.LedLevel = 1F;
-            this.btn_set_style.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
-            this.btn_set_style.Location = new System.Drawing.Point(11, 39);
-            this.btn_set_style.Margin = new System.Windows.Forms.Padding(2);
-            this.btn_set_style.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
-            this.btn_set_style.Name = "btn_set_style";
-            this.btn_set_style.NumberOfStates = ( (byte)( 2 ) );
-            this.btn_set_style.SideChain = 0.95F;
-            this.btn_set_style.Size = new System.Drawing.Size(76, 73);
-            this.btn_set_style.State = Stepflow.Gui.LedButton.Default.OFF;
-            this.btn_set_style.Style = Stepflow.Gui.Style.Dark;
-            this.btn_set_style.TabIndex = 7;
+            this.btn_set_Style.AutoText = false;
+            this.btn_set_Style.BackColor = System.Drawing.Color.FromArgb(255, 32, 32, 32);
+            this.btn_set_Style.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btn_set_Style.CausesValidation = false;
+            this.btn_set_Style.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btn_set_Style.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.btn_set_Style.LedLevel = 1F;
+            this.btn_set_Style.LedValue = System.Drawing.Color.FromArgb(( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ), ( (int)( ( (byte)( 255 ) ) ) ));
+            this.btn_set_Style.Location = new System.Drawing.Point(11, 39);
+            this.btn_set_Style.Margin = new System.Windows.Forms.Padding(2);
+            this.btn_set_Style.Mode = Stepflow.Gui.LedButton.Transit.OnRelease;
+            this.btn_set_Style.Name = "btn_set_style";
+            this.btn_set_Style.NumberOfStates = ( (byte)( 2 ) );
+            this.btn_set_Style.SideChain = 0.95F;
+            this.btn_set_Style.Size = new System.Drawing.Size(76, 73);
+            this.btn_set_Style.State = Stepflow.Gui.LedButton.Default.OFF;
+            this.btn_set_Style.Style = Stepflow.Gui.Style.Dark;
+            this.btn_set_Style.TabIndex = 7;
             // 
             // val_element_Val
             // 
@@ -436,7 +437,7 @@ namespace MidiGUI.Test.Container
             this.Controls.Add(this.val_element_Max);
             this.Controls.Add(this.val_element_Min);
             this.Controls.Add(this.val_element_Val);
-            this.Controls.Add(this.btn_set_style);
+            this.Controls.Add(this.btn_set_Style);
             this.Controls.Add(this.val_set_height);
             this.Controls.Add(this.val_set_width);
             this.Controls.Add(this.sld_set_height);
@@ -471,13 +472,13 @@ namespace MidiGUI.Test.Container
             sld_set_width.ValueChanged += Sld_set_width_ReleasedKnob;
             sld_set_height.ValueChanged += Sld_set_height_ReleasedKnob;
 
-            btn_set_style.SetUp(LED.Blue, LED.Pink, LED.Mint);
-            btn_set_style.DefineState(1, Style.Flat, LED.Blue);
-            btn_set_style.DefineState(2, Style.Lite, LED.Pink);
-            btn_set_style.DefineState(3, Style.Dark, LED.Green);
+            btn_set_Style.SetUp(LED.Blue, LED.Pink, LED.Mint);
+            btn_set_Style.DefineState(1, Style.Flat, LED.Blue);
+            btn_set_Style.DefineState(2, Style.Lite, LED.Pink);
+            btn_set_Style.DefineState(3, Style.Dark, LED.Green);
 
-            btn_set_style.AutoText = true;
-            btn_set_style.Changed += Btn_set_style_Changed;
+            btn_set_Style.AutoText = true;
+            btn_set_Style.Changed += Btn_set_style_Changed;
 
             btn_set_Orientation.SetUp( LED.Blue, LED.Orange, LED.Cyan );
             btn_set_Orientation.DefineState(1, Stepflow.Gui.Orientation.Rondeal, LED.Blue);
@@ -721,7 +722,7 @@ namespace MidiGUI.Test.Container
         private void mnu_JogDial_Click(object sender, EventArgs e)
         {
             destruct?.Invoke();
-            JogDial dings = new JogDial();
+            Stepflow.Midi.JogDial dings = new Stepflow.Midi.JogDial();
             dings.Location = new Point(120,120);
             dings.Size = new Size(384,384);
             dings.Style = Style.Dark;

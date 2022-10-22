@@ -12,7 +12,7 @@ namespace MidiGUI.Test.Container
     {
         private static TestResults isTestrun = TestResults.NONE;
         private static string testcase = string.Empty;
-        private static Runner<Form1,MidiGUIControls> testrunner = null;
+        private static Runner<Form1,SuiteGUIControls> testrunner = null;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -63,7 +63,7 @@ namespace MidiGUI.Test.Container
         {            
             Form1 window = sender as Form1;
             window.Paint -= Window_Shown;
-            testrunner = new Runner<Form1,MidiGUIControls>( new MidiGUIControls(window,isTestrun,testcase) );
+            testrunner = new Runner<Form1,SuiteGUIControls>( new SuiteGUIControls(window,isTestrun,testcase) );
             testrunner.Start();
         }
 
