@@ -18,5 +18,5 @@ It can be run at best by calling TestContainer.exe by command line. Without any 
 starts up as free manually testable demo. To let execute an automated testrun append parameters:
 
 <code>
-TestContainer --testrun --verbose --xmllogs
+TestContainer --testrun --verbose --xmllogs 
 <code>
