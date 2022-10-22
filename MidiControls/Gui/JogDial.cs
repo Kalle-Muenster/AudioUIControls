@@ -45,6 +45,7 @@ namespace Midi
 
         public enum Direction {
             Clockwise = 1,
+            StandingStill = 0,
             CounterClock = -1
         }
         public enum InteractionMode {
@@ -53,8 +54,8 @@ namespace Midi
         }
 
 
-        private static Bitmap[][] image;
-        private static Bitmap[]   leds;
+        private static Bitmap[][]  image;
+        private static Bitmap[]    leds;
         private static Rectangle[] ledBG;
          
         public delegate void DirectionHasChanged( object sender, ValueChangeArgs<Direction> data );
