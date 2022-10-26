@@ -30,8 +30,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GuiControls\GuiControls50.csproj" />
     <ProjectReference Include="..\MidiControls\MidiControls50.csproj" />
   </ItemGroup>
+
 
   <ItemGroup>
     <Reference Include="Consola">

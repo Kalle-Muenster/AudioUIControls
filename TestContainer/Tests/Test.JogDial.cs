@@ -29,11 +29,12 @@ namespace MidiGUI.Test.Container
             WheelTouched = 5
         }
 
-        private SuiteGUIControls test;
+        private SuiteGUIControls      test;
+        private Stepflow.Midi.JogDial dial;
         private bool touched = false;
         private bool reversed = false;
         private float movement = 0.0f;
-        private Stepflow.Midi.JogDial.Direction direction = (Stepflow.Midi.JogDial.Direction)0;
+        private Stepflow.Midi.JogDial.Direction direction = Stepflow.Midi.JogDial.Direction.StandingStill;
         private float angel = 0.0f;
         private float accelleration = 0.0f;
         private bool fast = false;
@@ -41,7 +42,7 @@ namespace MidiGUI.Test.Container
         
         private ExpectedEvent NextExpected = 0;
 
-        private Stepflow.Midi.JogDial dial;
+        
 
 
         public JogDial( Consola.Test.Test suite, Stepflow.Midi.JogDial testling )
@@ -50,7 +51,7 @@ namespace MidiGUI.Test.Container
             dial = testling;
             if( testling != null ) {
                 dial.WheelTouched += WheelTouched_Event;
-                dial.WheelReverse += WheelReverse_Event;
+                dial.WheelReverse += this.WheelReverse_Event;
                 dial.TurningStopt += TurningStopt_Event;
                 dial.WheelRelease += WheelRelease_Event;
                 dial.MovementFast += MovementFast_Event;

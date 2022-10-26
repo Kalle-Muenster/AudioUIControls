@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v5.0": {
       "TestContainer/1.0.0": {
         "dependencies": {
+          "GuiControls": "0.0.0.1",
           "MidiControls": "0.0.0.1",
           "Consola": "0.0.1.7",
           "Consola.Test": "0.0.1.7",

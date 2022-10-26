@@ -88,91 +88,91 @@ namespace MidiGUI.Test.Container
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
             this.toolStripMenuItem1.Text = "LedButton";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // guiSliderToolStripMenuItem
             // 
             this.guiSliderToolStripMenuItem.Name = "guiSliderToolStripMenuItem";
-            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiSliderToolStripMenuItem.Text = "GuiSlider";
             this.guiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // guiMeterToolStripMenuItem
             // 
             this.guiMeterToolStripMenuItem.Name = "guiMeterToolStripMenuItem";
-            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiMeterToolStripMenuItem.Text = "GuiMeter";
             this.guiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // guiRangerToolStripMenuItem
             // 
             this.guiRangerToolStripMenuItem.Name = "guiRangerToolStripMenuItem";
-            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiRangerToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiRangerToolStripMenuItem.Text = "GuiRanger";
             this.guiRangerToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiRangeControl_Click);
             // 
             // guiValueToolStripMenuItem
             // 
             this.guiValueToolStripMenuItem.Name = "guiValueToolStripMenuItem";
-            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.guiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.guiValueToolStripMenuItem.Text = "GuiValue";
             this.guiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // midiButtonToolStripMenuItem
             // 
             this.midiButtonToolStripMenuItem.Name = "midiButtonToolStripMenuItem";
-            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiButtonToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiButtonToolStripMenuItem.Text = "MidiButton";
             this.midiButtonToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedButton_Click);
             // 
             // midiSliderToolStripMenuItem
             // 
             this.midiSliderToolStripMenuItem.Name = "midiSliderToolStripMenuItem";
-            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiSliderToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiSliderToolStripMenuItem.Text = "MidiSlider";
             this.midiSliderToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiSlider_Click);
             // 
             // midiMeterToolStripMenuItem
             // 
             this.midiMeterToolStripMenuItem.Name = "midiMeterToolStripMenuItem";
-            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiMeterToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiMeterToolStripMenuItem.Text = "MidiMeter";
             this.midiMeterToolStripMenuItem.Click += new System.EventHandler(this.mnu_GuiMeter_Click);
             // 
             // midiValueToolStripMenuItem
             // 
             this.midiValueToolStripMenuItem.Name = "midiValueToolStripMenuItem";
-            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiValueToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiValueToolStripMenuItem.Text = "MidiValue";
             this.midiValueToolStripMenuItem.Click += new System.EventHandler(this.mnu_LedDisplay_Click);
             // 
             // jogDialToolStripMenuItem
             // 
             this.jogDialToolStripMenuItem.Name = "jogDialToolStripMenuItem";
-            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.jogDialToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.jogDialToolStripMenuItem.Text = "JogDial";
             this.jogDialToolStripMenuItem.Click += new System.EventHandler(this.mnu_JogDial_Click);
             // 
             // midiStringSetToolStripMenuItem
             // 
             this.midiStringSetToolStripMenuItem.Name = "midiStringSetToolStripMenuItem";
-            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiStringSetToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiStringSetToolStripMenuItem.Text = "StringControl";
             this.midiStringSetToolStripMenuItem.Click += new System.EventHandler(this.mnu_StringControl_Click);
             // 
             // midiComboBoxToolStripMenuItem1
             // 
             this.midiComboBoxToolStripMenuItem1.Name = "midiComboBoxToolStripMenuItem1";
-            this.midiComboBoxToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.midiComboBoxToolStripMenuItem1.Size = new System.Drawing.Size(158, 22);
             this.midiComboBoxToolStripMenuItem1.Text = "MidiComboBox";
             this.midiComboBoxToolStripMenuItem1.Click += new System.EventHandler(this.mnu_MidiComboBox_Click);
             // 
             // midiTrackBarToolStripMenuItem
             // 
             this.midiTrackBarToolStripMenuItem.Name = "midiTrackBarToolStripMenuItem";
-            this.midiTrackBarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.midiTrackBarToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.midiTrackBarToolStripMenuItem.Text = "MidiTrackBar";
             this.midiTrackBarToolStripMenuItem.Click += new System.EventHandler(this.mnu_MidiTrackBar_Click);
             // 
@@ -250,7 +250,7 @@ namespace MidiGUI.Test.Container
             // 
             this.lst_events_view.FormattingEnabled = true;
             this.lst_events_view.ItemHeight = 15;
-            this.lst_events_view.Location = new System.Drawing.Point(133, 581);
+            this.lst_events_view.Location = new System.Drawing.Point(138, 749);
             this.lst_events_view.Name = "lst_events_view";
             this.lst_events_view.Size = new System.Drawing.Size(645, 154);
             this.lst_events_view.TabIndex = 18;
@@ -281,6 +281,7 @@ namespace MidiGUI.Test.Container
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
