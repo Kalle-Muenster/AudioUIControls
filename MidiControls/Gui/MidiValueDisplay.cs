@@ -108,25 +108,21 @@ namespace Stepflow.Midi
             set { Proportion = value.ProportionalFloat; }
         }
 
-        MidiInOut IMidiControlElement<MidiInOut>.binding {
-            get { return midiIO; }
-        }
-
         void IMidiControlElement<MidiInOut>.OnIncommingMidiControl(object sender, Win32Imports.Midi.Message midicontrol)
         {
             MidiValue = new Value( (short)midicontrol.Value );
         }
 
-        public IMidiControlElement<MidiInOut> midi()
+        public MidiInOut midi()
         {
-            return this;
+            return midiIO;
         }
 
         MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu { get; set; }
         MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu { get; set; }
 
-        AutomationlayerAddressat[] IAutomat.channels {
-            get { return new AutomationlayerAddressat[]{ midi().binding.GetAutomationBindingDescriptor(0) }; }
+        AutomationlayerAddressat[] IAutomat<MidiInOut>.channels {
+            get { return new AutomationlayerAddressat[]{ midi().GetAutomationBindingDescriptor(0) }; }
         }
     #endregion
 #endif
@@ -157,9 +153,9 @@ namespace Stepflow.Midi
             
 #if IMPLEMENT_MIDICONTOL
             midiIO = new MidiInOut();
-            midi().binding.InitializeComponent( this, components, Invalidate );
-            midi().binding.AutomationEvent += midi().OnIncommingMidiControl;
-            Paint += midiIO.automation().ProcessMessageQueue;
+            midi().InitializeComponent( this, components, Invalidate );
+            midi().AutomationEvent += midi().automat().OnIncommingMidiControl;
+            Paint += midiIO.input().ProcessMessageQueue;
 #endif
             Paint += GuiValue_Paint;
             Style = Style.Dark;

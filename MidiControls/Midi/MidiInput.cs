@@ -27,6 +27,10 @@ namespace Stepflow.Gui.Automation
         private Action             invalidator;
         private IMidiControlElement<MidiInput> element;
 
+        public IMidiControlElement<MidiInput> automat()
+        {
+            return element;
+        }
 
         internal void triggerPortChange(AutomationDirection direction,object sender, int newPort)
         {
@@ -44,13 +48,14 @@ namespace Stepflow.Gui.Automation
             return incoming.Count > 0;
         }
 
-        public void InitializeComponent( IAutomat parent, IContainer parentConnector, Action parentInvalidator )
+        public void InitializeComponent( object parent, IContainer parentConnector, Action parentInvalidator )
         {
             element = parent as IMidiControlElement<MidiInput>;
-            IContainer components = parentConnector;
-            automation().invalidation = parentInvalidator;
-            element.inputMenu = new Midi.MidiInputMenu<MidiInput>(element, components);
-            InpPortChanged += element.inputMenu.OnPortChanged;
+            input().invalidation = parentInvalidator;
+            if( parentConnector != null ) {
+                element.inputMenu = new Midi.MidiInputMenu<MidiInput>(element, parentConnector);
+                InpPortChanged += element.inputMenu.OnPortChanged;
+            }
         }
 
         public MidiInput()
@@ -58,7 +63,7 @@ namespace Stepflow.Gui.Automation
         {  
             incoming = new Queue<Message>(0);
             controll = new MidiController(-1,-1,-1);
-            IncomingMidiMessage += automation().incommingMessagQueue;
+            IncomingMidiMessage += input().incommingMessagQueue;
             return;   
         }
 
@@ -83,7 +88,7 @@ namespace Stepflow.Gui.Automation
             set { invalidator = value; }
         }
 
-        public IAutomationControlable<Message> automation() {
+        public IAutomationControlable<Message> input() {
             return this;
         }
 
@@ -143,12 +148,12 @@ namespace Stepflow.Gui.Automation
         {
             if( !learning ) {
                 incoming.Enqueue( midiData );
-                automation().invalidation();
+                input().invalidation();
             } else { Message.TYPE type = midiData.Type;
                 if ( type < Message.TYPE.SYSEX && type != Message.TYPE.PROG_CHANGE ) {
                     learning = false;
                     learnedInput = string.Format( "{0}~{1}", (midiData.Channel+1).ToString(), midiData.Number );
-                    automation().invalidation();
+                    input().invalidation();
                 }
             }  
         }
@@ -164,6 +169,7 @@ namespace Stepflow.Gui.Automation
             if ( learnedInput != null ) {
                 string[] chanNum = learnedInput.Split('~');
                 learnedInput = null;
+                if( element.inputMenu != null )
                 if( element.inputMenu.midiIn_mnu.Visible )
                     element.inputMenu.midiIn_mnu.Close();
 

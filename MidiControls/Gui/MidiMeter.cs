@@ -35,14 +35,11 @@ namespace Stepflow
                 get { return new Win32Imports.Midi.Value( (int)(Proportion*127) ); }
                 set { Proportion = value.getProportionalFloat(); }
             }
-            AutomationlayerAddressat[] IAutomat.channels {
-                get { return new AutomationlayerAddressat[] { midi().binding.GetAutomationBindingDescriptor(0) }; }
+            AutomationlayerAddressat[] IAutomat<MidiInput>.channels {
+                get { return new AutomationlayerAddressat[] { midi().GetAutomationBindingDescriptor(0) }; }
             }
-            MidiInput IMidiControlElement<MidiInput>.binding {
-                get { return midiIn; }
-            }
-            public IMidiControlElement<MidiInput> midi() {
-                return this;
+            public MidiInput midi() {
+                return midiIn;
             }
             MidiInputMenu<MidiInput> IMidiControlElement<MidiInput>.inputMenu { get; set; }
             MidiOutputMenu<MidiInput> IMidiControlElement<MidiInput>.outputMenu { get; set; }
@@ -73,9 +70,9 @@ namespace Stepflow
 
             private void readMessageQueue()
             {
-                bool read = midi().binding.automation().messageAvailable();
+                bool read = midi().input().messageAvailable();
                 if( !read ) { if ( --messageReadCount <= 0 ) task().assist.ReleaseAssist( messageLoopTrigger ); }
-                else { midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
+                else { midi().input().ProcessMessageQueue( this, new EventArgs() );
                        messageReadCount = 10; }
                 if ( read ) Invalidate();
             }
@@ -93,8 +90,8 @@ namespace Stepflow
             protected void InitMidi( IContainer connector )
             {
                 messageLoopTrigger = readMessageQueue;
-                midi().binding.InitializeComponent( this, connector, emptyMessageQueue );
-                midi().binding.automation().AutomationEvent += midiDelegate();
+                midi().InitializeComponent( this, connector, emptyMessageQueue );
+                midi().input().AutomationEvent += midiDelegate();
                 messageReadCount = 0;
             }
         }

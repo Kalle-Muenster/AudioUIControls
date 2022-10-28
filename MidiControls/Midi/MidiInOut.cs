@@ -31,6 +31,11 @@ namespace Stepflow.Gui.Automation
         private volatile string   learnedInput;
         private IMidiControlElement<MidiInOut>  element;
 
+        public IMidiControlElement<MidiInOut> automat() {
+            return element;
+        }
+
+
 #if USE_WITH_WF
         private Action invalidator;
 
@@ -50,22 +55,21 @@ namespace Stepflow.Gui.Automation
             }
         }
 
-        public void InitializeComponent( IAutomat automatElement, IContainer automatConnector, Action automatInvalidation )
+        public void InitializeComponent( object automatElement, IContainer automatConnector, Action automatInvalidation )
         {
-            automation().invalidation = automatInvalidation;
-            automate().InitializeComponent( automatElement, automatConnector );
+            input().invalidation = automatInvalidation;
+            InitializeComponent( automatElement as IMidiControlElement<MidiInOut>, automatConnector );
         }
 
-        void IAutomationController<Value>.InitializeComponent( IAutomat automatElement, IContainer automatConnector )
+        public void InitializeComponent( IMidiControlElement<MidiInOut> automatElement, IContainer automatConnector )
         {
-            element = automatElement as IMidiControlElement<MidiInOut>;
-            IContainer components = automatConnector;
-
-            element.inputMenu = new Midi.MidiInputMenu<MidiInOut>(element, components);
-            InpPortChanged += element.inputMenu.OnPortChanged;
-
-            element.outputMenu = new Midi.MidiOutputMenu<MidiInOut>(element, components);
-            OutPortChanged += element.outputMenu.OnPortChanged;
+            element = automatElement;
+            if( automatConnector != null ) {
+                element.inputMenu = new Midi.MidiInputMenu<MidiInOut>(element, automatConnector);
+                InpPortChanged += element.inputMenu.OnPortChanged;
+                element.outputMenu = new Midi.MidiOutputMenu<MidiInOut>(element, automatConnector);
+                OutPortChanged += element.outputMenu.OnPortChanged;
+            }
         }
 
 #endif
@@ -73,7 +77,7 @@ namespace Stepflow.Gui.Automation
         public new int MidiInPortID {
             get { return base.MidiInPortID; }
             set { if ( base.MidiInPortID != value) {
-                    InpPortChanged(this, base.MidiInPortID = value);
+                    InpPortChanged?.Invoke( this, base.MidiInPortID = value );
                 }
             }
         }
@@ -81,7 +85,7 @@ namespace Stepflow.Gui.Automation
         public new int MidiOutPortID {
             get { return base.MidiOutPortID; }
             set { if (base.MidiOutPortID != value) {
-                    OutPortChanged(this, new ValueChangeArgs<int>( base.MidiOutPortID = value ) );
+                    OutPortChanged?.Invoke( this, base.MidiOutPortID = value );
                 }
             }
         }
@@ -93,7 +97,7 @@ namespace Stepflow.Gui.Automation
 
         public MidiInOut() {
             incoming = new Queue<Message>(0);
-            IncomingMidiMessage += automation().incommingMessagQueue;
+            IncomingMidiMessage += input().incommingMessagQueue;
         }
 
 
@@ -102,8 +106,8 @@ namespace Stepflow.Gui.Automation
 
         // This will create and send a midi message each 
         // time an elements 'Value' property may change
-        // (always produces CC or PITCH messages, regarding
-        // actual setting of the elements MidiOutType proprty)
+        // (produces either Note On/Off, CC or PITCH messages,
+        // regarding actual setting of MidiOutType proprty)
         public void OnValueChange( object sender, float value ) 
         {
             switch ( MidiOut_Type ) {
@@ -144,13 +148,13 @@ namespace Stepflow.Gui.Automation
             get { return AutomationDirection.Thruput; }
         }
 
-        public IAutomationController<Value> automate() {
+        public IAutomationController<Value> output() {
             return this;
         }
 
         ////////////////////////////////////////////// Input related:
 
-        public IAutomationControlable<Message> automation() {
+        public IAutomationControlable<Message> input() {
             return this;
         }
 
@@ -165,13 +169,13 @@ namespace Stepflow.Gui.Automation
              && (listenToCC.control == automationlayer.hiShort) ) return;
 
             Message.Filter filter = new Message.Filter(
-                Message.TYPE.ANY );
+                                      Message.TYPE.ANY );
 
             listenToCC = new MidiController( automationlayer.loShort,
-                                 automationlayer.hiShort > 127 ? 0
-                               : automationlayer.hiShort,
-                                 automationlayer.hiShort > 127
-                               ? automationlayer.hiShort : 127 );
+                                             automationlayer.hiShort > 127 ? 0
+                                           : automationlayer.hiShort,
+                                             automationlayer.hiShort > 127
+                                           ? automationlayer.hiShort : 127 );
 
             if ( automationlayer.tyByte != 0 ) {
                 Message.TYPE type = (Message.TYPE)automationlayer.tyByte;
@@ -221,14 +225,14 @@ namespace Stepflow.Gui.Automation
         {
             if(!learning ) {
                 incoming.Enqueue( message );
-                automation().invalidation();
+                input().invalidation();
             } else {
                 Message.TYPE type = message.Type;
                 if ( type < Message.TYPE.SYSEX && type != Message.TYPE.PROG_CHANGE ) {
                     learning = false;
                     learnedInput = string.Format( "{0}~{1}", ( message.Channel+1 ).ToString(),
                                     message.Number.ToString() );
-                    automation().invalidation();
+                    input().invalidation();
                 }
             }
         }
@@ -249,6 +253,7 @@ namespace Stepflow.Gui.Automation
             if( learnedInput != null ) {
                 string[] chanNum = learnedInput.Split('~');
                 learnedInput = null;
+                if( element.inputMenu != null )
                 if( element.inputMenu.midiIn_mnu.Visible )
                     element.inputMenu.midiIn_mnu.Close();
 
@@ -256,7 +261,7 @@ namespace Stepflow.Gui.Automation
                     short.Parse( chanNum[0] ), short.Parse( chanNum[1] )
                 );
 
-                automation().RegisterAsMesssageListener( learnedbinding );
+                input().RegisterAsMesssageListener( learnedbinding );
             }
         }
 
@@ -282,7 +287,13 @@ namespace Stepflow.Gui.Automation
 
             if( MidiOutPortID != bindingDescriptor.dryByte )
                 triggerPortChange( AutomationDirection.Output, element, bindingDescriptor.dryByte );
-             element.channels[channelAutomatic] = bindingDescriptor;
+            if( element != null )
+                element.channels[channelAutomatic] = bindingDescriptor;
+        }
+
+        public void ConfigureAsMessagingAutomat( AutomationlayerAddressat bindingDescriptor )
+        {
+            ConfigureAsMessagingAutomat( bindingDescriptor, 0 );
         }
     }
 }

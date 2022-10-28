@@ -21,6 +21,7 @@ namespace MidiGUI.Test.Container
     {
         private SuiteGUIControls test;
         private Form1            Aut;
+        private float            ExpectedValue;
 
         public Meters( SuiteGUIControls suite, Form1 aut )
         {
@@ -78,9 +79,36 @@ namespace MidiGUI.Test.Container
             Thread.Sleep(1000);
         }
 
+
+
+
         public void Test_MidiMeter()
         {
-            // TODO
+            test.SelectAndBindMidiReceivingControl<MidiMeter>(1,1);
+            MidiMeter dings = Aut.GetStagedControl() as MidiMeter;
+            dings.LevelChanged += Dings_LevelChanged;
+
+            ExpectedValue = dings.Range / 2.0f;
+            test.midi().SendControlChange(64);
+
+            // TODO verify that the meter chart shows up center-value / half-range
+            Sleep(200);
+
+            test.midi().SendControlChange(0);
+
+            Sleep(200);
+
+            test.midi().SendControlChange(127);
+
+            Sleep(200);
+
+            /////////
+            // TODO sending more different midi messages and veify the control receives them
+        }
+
+        private void Dings_LevelChanged( object sender, ValueChangeArgs<float> value )
+        {
+            test.CheckStep( value == ExpectedValue, "Meter level changed to {0}", value.Value );
         }
     }
 }

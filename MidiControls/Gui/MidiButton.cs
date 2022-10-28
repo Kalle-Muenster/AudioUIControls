@@ -14,16 +14,12 @@ namespace Midi
         public delegate void MidiValueChangeDelegate(object sender, Win32Imports.Midi.Value value );
         private MidiValueChangeDelegate MidiChanged;
 
-        AutomationlayerAddressat[] IAutomat.channels {
+        AutomationlayerAddressat[] IAutomat<MidiInOut>.channels {
             get { return new AutomationlayerAddressat[] { midiio.GetAutomationBindingDescriptor(0) }; }
         }
 
-        MidiInOut IMidiControlElement<MidiInOut>.binding {
-            get { return midiio; }
-        }
-
-        public IMidiControlElement<MidiInOut> midi() {
-            return this;
+        public MidiInOut midi() {
+            return midiio;
         }
         
         MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu { get; set; }
@@ -46,10 +42,10 @@ namespace Midi
             midiio = new MidiInOut();
             midiio.InitializeComponent( this, getConnector(), Invalidate );
 
-            Paint += midiio.automation().ProcessMessageQueue;
-            midiio.automation().AutomationEvent += midi().OnIncommingMidiControl;
+            Paint += midiio.input().ProcessMessageQueue;
+            midiio.AutomationEvent += midiio.automat().OnIncommingMidiControl;
             Changed += MidiButton_Changed;
-            MidiChanged = midi().binding.automate().OnValueChange;
+            MidiChanged = midi().output().OnValueChange;
             if (Text == "Gui") {
                 Text = "Midi";
             }

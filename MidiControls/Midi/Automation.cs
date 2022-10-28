@@ -14,12 +14,21 @@ namespace Stepflow {
             /// <summary>IMidiControlElement[midiinterfaceclass] (interface)
             /// Interface class to make control elements support the 'Midi' automation protocol</summary>
             /// <typeparam name="midiinterfaceclass">Class which provides accessing midi device interfaces</typeparam>
-            public interface IMidiControlElement<midiinterfaceclass> : IAutomat where midiinterfaceclass : ImportWraper 
+            public interface IMidiControlElement<midiinterfaceclass>
+                : IAutomat<midiinterfaceclass>
+            where midiinterfaceclass
+                : ImportWraper
+                , IAutomationProtocol
             {
+                /// <summary> The current control element's value represented as Midi value </summary>
                 MidiValue MidiValue { get; set; }
                 void OnIncommingMidiControl( object sender, MidiMessage value );
-                IMidiControlElement<midiinterfaceclass> midi();
-                midiinterfaceclass binding { get; }
+
+                /// <summary> midi()
+                /// Get midi functionallity of impementing control element class
+                /// </summary><returns> an interface object providing the api </returns>
+                midiinterfaceclass midi();
+                
                 /// <summary> midi().inputMenu
                 /// defines a property which (when implemented) provides accessing the context
                 /// menu on control elements implementing a IMidiControlElement interface type.

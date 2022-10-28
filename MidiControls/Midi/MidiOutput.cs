@@ -27,13 +27,14 @@ namespace Stepflow.Gui.Automation
             }
         }
 
-        public void InitializeComponent( IAutomat automatElement, IContainer automatConnector )
+        public void InitializeComponent( IMidiControlElement<MidiOutput> automatElement, IContainer automatConnector )
         {
-            element = automatElement as IMidiControlElement<MidiOutput>;
-            IContainer components = automatConnector;
+            element = automatElement;
             element.inputMenu = null;
-            element.outputMenu = new Midi.MidiOutputMenu<MidiOutput>(element, components);
-            OutPortChanged += element.outputMenu.OnPortChanged;
+            if( automatConnector != null ) {
+                element.outputMenu = new Midi.MidiOutputMenu<MidiOutput>(element, automatConnector);
+                OutPortChanged += element.outputMenu.OnPortChanged;
+            }
         }
 
         public int MidiOutDeviceID {
@@ -86,7 +87,7 @@ namespace Stepflow.Gui.Automation
             else MidiOut_Value = value;
         }
 
-        public IAutomationController<Value> automate()
+        public IAutomationController<Value> output()
         {
             return this;
         }
@@ -105,11 +106,18 @@ namespace Stepflow.Gui.Automation
             if( MidiOutPortID != bindingDescriptor.dryByte )
                 triggerPortChange( AutomationDirection.Output, element, bindingDescriptor.dryByte );
 
-            if ( channelAutomatic < 0 ) {
-                element.channels[channelAutomatic] = bindingDescriptor;
-            } else {
-                element.channels[destination] = bindingDescriptor;
+            if( element != null ) {
+                if( channelAutomatic > 0 ) {
+                    element.channels[channelAutomatic] = bindingDescriptor;
+                } else {
+                    element.channels[destination] = bindingDescriptor;
+                }
             }
+        }
+
+        public void ConfigureAsMessagingAutomat( AutomationlayerAddressat bindingDescriptor )
+        {
+            ConfigureAsMessagingAutomat( bindingDescriptor, 0 );
         }
     }
 }

@@ -44,16 +44,16 @@ namespace Stepflow.Midi.Gui
             ( this as IInterValuable ).getMenuHook().Add( new ValenceBondMenu<Controlled.Int32>(this, connector) );
             midiio.InitializeComponent( this, connector , Invalidate );
             (this as IBasicTouchableElement<MidiTrackBar>).handler = new BasicTouchHandler<MidiTrackBar>( this );
-            midiio.automate().ConfigureAsMessagingAutomat( midiad, 0 );
-            midiio.automation().RegisterAsMesssageListener( midiad );
+            midiio.output().ConfigureAsMessagingAutomat( midiad, 0 );
+            midiio.input().RegisterAsMesssageListener( midiad );
 
             if( PointerInput.Dispatcher == null ) {
                 PointerInput.Initialized += touch.element().TouchInputReady;
             } else PointerInput.Dispatcher.RegisterTouchableElement( this );
 
-            midiio.automation().AutomationEvent += midi().OnIncommingMidiControl;
+            midiio.input().AutomationEvent += midi().automat().OnIncommingMidiControl;
             ValueChanged += MidiTrackBar_ValueChanged;
-            Paint += midiio.automation().ProcessMessageQueue;
+            Paint += midiio.input().ProcessMessageQueue;
             Disposed += MidiComboBox_Disposed;
         }
 
@@ -76,11 +76,11 @@ namespace Stepflow.Midi.Gui
         }
 
 
-        MidiInOut IMidiControlElement<MidiInOut>.binding {
-            get { return midiio; }
+        public MidiInOut midi() {
+            return midiio;
         }
 
-        AutomationlayerAddressat[] IAutomat.channels {
+        AutomationlayerAddressat[] IAutomat<MidiInOut>.channels {
             get { return new AutomationlayerAddressat[] { midiad }; }
         }
 
@@ -96,7 +96,7 @@ namespace Stepflow.Midi.Gui
             get { return touch.IsTouched; }
         }
 
-        Value IMidiControlElement<MidiInOut>.MidiValue {
+        public Value MidiValue {
             get { return new Value( (short)Value ); }
             set { this.value.VAL = (int)(value.ProportionalFloat * (Maximum - Minimum));
                 valence().SetDirty( ValenceFieldState.Flags.VAL );
@@ -158,14 +158,9 @@ namespace Stepflow.Midi.Gui
             get; set;
         }
 
-        public IMidiControlElement<MidiInOut> midi()
-        {
-            return this;
-        }
-
         void IMidiControlElement<MidiInOut>.OnIncommingMidiControl( object sender, Win32Imports.Midi.Message value )
         {
-            midi().MidiValue = value;
+            MidiValue = value;
         }
 
         void IBasicTouchable.OnTouchDown(FingerTip tip)

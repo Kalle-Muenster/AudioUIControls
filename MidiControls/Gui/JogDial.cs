@@ -164,7 +164,7 @@ namespace Midi
             }
             float flowMov = flow.MOV;
             if( actual != fLast ) {
-                midiIO.automate().OnValueChange( this, MidiValue );
+                midiIO.output().OnValueChange( this, MidiValue );
                 if( canStop == false ) {
                     canStop = Math.Abs( actual ) > IsDownBelow;
                     if( canStop ) {
@@ -531,9 +531,9 @@ namespace Midi
 
         private void MidiIn_PortChanged( object sender, int newPortId )
         {
-            Message.Filter currentlyActive = midi().binding.MessageFilter; 
-            midi().binding.RemoveAnyFilters();
-            midi().binding.UseMessageFilter( currentlyActive );
+            Message.Filter currentlyActive = midi().MessageFilter; 
+            midi().RemoveAnyFilters();
+            midi().UseMessageFilter( currentlyActive );
         }
 
         protected override void OnResize( EventArgs e )
@@ -806,18 +806,20 @@ namespace Midi
 #region Midi Interface
         private int    messageReadCount = 0;
         private Action messageLoopTrigger;
-        AutomationlayerAddressat[] IAutomat.channels {
-            get { Message.Filter filter = midi().binding.MessageFilter;
+        AutomationlayerAddressat[] IAutomat<MidiInOut>.channels {
+            get { Message.Filter filter = midi().MessageFilter;
                 return new AutomationlayerAddressat[] {
                     new AutomationlayerAddressat( filter.from, (byte)filter.loTy,
                                                   filter.till, (byte)filter.Chan )
                 };
             }
         }
-        public IMidiControlElement<MidiInOut> midi() { return this; }
-        MidiInOut IMidiControlElement<MidiInOut>.binding {
-            get { return midiIO == null ? midiIO = new MidiInOut() : midiIO; }
+        public MidiInOut midi() {
+            return midiIO == null 
+                 ? midiIO = new MidiInOut()
+                 : midiIO;
         }
+
         public Win32Imports.Midi.Value MidiValue {
             get { return new Win32Imports.Midi.Value((int)((Position / 360.0f) * 127.0f)); }
             set { Position = value.getProportionalFloat() * 360; }
@@ -829,9 +831,9 @@ namespace Midi
         MidiOutputMenu<MidiInOut> IMidiControlElement<MidiInOut>.outputMenu { get; set; }
             private void readMessageQueue()
             {
-                bool read = midi().binding.automation().messageAvailable();
+                bool read = midi().input().messageAvailable();
                 if( !read ) { if( --messageReadCount <= 0 ) task().assist.ReleaseAssist( messageLoopTrigger ); } else {
-                    midi().binding.automation().ProcessMessageQueue( this, new EventArgs() );
+                    midi().input().ProcessMessageQueue( this, new EventArgs() );
                     messageReadCount = 10;
                 }if( read ) Invalidate();
             }
@@ -849,11 +851,12 @@ namespace Midi
             protected void InitMidi( IContainer connector )
             {
                 messageLoopTrigger = readMessageQueue;
-                midi().binding.InitializeComponent( this, connector, emptyMessageQueue );
-                midi().binding.automation().AutomationEvent += midi().OnIncommingMidiControl;
+                midi().InitializeComponent( this, connector, emptyMessageQueue );
+                midi().input().AutomationEvent += midi().automat().OnIncommingMidiControl;
                 messageReadCount = 0;
             }
-#endregion
+
+            #endregion
         }
     }
 }

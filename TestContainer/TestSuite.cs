@@ -52,7 +52,8 @@ namespace MidiGUI.Test
             }
 
             midiInOut = new MidiInOut();
-            midi().binding.AutomationEvent += midi().OnIncommingMidiControl;
+            midiInOut.InitializeComponent( this, null, midiQueueAction );
+            midi().input().AutomationEvent += midi().automat().OnIncommingMidiControl;
             
             midipoller = new Task( midiQueueAction );
             midipoller.Start();
@@ -117,6 +118,7 @@ namespace MidiGUI.Test
             if( meters == null ) {
                 meters = new Container.Meters( this, Aut );
             } meters.Test_GuiMeter();
+            meters.Test_MidiMeter();
         }
 
 
@@ -164,7 +166,7 @@ namespace MidiGUI.Test
 
         private AutomationlayerAddressat[] midisettings = new AutomationlayerAddressat[1];
         public Value MidiValue { get; set; }
-        public MidiInOut binding { get { return midiInOut; } }
+        public MidiInOut midi() { return midiInOut; }
         public MidiInputMenu<MidiInOut> inputMenu { get; set; }
         public MidiOutputMenu<MidiInOut> outputMenu { get; set; }
 
@@ -176,16 +178,59 @@ namespace MidiGUI.Test
         {
             EventArgs e = new EventArgs();
             while( midiloop ) {
-                if( midi().binding.automation().messageAvailable() )
-                    midi().binding.automation().ProcessMessageQueue( this, e );
+                if( midi().input().messageAvailable() )
+                    midi().input().ProcessMessageQueue( this, e );
                 midipoller.Wait( 10 );
             }
         }
 
-        public void BindMidiControl()
+        public void SelectAndBindMidiSendingControl<T>( int channel, int controller ) where T : class, IInterValuable
         {
-            //AutomationlayerAddressat autput = new AutomationlayerAddressat();
-            //(Aut.GetStagedControl() as IAutomationController<Win32Imports.Midi.Message>).ConfigureAsMessagingAutomat()
+            midi().MidiInPortID = 0;
+            AutomationlayerAddressat binder = new AutomationlayerAddressat();
+            binder.tyByte = (byte)Win32Imports.Midi.Message.TYPE.CTRL_CHANGE;
+            binder.loByte = (byte)channel;
+            binder.hiByte = (byte)controller;
+            binder.dryByte = (byte)midi().MidiInPortID;
+            midi().input().RegisterAsMesssageListener( binder );
+
+            binder.dryByte = 1;
+
+            SelectControlType( typeof(T));
+            T testling = Aut.GetStagedControl() as T;
+            if( typeof(T) == typeof(MidiSlider) )
+                ( testling as MidiSlider ).midi().output().ConfigureAsMessagingAutomat( binder );
+            else if( typeof(T) == typeof(JogDial) )
+                ( testling as JogDial ).midi().output().ConfigureAsMessagingAutomat( binder );
+            else if( typeof(T) == typeof(MidiButton) )
+                ( testling as MidiButton ).midi().output().ConfigureAsMessagingAutomat( binder );
+
+            InfoStep("Bound '{0}' to midi output controller {1} on channel {2} ", testling, controller, channel);
+        }
+
+        public void SelectAndBindMidiReceivingControl<T>( int channel, int controller ) where T : class, IInterValuable
+        {
+            midi().MidiOutPortID = 1;
+            AutomationlayerAddressat binder = new AutomationlayerAddressat();
+            binder.tyByte = (byte)Win32Imports.Midi.Message.TYPE.CTRL_CHANGE;
+            binder.loByte = (byte)channel;
+            binder.hiByte = (byte)controller;
+            binder.dryByte = (byte)midi().MidiOutPortID;
+            midi().output().ConfigureAsMessagingAutomat( binder );
+            binder.dryByte = 0;
+
+            SelectControlType( typeof(T) );
+            T testling = Aut.GetStagedControl() as T;
+            if( typeof(T) == typeof(MidiMeter) )
+                (testling as MidiMeter).midi().input().RegisterAsMesssageListener( binder );
+            else if( typeof(T) == typeof(MidiSlider) )
+                ( testling as MidiSlider ).midi().input().RegisterAsMesssageListener( binder );
+            else if( typeof(T) == typeof(JogDial) )
+                ( testling as JogDial ).midi().input().RegisterAsMesssageListener(binder);
+            else if( typeof(T) == typeof(MidiButton) )
+                ( testling as MidiButton ).midi().input().RegisterAsMesssageListener(binder);
+
+            InfoStep("Bound '{0}' to input midi channel {2}, controller {1} on port {3}", testling, controller, channel, midi().MidiOutPortName(1) );
         }
 
         public void OnIncommingMidiControl( object sender, Win32Imports.Midi.Message value )
@@ -194,11 +239,6 @@ namespace MidiGUI.Test
                 PassStep( "Received expected Midi Message: {0}", value );
             else
                 FailStep( "Received nonsense: {0}", value );
-        }
-
-        public IMidiControlElement<MidiInOut> midi()
-        {
-            return this;
         }
     }
 }

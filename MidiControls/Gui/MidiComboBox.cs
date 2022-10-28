@@ -46,9 +46,9 @@ namespace Stepflow.Midi.Gui
             ContextMenuStrip = new ContextMenuStrip( connector );
             ( this as IInterValuable ).getMenuHook().Add( new ValenceBondMenu<Controlled.Byte>(this, connector));
             midiio.InitializeComponent( this, connector , Invalidate );
-            midiio.automate().ConfigureAsMessagingAutomat( midiad, 0 );
-            midiio.automation().RegisterAsMesssageListener( midiad );
-            midiio.automation().AutomationEvent += midi().OnIncommingMidiControl;
+            midiio.output().ConfigureAsMessagingAutomat( midiad, 0 );
+            midiio.input().RegisterAsMesssageListener( midiad );
+            midiio.input().AutomationEvent += midi().automat().OnIncommingMidiControl;
 
             if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
                 if( PointerInput.Dispatcher == null ) {
@@ -58,7 +58,7 @@ namespace Stepflow.Midi.Gui
             }
 
             SelectedIndexChanged += MidiSelectBox_SelectedIndexChanged;
-            Paint += midiio.automation().ProcessMessageQueue;
+            Paint += midiio.input().ProcessMessageQueue;
             Disposed += MidiComboBox_Disposed;
         }
 
@@ -87,7 +87,7 @@ namespace Stepflow.Midi.Gui
         {
             index.VAL = (byte)SelectedIndex;
             valence().SetDirty( ValenceFieldState.Flags.VAL );
-            midiio.automate().OnValueChange( this, midi().MidiValue );
+            midiio.output().OnValueChange( this, MidiValue );
             Invalidate();
         }
 
@@ -111,14 +111,14 @@ namespace Stepflow.Midi.Gui
         }
 
 #region MidiAutomation
-        Value IMidiControlElement<MidiInOut>.MidiValue {
+        public Value MidiValue {
             get { return new Value( SelectedIndex ); }
             set { SelectedIndex = value; }
         }
 
         
-        MidiInOut IMidiControlElement<MidiInOut>.binding {
-            get { return midiio; }
+        public MidiInOut midi() {
+            return midiio;
         }
 
         MidiInputMenu<MidiInOut> IMidiControlElement<MidiInOut>.inputMenu { 
@@ -128,25 +128,18 @@ namespace Stepflow.Midi.Gui
             get; set;
         }
 
-        AutomationlayerAddressat[] IAutomat.channels {
+        AutomationlayerAddressat[] IAutomat<MidiInOut>.channels {
             get { return new AutomationlayerAddressat[] { midiad }; }
-        }
-
-
-
-        public IMidiControlElement<MidiInOut> midi()
-        {
-            return this;
         }
 
         void IMidiControlElement<MidiInOut>.OnIncommingMidiControl( object sender, Win32Imports.Midi.Message value )
         {
-            midi().MidiValue = new Value( (short)value.Value );
+            MidiValue = new Value( (short)value.Value );
         }
 
         public IncommingAutomation<Win32Imports.Midi.Message> midiDelegate()
         {
-            return midi().OnIncommingMidiControl;
+            return midi().automat().OnIncommingMidiControl;
         }
 #endregion
 

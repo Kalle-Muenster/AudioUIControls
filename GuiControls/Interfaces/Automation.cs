@@ -139,35 +139,58 @@ namespace Stepflow
                 AutomationDirection direction { get; }
             }
 
+            public interface IAutomationProtocol<Automat>
+                : IAutomationProtocol
+            where Automat
+                : IAutomat<IAutomationProtocol<Automat>>
+            {
+                void InitializeComponent( Automat automatElement,
+                                          System.ComponentModel.IContainer elementConnector );
+                Automat automat();
+            }
            
             /// <summary>IAutomationControlable[MessageType] (interface)
             /// Interface for components which can make control elements able receiving 
             /// automation messages of any kinds of supported protocol, so these can be
             /// controlled via control elements on external hardware devices</summary>
             /// <typeparam name="MessageType">data type for messages being received</typeparam>
-            public interface IAutomationControlable<MessageType> : IAutomationProtocol 
-                where MessageType : struct
+            public interface IAutomationControlable<MessageType>
+                : IAutomationProtocol
+            where MessageType
+                : struct
             { 
                 event IncommingAutomation<MessageType> AutomationEvent;
-                void InitializeComponent( IAutomat element, System.ComponentModel.IContainer elementConnector, Action elementInvalidator );
-                Action invalidation { get; set; }
+                void InitializeComponent( object automatElement,
+                                          System.ComponentModel.IContainer elementConnector,
+                                          Action elementInvalidator );
 
                 /// <summary>accessor for retreiving this controll element instance,
                 /// casted to having this IAutomationControlabe interface accessible.
                 /// (just needed if 'explicitely' implemented)</summary><returns>
                 /// 'this' casted to an 'IAutomationControlabe object'</returns>
-                IAutomationControlable<MessageType> automation();
+                IAutomationControlable<MessageType> input();
                 
                 /// <summary>Must be overriden by implementation which retrieve the controll elements name.</summary>
                 string getName();
-                
+
+                /// <summary>messageAvailable()
+                /// Are any automation messages available in the message queue actually? 
+                /// </summary><returns>'true' if there are one or more messages available.
+                /// 'false' if there are no incoming messages available actually.</returns>
+                bool messageAvailable();
+
+                void incommingMessagQueue( MessageType message );
+
+                Action invalidation { get; set; }
+
+
                 /// <summary>RegisterAsMesssageListener(bindingdescriptor):
                 /// register as observer at the message loop which receives the automation messages from
                 /// other device</summary><param name="bindingDescriptor">An 'AutomationlayerAddressat'
                 /// struct containing information about on which kind of automation signals or messages
                 /// the element should listen to. (for midi registration this would be 'portid + channel
-                /// + controller' triade for identfying a distinct controller change channel within
-                /// the midi environment we are actually connected to)</param>
+                /// + controller' triade for identfying a distinct controller channel within
+                /// the midi environment we are actually connected to via the actually used midi port)</param>
                 void RegisterAsMesssageListener( AutomationlayerAddressat bindingDescriptor );
 
                 /// <summary>SignOutFromAutomationLoop():
@@ -180,14 +203,6 @@ namespace Stepflow
                 /// <returns>AutomationlayerAddressat struct containing information about
                 /// this controll elements bound automation targets or sources</returns>
                 AutomationlayerAddressat GetAutomationBindingDescriptor( int channel );
-
-                /// <summary>messageAvailable()
-                /// Are any automation messages available in the message queue actually? 
-                /// </summary><returns>'true' if there are one or more messages available.
-                /// 'false' if there are no incoming messages available actually.</returns>
-                bool messageAvailable();
-
-                void incommingMessagQueue( MessageType message );
 
                 /// <summary>ProcessMessageQueue(sender,eventargs):
                 /// progress and empty the queue of received incomming messages where listening to ...
@@ -206,12 +221,29 @@ namespace Stepflow
             /// of given 'MessageType' when interacted (e.g. for automating other controlls on external devices,
             /// for automating audio/music equipment as either external hardware or internal software components
             /// </summary><typeparam name="MessageType">Data type of messages the control element sends</typeparam>
-            public interface IAutomationController<MessageType> : IAutomationProtocol where MessageType : struct
-            { 
+            public interface IAutomationController<MessageType> 
+                : IAutomationProtocol
+            where MessageType 
+                : struct
+            {
+                /// <summary> MessageForwardingEnabled (bool)
+                /// Property which tells about the instnces behavior in handling incomming messages.
+                /// if the instance implements both directions for an automation protocol (e.g. if
+                /// it implements IAutomationController<T> and IAutomationControlable<T> interfaces)
+                /// then if this Property returns true, the instance automatically will pass any
+                /// messages it receives via its IAutomationControlable<T> implementation forwarding
+                /// it to its IAutomationController<T> implementation for outputing it. (e.g for systems
+                /// like MIDI or DMX where devices can be connectet in rows consectuitively one after
+                /// anther. By setting forwarding to false and then adding own implementation
+                /// for handling message forwarding which by own criteria can decide if a message 
+                /// should be forwarded or not, can be controlled so if distinct devices should be
+                /// able 'eating' messages from an environments message cue so.
+                /// </summary>
                 bool MessageForwardingEnabled { get; }
-                IAutomationController<MessageType> automate();
+                IAutomationController<MessageType> output();
 
-                void InitializeComponent( IAutomat element, System.ComponentModel.IContainer elementConnector );
+           //     void InitializeComponent( object automatElement,
+           //                               System.ComponentModel.IContainer elementConnector );
 
                 /// <summary>OwValueChange(sender,eventargs)
                 /// should be 'implemented' within the AutomationProtocol type used in conjunction with this 
@@ -223,7 +255,7 @@ namespace Stepflow
                 /// assigning values to variables on the element)</summary><param name="sender">reference to this
                 /// controll element as being message sender</param><param name="value">the value which is set to
                 /// this controll elements 'main' value property by automation events</param>
-                void OnValueChange(object sender, float value);
+                void OnValueChange( object sender, float value );
 
                 /// <summary>OwValueChange(sender,eventargs)
                 /// should be 'implemented' within the AutomationProtocol type used in conjunction with this 
@@ -235,7 +267,7 @@ namespace Stepflow
                 /// assigning values to variables on the element)</summary><param name="sender">reference to this
                 /// controll element as being message sender</param><param name="value">the value which is set to
                 /// this controll elements 'main' value property by automation events</param>
-                void OnValueChange(object sender, MessageType value);
+                void OnValueChange( object sender, MessageType value );
 
                 /// <summary>
                 /// ConfigureAsMessagingAutomat(bindingDescriptor)
@@ -243,12 +275,16 @@ namespace Stepflow
                 /// <param name="bindingDescriptor"></param>
                 /// <param name="channelAutomatic"> optional channal parameter </param>
                 void ConfigureAsMessagingAutomat( AutomationlayerAddressat bindingDescriptor, int channelAutomatic );
+                void ConfigureAsMessagingAutomat( AutomationlayerAddressat bindingDescriptor );
             }
 
 
-            public interface IAutomat
+            public interface IAutomat<AutomationProtocol>
+                                where AutomationProtocol
+                                   : IAutomationProtocol
             {
-                AutomationlayerAddressat[] channels { get; }
+                AutomationlayerAddressat[]  channels { get; }
+                //IAutomat<AutomationProtocol> automat();
             }
 
         }

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Stepflow.Midi
 {
 
-    public class MidiInputMenu<MidiClass> where MidiClass : ImportWraper
+    public class MidiInputMenu<MidiClass> where MidiClass : ImportWraper, IAutomationProtocol
     {
         public IMidiControlElement<MidiClass> element;
         public  ContextMenuStrip              midiIn_mnu;
@@ -45,12 +45,12 @@ namespace Stepflow.Midi
         private void OnLearnClick( object sender, EventArgs e )
         {
             if( midiIn_mnu_binding_learn.Checked ) {
-                if ( element.binding is In ) {
-                    (element.binding as In).RemoveAnyFilters();
-                    (element.binding as MidiInput).setLearnung();
-                } else if (element.binding is Thru ) {
-                    (element.binding as Thru).RemoveAnyFilters();
-                    (element.binding as MidiInOut).setLearnung();
+                if ( element.midi() is In ) {
+                    (element.midi() as In).RemoveAnyFilters();
+                    (element.midi() as MidiInput).setLearnung();
+                } else if (element.midi() is Thru ) {
+                    (element.midi() as Thru).RemoveAnyFilters();
+                    (element.midi() as MidiInOut).setLearnung();
                 }
             }
         }
@@ -67,11 +67,11 @@ namespace Stepflow.Midi
                 layer.hiByte = 0;
                 layer.dryByte = 127;
             }
-            if ( element.binding is MidiInput )
-                (element.binding as MidiInput).RegisterAsMesssageListener( layer );
+            if ( element.midi() is MidiInput )
+                (element.midi() as MidiInput).RegisterAsMesssageListener( layer );
             else
-            if ( element.binding is MidiInOut )
-                (element.binding as MidiInOut).automation().RegisterAsMesssageListener( layer );
+            if ( element.midi() is MidiInOut )
+                (element.midi() as MidiInOut).input().RegisterAsMesssageListener( layer );
 
             midiIn_mnu.Close();
         }
@@ -89,11 +89,11 @@ namespace Stepflow.Midi
 
         private void midiIn_mnu_input_port_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ( element.binding is MidiInOut )
-                (element.binding as MidiInOut).triggerPortChange( AutomationDirection.Input, sender, (element.binding as Thru).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
+            if ( element.midi() is MidiInOut )
+                (element.midi() as MidiInOut).triggerPortChange( AutomationDirection.Input, sender, (element.midi() as Thru).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
             else
-            if ( element.binding is MidiInput )
-                (element.binding as MidiInput).triggerPortChange( AutomationDirection.Input, sender, (element.binding as In).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
+            if ( element.midi() is MidiInput )
+                (element.midi() as MidiInput).triggerPortChange( AutomationDirection.Input, sender, (element.midi() as In).MidiInPortID = midiIn_mnu_input_port.SelectedIndex );
         }
 
         public MidiInputMenu( IMidiControlElement<MidiClass> parent,
@@ -103,7 +103,7 @@ namespace Stepflow.Midi
             element.inputMenu = this;
 
 
-            this.midiIn_mnu = new System.Windows.Forms.ContextMenuStrip(connector);
+            this.midiIn_mnu = new System.Windows.Forms.ContextMenuStrip( connector );
             this.midiIn_mnu.SuspendLayout();
 
             this.midiIn_mnu_input_port = new System.Windows.Forms.ToolStripComboBox();
@@ -127,15 +127,15 @@ namespace Stepflow.Midi
             this.midiIn_mnu_input_port.Name = "midiIn_mnu_input_port";
             this.midiIn_mnu_input_port.Size = new System.Drawing.Size(121, 33);
 
-            if( element.binding is MidiInOut ) {
-                int numPorts = (element.binding as MidiInOut).NumberOfMidiInPorts;
+            if( element.midi() is MidiInOut ) {
+                int numPorts = (element.midi() as MidiInOut).NumberOfMidiInPorts;
                 for (int i = 0; i < numPorts; ++i) {
-                    this.midiIn_mnu_input_port.Items.Add((element.binding as MidiInOut).MidiInPortName(i));
+                    this.midiIn_mnu_input_port.Items.Add((element.midi() as MidiInOut).MidiInPortName(i));
                 }
-            } else if( element.binding is MidiInput ) {
-                int numPorts = (element.binding as MidiInput).NumberOfMidiInPorts;
+            } else if( element.midi() is MidiInput ) {
+                int numPorts = (element.midi() as MidiInput).NumberOfMidiInPorts;
                 for (int i = 0; i < numPorts; ++i) {
-                    this.midiIn_mnu_input_port.Items.Add((element.binding as MidiInput).MidiInPortName(i));
+                    this.midiIn_mnu_input_port.Items.Add((element.midi() as MidiInput).MidiInPortName(i));
                 }
             }
 
@@ -199,7 +199,8 @@ namespace Stepflow.Midi
             this.ContextMenuHook.DropDown = midiIn_mnu_binding_mnu.DropDown;
 
             midiIn_mnu.ResumeLayout();
-            (element as IInterValuable).getMenuHook().Add( this );
+            if (element is IInterValuable)
+               (element as IInterValuable).getMenuHook().Add( this );
         }
 
         private void MidiIn_mnu_binding_msgtype_SelectedIndexChanged( object sender, EventArgs e )
@@ -232,7 +233,7 @@ namespace Stepflow.Midi
     //////////////////////////////////////////////////////////////////////////////////////////////////////
    /// MidiOutputMenu
 
-    public class MidiOutputMenu<MidiClass> where MidiClass : Win32Imports.Midi.ImportWraper
+    public class MidiOutputMenu<MidiClass> where MidiClass : ImportWraper, IAutomationProtocol
     {
         public IMidiControlElement<MidiClass> element;
         private int  destination;
@@ -289,10 +290,10 @@ namespace Stepflow.Midi
                     (byte)midiOut_mnu_binding_msgtype.Tag, 0,127
                 );
 
-            if( element.binding is MidiOutput )
-                (element.binding as MidiOutput).ConfigureAsMessagingAutomat( automat, destination );
+            if( element.midi() is MidiOutput )
+                (element.midi() as MidiOutput).ConfigureAsMessagingAutomat( automat, destination );
             else
-                (element.binding as MidiInOut).ConfigureAsMessagingAutomat( automat, destination );
+                (element.midi() as MidiInOut).ConfigureAsMessagingAutomat( automat, destination );
             
             midiOut_mnu.Close();
         }
@@ -310,11 +311,11 @@ namespace Stepflow.Midi
 
         private void Midi_mnu_output_port_SelectedIndexChanged( object sender, EventArgs e )
         {
-            if ( element.binding is MidiInOut )
-                (element.binding as MidiInOut).triggerPortChange(AutomationDirection.Output, sender, (element.binding as Thru).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
+            if ( element.midi() is MidiInOut )
+                (element.midi() as MidiInOut).triggerPortChange(AutomationDirection.Output, sender, (element.midi() as Thru).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
             else
-            if ( element.binding is MidiOutput )
-                (element.binding as MidiOutput).triggerPortChange(AutomationDirection.Output, sender, (element.binding as Out).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
+            if ( element.midi() is MidiOutput )
+                (element.midi() as MidiOutput).triggerPortChange(AutomationDirection.Output, sender, (element.midi() as Out).MidiOutPortID = midiOut_mnu_output_port.SelectedIndex );
         }
 
         private void MidiOut_mnu_binding_msgtype_SelectedIndexChanged( object sender, EventArgs e )
@@ -376,15 +377,15 @@ namespace Stepflow.Midi
             this.midiOut_mnu_output_port.Name = "midiOut_mnu_output_port";
             this.midiOut_mnu_output_port.Size = new System.Drawing.Size(121, 33);
 
-            if( element.binding is MidiInOut ) {
-                int numPorts = (element.binding as MidiInOut).NumberOfMidiOutPorts;
+            if( element.midi() is MidiInOut ) {
+                int numPorts = (element.midi() as MidiInOut).NumberOfMidiOutPorts;
                 for (int i = 0; i < numPorts; ++i) {
-                    this.midiOut_mnu_output_port.Items.Add( (element.binding as MidiInOut).MidiOutPortName(i) );
+                    this.midiOut_mnu_output_port.Items.Add( (element.midi() as MidiInOut).MidiOutPortName(i) );
                 }
-            } else if( element.binding is MidiOutput ) {
-                int numPorts = (element.binding as MidiOutput).NumberOfMidiOutPorts;
+            } else if( element.midi() is MidiOutput ) {
+                int numPorts = (element.midi() as MidiOutput).NumberOfMidiOutPorts;
                 for (int i = 0; i < numPorts; ++i) {
-                    this.midiOut_mnu_output_port.Items.Add( (element.binding as MidiOutput).MidiOutPortName(i) );
+                    this.midiOut_mnu_output_port.Items.Add( (element.midi() as MidiOutput).MidiOutPortName(i) );
                 }
             }
 
@@ -441,7 +442,8 @@ namespace Stepflow.Midi
             ContextMenuHook.DropDown = midiOut_mnu_binding_mnu.DropDown;
 
             midiOut_mnu.ResumeLayout();
-            (element as IInterValuable).getMenuHook().Add( this );
+            if (element is IInterValuable)
+               (element as IInterValuable).getMenuHook().Add( this );
         }
     }
 

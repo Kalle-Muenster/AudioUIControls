@@ -452,12 +452,6 @@ namespace Stepflow
                     }
                 }
 
-                public MidiOutput binding {
-                    get {
-                        return ((IMidiControlElement<MidiOutput>)Instrument).binding;
-                    }
-                }
-
                 public AutomationlayerAddressat[] channels {
                     get {
                         return ((IMidiControlElement<MidiOutput>)Instrument).channels;
@@ -469,9 +463,9 @@ namespace Stepflow
                     ((IMidiControlElement<MidiOutput>)Instrument).OnIncommingMidiControl(sender, value);
                 }
 
-                public IMidiControlElement<MidiOutput> midi()
+                public MidiOutput midi()
                 {
-                    return ((IMidiControlElement<MidiOutput>)Instrument).midi();
+                    return Instrument.midi();
                 }
 
                 MidiInputMenu<MidiOutput> IMidiControlElement<MidiOutput>.inputMenu {
@@ -567,14 +561,14 @@ namespace Stepflow
 
                 private void String_AmplitudeChanged( object sender, ValueChangeArgs<float> value )
                 {
-                    midi().binding.SendNoteOn( outchannel, notevalue, (int)(127.0f * value.Value) );
+                    midi().SendNoteOn( outchannel, notevalue, (int)(127.0f * value.Value) );
                 }
 
                 private void String_FrequencyChanged( object sender, ValueChangeArgs<float> value )
                 {
                     midimsges = Frequency.toMidiData( value.Value, amplitude, outchannel );
                     notevalue = (Note)midimsges[0].Number;
-                    midi().binding.SendOutMessages( midimsges );
+                    midi().SendOutMessages( midimsges );
                 }
 
 
@@ -602,7 +596,7 @@ namespace Stepflow
                     }
                     midimsges = Frequency.toMidiData( frequency, amplitude, outchannel );
                     notevalue = (Note)midimsges[0].Number;
-                    midi().binding.SendOutMessages( midimsges );
+                    midi().SendOutMessages( midimsges );
                 }
 
                 private void OnStringRelease(object sender, FingerTip e)
@@ -844,7 +838,7 @@ namespace Stepflow
                 plectrum.Style = Style.Dark;
                 plectrum.AttachSideChain( IntPtr.Zero );
 
-                midi().binding.InitializeComponent( this, components );
+                midi().InitializeComponent( this, components );
                 Disposed += Dispose_function;
             }
 
@@ -933,8 +927,8 @@ namespace Stepflow
                 }
             }
 
-            MidiOutput IMidiControlElement<MidiOutput>.binding {
-                get { return midiOut; }
+            public MidiOutput midi() {
+                return midiOut;
             }
 
 
@@ -945,13 +939,15 @@ namespace Stepflow
 
             MidiInputMenu<MidiOutput> IMidiControlElement<MidiOutput>.inputMenu { get; set; }
             MidiOutputMenu<MidiOutput> IMidiControlElement<MidiOutput>.outputMenu { get; set; }
-
-            public IMidiControlElement<MidiOutput> midi()
-            {
-                return this;
-            }
-            AutomationlayerAddressat[] IAutomat.channels {
-                get { return new AutomationlayerAddressat[] { new AutomationlayerAddressat((byte)midi().binding.MidiOut_Channel, (byte)midi().binding.MidiOut_Type, (byte)midi().binding.MidiOut_Controller, (byte)midi().binding.MidiOutPortID) }; }
+            AutomationlayerAddressat[] IAutomat<MidiOutput>.channels {
+                get { return new AutomationlayerAddressat[] {
+                    new AutomationlayerAddressat(
+                        (byte)midi().MidiOut_Channel,
+                        (byte)midi().MidiOut_Type,
+                        (byte)midi().MidiOut_Controller,
+                        (byte)midi().MidiOutPortID) 
+                    };
+                }
             }
 
             public virtual void OnTouchDown(FingerTip tip) { }
