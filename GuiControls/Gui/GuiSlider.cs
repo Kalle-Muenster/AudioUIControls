@@ -76,7 +76,7 @@ namespace Stepflow.Gui
         void IInterValuable.callOnInvalidated( InvalidateEventArgs e ) { OnInvalidated(e); }
         private void valueUpdate() { TriggerEvents(); Invalidate(); }
 
-        internal protected ITouchGesturedElement<GuiSlider> getInTouch() { return this as ITouchGesturedElement<GuiSlider>; }
+        internal protected ITouchGesturedElement<GuiSlider> getInTouch() { return this; }
 
         public interface IControlMarker
         {
@@ -591,8 +591,8 @@ namespace Stepflow.Gui
                         Width = Height = (Width*2);
                     } orientation = (int)value;
                     glimmer.SetSheet( orientation / 2 );
-                    bgimg.SetGroup( value );
-                    nippl.SetGroup( value );
+                    bgimg.SelectGroup( value );
+                    nippl.SelectGroup( value );
                     NuppsiResize();
                     Invalidate( true );
                 }
@@ -605,8 +605,8 @@ namespace Stepflow.Gui
             set { if ( style != (sbyte)value ) {
                     style = (sbyte)value;
                     glimmer.SetStyle( value );
-                    bgimg.SetLoop( value );
-                    nippl.SetLoop( value );
+                    bgimg.SelectLoop( value );
+                    nippl.SelectLoop( value );
                     Invalidate();  
                 }
             }
@@ -810,8 +810,7 @@ namespace Stepflow.Gui
             images = new Bitmap[4];
 
             source = new IRectangle[3][][][];
-            SpriteSheet.Loader loader = new SpriteSheet.Loader(
-                Resources.slider_complete_xml
+            SpriteSheet.Loader loader = new SpriteSheet.Loader( Resources.slider_complete_xml
                                                                 );
             int elmcount = loader.elmCount();
             source[0] = new IRectangle[elmcount][][];
@@ -863,8 +862,8 @@ namespace Stepflow.Gui
 
             bgimg = new SpriteSheet( images, source[0] );
             nippl = new SpriteSheet( images, source[1] );
-            bgimg.SetColor( Color.White ); //Color.FromArgb(255,32,32,32) );
-            nippl.SetColor( Color.White ); //Color.FromArgb(255,32,32,32) );
+            bgimg.SetColor( Color.White );
+            nippl.SetColor( Color.White );
 
             fastmove = 0;
             lastMouse = 0;
@@ -893,8 +892,8 @@ namespace Stepflow.Gui
             BorderStyle = BorderStyle.None;
             glimmer.SetStyle( Style );
             glimmer.SetModus( LedGlimmer.Mode.AutoBrushSelect );
-            bgimg.SetSprite( Orientation, Style );
-            nippl.SetSprite( Orientation, Style );
+            bgimg.SelectLoop( Orientation, Style );
+            nippl.SelectLoop( Orientation, Style );
             mnu_valene = new ValenceBondMenu<Controlled.Float32>( this, getConnector() );
 
             if( PointerInput.AutoRegistration == AutoRegistration.Enabled ) {
@@ -926,8 +925,6 @@ namespace Stepflow.Gui
             Color bg = Parent.FindForm().BackColor;
             base.BackColor = bg;
             base.ForeColor = bg;
-            //bgimg.SetColor( bg );
-            //nippl.SetColor( bg );
             Load -= AdjustSpriteColor;
             Invalidate( true );
         }

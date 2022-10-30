@@ -133,6 +133,32 @@ namespace GuiControls.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;SpriteSheet image=&quot;LedButton_Small&quot; count=&quot;3&quot;&gt;
+        ///	&lt;element name=&quot;LedButton&quot; enum=&quot;Stepflow.Gui.MipMap&quot; count=&quot;3&quot;&gt;
+        ///		&lt;group name=&quot;Large&quot; enum=&quot;Stepflow.Gui.Style&quot; count=&quot;3&quot;&gt;
+        ///			&lt;group name=&quot;Flat&quot; count=&quot;2&quot;&gt;
+        ///				&lt;sprite name=&quot;BackG&quot; image=&quot;LedButton_Flat&quot;&gt;
+        ///					&lt;X&gt;0&lt;/X&gt;
+        ///					&lt;Y&gt;0&lt;/Y&gt;
+        ///					&lt;W&gt;64&lt;/W&gt;
+        ///					&lt;H&gt;64&lt;/H&gt;
+        ///				&lt;/sprite&gt;
+        ///				&lt;sprite name=&quot;Hover&quot; image=&quot;button_flat_hover&quot;&gt;
+        ///					&lt;X&gt;0&lt;/X&gt;
+        ///					&lt;Y&gt;0&lt;/Y&gt;
+        ///					&lt;W&gt;64&lt;/W&gt;
+        ///					&lt;H&gt;64&lt;/H&gt;
+        ///				&lt;/sprite&gt;
+        ///			&lt;/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string ledbutton_complete_xml {
+            get {
+                return ResourceManager.GetString("ledbutton_complete_xml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap LedButton_Dark {
@@ -168,6 +194,16 @@ namespace GuiControls.Properties {
         public static System.Drawing.Bitmap LedButton_Lite {
             get {
                 object obj = ResourceManager.GetObject("LedButton_Lite", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap LedButton_Small {
+            get {
+                object obj = ResourceManager.GetObject("LedButton_Small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

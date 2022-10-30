@@ -538,7 +538,7 @@ namespace Stepflow.Gui
                 source[direction-Orientation.Horizontal][1][0] = loader.getSprite( direction, "Flat.Nipple.Small" );
                 source[direction-Orientation.Horizontal][1][1] = loader.getSprite( direction, "Flat.Nipple.Medium" );
                 source[direction-Orientation.Horizontal][1][2] = loader.getSprite( direction, "Flat.Nipple.Large" );
-                source[direction-Orientation.Horizontal][2]    =  loader.getArray( direction, "Led" );
+                source[direction-Orientation.Horizontal][2]    = loader.getArray( direction, "Led" );
             }
 
             if(!PointerInput.isInitialized() ) {

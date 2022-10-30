@@ -54,11 +54,11 @@ namespace Stepflow.Gui.Helpers
         private byte alpha;
 
         public float Glim {
-            get { return (float)alpha/255; }
-            set { alpha = (byte)(value*255); }
+            get { return (float)alpha/255.0f; }
+            set { alpha = (byte)(value*255.0f); }
         }
         public Color Glow {
-            get { return Color.FromArgb(color); }
+            get { return Color.FromArgb( color ); }
             set { byte remember = alpha;
                 color = value.ToArgb();
                 alpha = remember;
@@ -246,11 +246,13 @@ namespace Stepflow.Gui.Helpers
         public void DrawSprite( System.Drawing.Graphics ctx, Rect dst ) {
             if( !Off ) {
                 IRectangle src = spriteframe[spritesheet][(int)Led];
-                if( alfamatrize.Matrix33 != targetValue ) {
+                if( alfamatrize.Matrix33 != targetValue ) unsafe {
                     float d = targetValue - alfamatrize.Matrix33;
-                    int s = d < 0 ? -1 : 1;
-                    d = Math.Abs(d);
-                    d = (d > 0.075f ? 0.075f : d) * s;
+                    uint s = *(uint*)&d & 0x80000000u;
+                    d = Math.Abs( d );
+                    d = ( d > 0.075f ? 0.075f : d );
+                    s &= *(uint*)&d;
+                    d = *(float*)&s;
                     alfamatrize.Matrix33 += d;
                     attributzke.SetColorMatrix( alfamatrize );
                 } ctx.DrawImage( this, dst, src.X, src.Y, src.W, src.H, 

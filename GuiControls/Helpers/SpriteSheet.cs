@@ -107,7 +107,7 @@ namespace Stepflow.Gui
                 rec = (SystemDefault)sourceFrame.cast<SystemDefault,Rectangle>();
             }
 
-            virtual public void Draw( Graphics g, System.Drawing.Rectangle dstRec )
+            virtual public void Draw( Graphics g, Rectangle dstRec )
             {
                 g.DrawImage( image, dstRec, rec.ToRectangle(), GraphicsUnit.Pixel );
             }
@@ -340,11 +340,12 @@ namespace Stepflow.Gui
 
             private CornerAndSize getValues( string xpres )
             {
-                int X = xml.SelectSingleNode( xpres+"/X/text()" ).ValueAsInt;
-                int Y = xml.SelectSingleNode( xpres+"/Y/text()" ).ValueAsInt;
-                int W = xml.SelectSingleNode( xpres+"/W/text()" ).ValueAsInt;
-                int H = xml.SelectSingleNode( xpres+"/H/text()" ).ValueAsInt;
-                return new CornerAndSize( X, Y, W, H );
+                return new CornerAndSize(
+                    xml.SelectSingleNode( xpres+"/X/text()" ).ValueAsInt,
+                    xml.SelectSingleNode( xpres+"/Y/text()" ).ValueAsInt,
+                    xml.SelectSingleNode( xpres+"/W/text()" ).ValueAsInt,
+                    xml.SelectSingleNode( xpres+"/H/text()" ).ValueAsInt
+                );
             }
 
             public IRectangle[] getArray( Enum element, string name )
@@ -363,7 +364,7 @@ namespace Stepflow.Gui
                 for( int i = 0; i < count; ++i ) {
                     load[i] = Rectangle<CenterAndScale>.Create(
                                    StorageLayout.CornerAndSizes,
-                                   rect.X,rect.Y, rect.W,rect.H );
+                                   rect.X, rect.Y, rect.W, rect.H );
                     rect.Corner += pt;
                     if( rect.X >= img_size.Width ) {
                         rect.X = origin.x;
@@ -392,17 +393,20 @@ namespace Stepflow.Gui
         {
             bitmaps = images;
             sources = rects;
-            Initialize();
+            InitializeIndices();
         }
 
         public SpriteSheet( int imgCount, int AAAcount, int BBBcount, int CCCcount )
         {
             bitmaps = new Bitmap[imgCount];
             sources = new IRectangle[AAAcount][][];
-            for(int i=0;i<AAAcount;++i ) {
+            sprites = new ISprite[AAAcount][][];
+            for( int i=0; i<AAAcount; ++i ) {
                 sources[i] = new IRectangle[BBBcount][];
-                for(int c = 0; c < BBBcount; ++c ) {
+                sprites[i] = new ISprite[BBBcount][];
+                for( int c = 0; c < BBBcount; ++c ) {
                     sources[i][c] = new IRectangle[CCCcount];
+                    sprites[i][c] = new ISprite[CCCcount];
                 }
             }
             aaa = AAAcount;
@@ -410,15 +414,41 @@ namespace Stepflow.Gui
             ccc = CCCcount;
         }
 
-        public void Initialize()
+        public void AddSprite( ISprite sprite, int a, int b, int c )
+        {
+            AddImage( sprite.image as Bitmap );
+            sprites[a][b][c] = sprite;
+            if( sources[a][b][c] == null )
+                sources[a][b][c] = sprite.frame;
+        }
+
+        public void AddSprite( Bitmap img, IRectangle source, int a, int b, int c  )
+        {
+            int i = AddImage( img );
+            sources[a][b][c] = source;
+            sprites[a][b][c] = new IndexBasedSprite( this, a, b, c, i ); 
+        }
+
+        public int AddImage( Bitmap img )
+        {
+            int idx = -1;
+            for( int i = 0; i < bitmaps.Length; ++i )
+                if( img == bitmaps[i] ) return i;
+                else if( idx < 0 ) if( bitmaps[i] == null )
+                    idx = i;
+            bitmaps[idx] = img;
+            return idx;
+        }
+
+        public void InitializeIndices()
         {
             sprites = new ISprite[sources.Length][][];
-            for(int a=0;a<sources.Length;++a ) {
+            for( int a=0; a<sources.Length; ++a ) {
                 sprites[a] = new ISprite[sources[a].Length][];
-                for(int b = 0; b < sources[a].Length; ++b ) {
+                for( int b = 0; b < sources[a].Length; ++b ) {
                     sprites[a][b] = new ISprite[sources[a][b].Length];
-                    for(int c = 0; c < sources[a][b].Length; ++c ) {
-                        sprites[a][b][c] = new IndexBasedSprite(this, a, b, c, a);
+                    for( int c = 0; c < sources[a][b].Length; ++c ) {
+                        sprites[a][b][c] = new IndexBasedSprite( this, a, b, c, a );
                     }
                 }
             }
@@ -427,14 +457,12 @@ namespace Stepflow.Gui
             color = null;
         }
 
-        ISprite Current {
-            get { return sprites[aaa][bbb][ccc]; }
-        }
 
-        private void enableColor(bool enable)
+
+        private void enableColor( bool enable )
         {
-            if (enable) {
-            if( attributes==null ) {
+            if( enable ) {
+            if( attributes == null ) {
                 attributes = new ImageAttributes();
             }
             if( color == null ) {
@@ -449,20 +477,20 @@ namespace Stepflow.Gui
                 );
             }
             } else {
-                attributes.ClearColorMatrix(ColorAdjustType.Bitmap);
-                attributes.ClearGamma(ColorAdjustType.Bitmap);
+                attributes.ClearColorMatrix( ColorAdjustType.Bitmap );
+                attributes.ClearGamma( ColorAdjustType.Bitmap );
                 attributes = null;
                 color = null;
             }
-        } 
+        }
 
         public void SetColor( Color drawColor )
         {
             enableColor( true );
-            color.Matrix00 = (float)drawColor.R / 255;
-            color.Matrix11 = (float)drawColor.G / 255;
-            color.Matrix22 = (float)drawColor.B / 255;
-            color.Matrix33 = (float)drawColor.A / 255;
+            color.Matrix00 = (float)drawColor.R / 255.0f;
+            color.Matrix11 = (float)drawColor.G / 255.0f;
+            color.Matrix22 = (float)drawColor.B / 255.0f;
+            color.Matrix33 = (float)drawColor.A / 255.0f;
             dirtOnTheMatrix = true;
         }
         public void SetAlpha( float alpha )
@@ -479,50 +507,104 @@ namespace Stepflow.Gui
         }
 
         public Color Color {
-            get { return attributes == null? Color.Transparent : Color.FromArgb((int)(color.Matrix33*255),(int)(color.Matrix00*255),(int)(color.Matrix11*255),(int)(color.Matrix22*255)); }
-            set { SetColor(value); }
+            get { return attributes == null 
+                       ? Color.Transparent
+                       : Color.FromArgb(
+                           (int)(color.Matrix33*255.0f),
+                           (int)(color.Matrix00*255.0f),
+                           (int)(color.Matrix11*255.0f),
+                           (int)(color.Matrix22*255.0f)
+                         );
+            }
+            set { SetColor( value ); }
         }
 
-        public void SetSprite( int num )
+
+
+        public void SelectGroup( int group )
         {
-            ccc = num;
+            aaa = group;
         }
-        public void SetSprite( Enum frame )
+        public void SelectGroup( Enum group )
+        {
+            aaa = group.ToInt32();
+        }
+        public E CurrentGroup<E>() where E : struct, IConvertible
+        {
+            return (E)Enum.GetValues( typeof(E) ).GetValue( aaa );
+        }
+
+        public void SelectLoop( int loop )
+        {
+            bbb = loop;
+        }
+        public void SelectLoop( Enum loop )
+        {
+            bbb = loop.ToInt32();
+        }
+        public void SelectLoop( Enum group, Enum loop )
+        {
+            aaa = group.ToInt32();
+            bbb = loop.ToInt32();
+        }
+        public E CurrentLoop<E>() where E : struct, IConvertible
+        {
+            return (E)Enum.GetValues( typeof(E) ).GetValue( bbb );
+        }
+
+        public void SelectFrame( int frame )
+        {
+            ccc = frame;
+        }
+        public void SelectFrame( Enum frame )
         {
             ccc = frame.ToInt32();
         }
+        public void SelectFrame( int group, int loop, int frame )
+        {
+            aaa = group;
+            bbb = loop;
+            ccc = frame;
+        }
+
+        private int indexValue( object index )
+        {
+            Type type = index.GetType();
+            if( index is int ) { return (int)index; } else
+            if( index is Enum ) { return ( index as Enum ).ToInt32(); } else
+            if( index is string ) { return ( Enum.Parse(type, index as string) as Enum ).ToInt32(); }
+            else throw new TypeUnloadedException();
+        }
+        public ISprite this[ params object[] idx ] {
+            get { switch( idx.Length ) {
+                    case 1: { return sprites[aaa][bbb][indexValue(idx[0])]; }
+                    case 2: { return sprites[aaa][indexValue(idx[0])][indexValue(idx[1])]; }
+                    case 3: { return sprites[indexValue(idx[0])][indexValue(idx[1])][indexValue(idx[2])]; }
+                } return null;
+            }
+        }
+
+
+        public ISprite NextFrame {
+            get { ccc = ( ++ccc % sprites[aaa][bbb].Length );
+                return sprites[aaa][bbb][ccc]; }
+        }
+
         public ISprite GetSprite( int frame )
         {
-            return sprites[aaa][bbb][ccc=frame];
+            return sprites[aaa][bbb][frame];
         }
-        public ISprite GetSprite( Enum idx )
+        public ISprite GetSprite( Enum frame )
         {
-            return sprites[aaa][bbb][ccc=idx.ToInt32()];
+            return sprites[aaa][bbb][frame.ToInt32()];
         }
-        public void SetGroup( Enum group )
+        public ISprite GetSprite( int group, int loop, int frame )
         {
-            aaa = group.ToInt32();
+            return sprites[group][loop][frame];
         }
-        public E GetGroup<E>() where E : struct, IConvertible
+        public ISprite Current
         {
-            return (E)Enum.GetValues(typeof(E)).GetValue(aaa);
+            get { return sprites[aaa][bbb][ccc]; }
         }
-        public void SetLoop( Enum loop )
-        {
-            bbb = loop.ToInt32();
-        }
-        public E GetLoop<E>() where E : struct, IConvertible
-        {
-            return (E)Enum.GetValues(typeof(E)).GetValue(bbb);
-        }
-        public void SetSprite( Enum group, Enum loop )
-        {
-            aaa = group.ToInt32();
-            bbb = loop.ToInt32();
-        }
-        public ISprite GetSprite( int orient, int style, int frame )
-        {
-            return sprites[aaa=orient][bbb=style][frame];
-        } 
     }
 }

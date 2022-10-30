@@ -70,6 +70,7 @@ namespace Stepflow.Gui
         private int                hover;
         private bool               autoText;
         private LedGlimmer         glimmer;
+        private SpriteSheet        smaller;
         private ButtonValenceField joints;
 
         private byte               highest;
@@ -77,30 +78,20 @@ namespace Stepflow.Gui
         private LED[]              led = new LED[MaxNumState];
         private bool               glimme = false;
         private int                tackte = 0;
+        private MipMap             mipmap = MipMap.Large;
 
         #region Impl: ITaskAssistable
-
-        public ITaskAsistableVehicle<Action,Action> task() { return this; }
-        ITaskAssistor<Action, Action> ITaskAsistableVehicle<Action, Action>.assist { get; set; }
-        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StartAssist()
-        {
-//#if DEBUG
-//            int placement = task().assist.GetAssistence( task().assist.action );  
-//            Consola.StdStream.Out.WriteLine( "DampfDruck now at {0} cylinders", placement );
-//            return placement;
-//#else
-            return task().assist.GetAssistence( task().assist.action );   
-//#endif
+        public ITaskAsistableVehicle<Action,Action> task() {
+            return this;
         }
-        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist()
-        {
-//#if DEBUG
-//            int placement = task().assist.ReleaseAssist( task().assist.action );
-//            Consola.StdStream.Out.WriteLine( "DampfStopt! no cylinders anymore", placement );
-//            return placement;
-//#else
+        ITaskAssistor<Action,Action> ITaskAsistableVehicle<Action,Action>.assist {
+            get; set;
+        }
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StartAssist() {
+            return task().assist.GetAssistence( task().assist.action );   
+        }
+        int IAsistableVehicle<IActionDriver<Action,ILapFinish<Action>,Action>,ILapFinish<Action>>.StoptAssist() {
             return task().assist.ReleaseAssist( task().assist.action );
-//#endif
         }
         #endregion
 
@@ -118,14 +109,21 @@ namespace Stepflow.Gui
 #endregion
 
         private sbyte style;
+        private Image backg()
+        {
+            return mipmap == MipMap.Large
+                 ? background[style+hover]
+                 : Resources.kein_bild;
+        }
         public Style Style {
             get { return (Style)style; }
             set { if( style != (sbyte)value ) {
                     style = (sbyte)value;
-                    BackgroundImage = background[style+hover];
+                    BackgroundImage = backg();
+                    smaller.SelectFrame( style );
                     Label.ForeColor = value <= Style.Flat
-                                             ? Color.FromKnownColor(KnownColor.ControlDarkDark)
-                                             : Color.FromKnownColor(KnownColor.ControlLight);
+                                             ? Color.FromKnownColor( KnownColor.ControlDarkDark )
+                                             : Color.FromKnownColor( KnownColor.ControlLight );
                 Invalidate(); }
             }
         }
@@ -153,7 +151,7 @@ namespace Stepflow.Gui
             get { return mode; }
             set { if( value != mode ) {
                     mode = value;
-                    Invalidate(false);
+                    Invalidate( false );
                 } 
             }
         }
@@ -161,7 +159,7 @@ namespace Stepflow.Gui
         public float LedLevel {
             get { return glimmer.Lum; }
             set { glimmer.Pre = value;
-                  Invalidate(false);
+                  Invalidate( false );
             }
         }
 
@@ -189,20 +187,17 @@ namespace Stepflow.Gui
 
         static LedButton()
         {
-//#if DEBUG
-//            Consola.StdStream.Init( Consola.CreationFlags.TryConsole );
-//            Win32Imports.RETURN_CODE.SetLogOutWriter( Consola.StdStream.Out.WriteLine );
-//#endif
             Valence.RegisterIntervaluableType<Controlled.Int8>();
             Valence.RegisterIntervaluableType<Controlled.Float32>();
 
             buttonLeds = Resources.LedButton_LEDs;
-            background = new Bitmap[6] { Resources.LedButton_Flat,
+            background = new Bitmap[7] { Resources.LedButton_Flat,
                                          Resources.button_hover_Lite,
                                          Resources.button_hover_Dark,
                                          Resources.button_hover_Flat,
                                          Resources.LedButton_Lite,
-                                         Resources.LedButton_Dark };
+                                         Resources.LedButton_Dark,
+                                         Resources.LedButton_Small };
             
 
             TaskAssist<SteadyAction,Action,Action>.Init( 60 );
@@ -216,7 +211,7 @@ namespace Stepflow.Gui
         {
             hover = 0;
             mode = Transit.OnRelease;
-            state = new Controlled.Int8(0,9,0,ControlMode.None);
+            state = new Controlled.Int8( 0, 9, 0, ControlMode.None );
             state.VAL = 2;
             state.Mode = ControlMode.Element;
             unsafe {
@@ -226,13 +221,25 @@ namespace Stepflow.Gui
             state.SetCheckAtSet();
             state.Active = true;
 
-            glimmer = new LedGlimmer( buttonLeds, 1 );
-            glimmer.SetSheet(0);
+            glimmer = new LedGlimmer( buttonLeds, 1.0f );
+            glimmer.SetSheet( 0 );
             glimmer.Pre = 1.0f;
             glimmer.Lum = 1.0f;
-            for( int i=0; i<8; ++i ) {
+            for( int i = 0; i < 8; ++i ) {
                 glimmer.SetSource( (LED)i, 0, i * 32, 32, 32 );
             }
+
+            smaller = new SpriteSheet(1, 1, 2, 3);
+            smaller.Name = "LedButton";
+            smaller.AddSprite( background[6], new CornerAndSize(22, 04, 10, 10), 0, 0, 0 );
+            smaller.AddSprite( background[6], new CornerAndSize(22, 22, 10, 10), 0, 0, 1 );
+            smaller.AddSprite( background[6], new CornerAndSize(22, 40, 10, 10), 0, 0, 2 );
+            smaller.AddSprite( background[6], new CornerAndSize(00, 00, 18, 18), 0, 1, 0 );
+            smaller.AddSprite( background[6], new CornerAndSize(00, 18, 18, 18), 0, 1, 1 );
+            smaller.AddSprite( background[6], new CornerAndSize(00, 36, 18, 18), 0, 1, 2 );
+            smaller.SelectGroup( 0 );
+            smaller.SelectLoop( 0 );
+            smaller.SelectFrame( style = 1 );
 
             side = new RangeController();
             side.MIN = 0;
@@ -253,8 +260,6 @@ namespace Stepflow.Gui
             
             led[9] = LED.Orange;
             highest = 3;
-
-            style = 1;
             Enabled = true;
             Visible = true;
             clicked = false;
@@ -292,7 +297,7 @@ namespace Stepflow.Gui
             get { return clicked; }
             set { if( value != clicked ) {
                     if ( value && (Waiting != null) )
-                        Waiting( this, new ValueChangeArgs<Enum>(States[state.VAL]) );
+                        Waiting( this, States[state.VAL] );
                     clicked = value;
                 }
             }
@@ -302,7 +307,9 @@ namespace Stepflow.Gui
         public float SideChain {
             get { return side; }
             set { side.VAL = value;
-                valence<RangeController>( ChainField ).SetDirty( ValenceFieldState.Flags.VAL|ValenceFieldState.Flags.MOV );
+                valence<RangeController>( ChainField ).SetDirty(
+                    ValenceFieldState.Flags.VAL|ValenceFieldState.Flags.MOV
+                );
             }
         }
 
@@ -331,7 +338,7 @@ namespace Stepflow.Gui
                     if( autoText ) Label.Text = States[newValue].ToString();
                     state.VAL = newValue;
                     valence<Controlled.Int8>( StateField ).SetDirty( ValenceFieldState.Flags.VAL );
-                    Changed?.Invoke( this, new ValueChangeArgs<Enum>( States[newValue] ) );
+                    Changed?.Invoke( this, States[newValue] );
                     LedColor = led[newValue];
                 }
             }    
@@ -342,7 +349,7 @@ namespace Stepflow.Gui
             private set {
                 if ( value != Hovered ) {
                     hover = value ? 3 : 0;
-                    BackgroundImage = background[style+hover];
+                    BackgroundImage = backg();
                     Invalidate();
                 } hovered = value;
             }
@@ -550,8 +557,25 @@ namespace Stepflow.Gui
 
         protected override void OnResize( EventArgs e )
         {
-            base.OnResize(e);
+            MipMap lastSize = mipmap;
+            base.OnResize( e );
+            
+            switch( Width ) {
+                case >= 48: { mipmap = MipMap.Large; } break;
+                case >= 20: { mipmap = MipMap.Medium; } break; 
+                default: { mipmap = MipMap.Small; } break;
+            } if ( mipmap != lastSize ) {
+                BackgroundImage = backg();
+                Label.Visible = mipmap == MipMap.Large;
+                if( mipmap < MipMap.Large )
+                    smaller.SelectLoop( mipmap );
+            }
+
             leDrect.X = Width / 4;
+            leDrect.Y = mipmap < MipMap.Large 
+                      ? Height / 4
+                      : 0;
+
             leDrect.Width = Width / 2;
             leDrect.Height = Height / 2;
         }
@@ -567,7 +591,11 @@ namespace Stepflow.Gui
                 else if( mode == Transit.OnPress )
                     glimmer.Pre += 0.025f;
             glimmer.Lum = glimmer.Pre;
-            glimmer.DrawSprite( e.Graphics, leDrect );
+            if( mipmap < MipMap.Large ) {
+                glimmer.DrawBrush( e.Graphics, leDrect );
+                smaller.Current.Draw( e.Graphics,
+                    new CornerAndSize( 0, 0, Width, Height ) );
+            } else glimmer.DrawSprite( e.Graphics, leDrect );
         }
 
         private void Label_MouseDown( object sender, MouseEventArgs e )

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SpriteSheet image="LedButton_Small" count="3">
+	<element name="LedButton" enum="Stepflow.Gui.MipMap" count="3">
+		<group name="Large" enum="Stepflow.Gui.Style" count="3">
+			<group name="Flat" count="2">
+				<sprite name="BackG" image="LedButton_Flat">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+				<sprite name="Hover" image="button_flat_hover">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+			</group>
+			<group name="Lite" count="2">
+				<sprite name="BackG" image="LedButton_Lite">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+				<sprite name="Hover" image="button_lite_hover">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+			</group>
+			<group name="Dark" count="2">
+				<sprite name="BackG" image="LedButton_Dark">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+				<sprite name="Hover" image="button_dark_hover">
+					<X>0</X>
+					<Y>0</Y>
+					<W>64</W>
+					<H>64</H>
+				</sprite>
+			</group>
+		</group>
+		<array name="Medium" enum="Stepflow.Gui.Style" box="18" dir="Y" count="3">
+			<X>0</X>
+			<Y>0</Y>
+			<W>18</W>
+			<H>18</H>
+		</array>
+		<array name="Small" enum="Stepflow.Gui.Style" box="18" dir="Y" count="3">
+			<X>22</X>
+			<Y>4</Y>
+			<W>10</W>
+			<H>10</H>
+		</array>
+	</element>
+    <element name="LED" enum="Stepflow.Gui.Orientation" image="LedButton_LEDs" count="2">
+        <array name="Horizontal" enum="Stepflow.Gui.LED" count="8" dir="Y" box="32">
+            <X>0</X>
+            <Y>0</Y>
+            <W>32</W>
+            <H>32</H>
+        </array>
+        <array name="Vertical" enum="Stepflow.Gui.LED" count="8" dir="Y" box="32">
+            <X>32</X>
+            <Y>0</Y>
+            <W>32</W>
+            <H>32</H>
+        </array>
+    </element>
+</SpriteSheet>
