@@ -54,7 +54,7 @@ namespace MidiGUI.Test.Container
             int returnvalue = 0;
             if( isTestrun != TestResults.NONE ) {
                 Suite<Form1> test = testrunner.GetResult();
-                returnvalue = test.wasErrors() ? -1
+                returnvalue = test.hasCrashed() ? -1
                             : test.getFailures();
             } return returnvalue;
         }

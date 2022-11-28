@@ -34,8 +34,8 @@ namespace MidiGUI.Test
 
         public SuiteGUIControls( Container.Form1 mainwindow, TestResults args, string testcase )
             : base( mainwindow
-                  , args.HasFlag(TestResults.Verbose)
-                  , args.HasFlag(TestResults.XmlOutput)
+                  , args.HasFlag( TestResults.Verbose )
+                  , args.HasFlag( TestResults.XmlOutput )
                   ) {
 
             switch( testcase ) {
@@ -148,7 +148,7 @@ namespace MidiGUI.Test
             Thread.Sleep( 1000 );
 
             Point32 point = Aut.GetTestlingArea().Center;
-            InfoStep( "Clicking {0} at x:{1},y:{2}", CurrentCase, point.X, point.Y );
+            StepInfo( "Clicking {0} at x:{1},y:{2}", CurrentCase.Name, point.X, point.Y );
             ConTrol.Click( ConTrol.Button.L, point.X, point.Y );
             Thread.Sleep( 1000 );
 
@@ -205,7 +205,7 @@ namespace MidiGUI.Test
             else if( typeof(T) == typeof(MidiButton) )
                 ( testling as MidiButton ).midi().output().ConfigureAsMessagingAutomat( binder );
 
-            InfoStep("Bound '{0}' to midi output controller {1} on channel {2} ", testling, controller, channel);
+            StepInfo("Bound '{0}' to midi output controller {1} on channel {2} ", testling, controller, channel);
         }
 
         public void SelectAndBindMidiReceivingControl<T>( int channel, int controller ) where T : class, IInterValuable
@@ -230,7 +230,7 @@ namespace MidiGUI.Test
             else if( typeof(T) == typeof(MidiButton) )
                 ( testling as MidiButton ).midi().input().RegisterAsMesssageListener(binder);
 
-            InfoStep("Bound '{0}' to input midi channel {2}, controller {1} on port {3}", testling, controller, channel, midi().MidiOutPortName(1) );
+            StepInfo("Bound '{0}' to input midi channel {2}, controller {1} on port {3}", testling, controller, channel, midi().MidiOutPortName(1) );
         }
 
         public void OnIncommingMidiControl( object sender, Win32Imports.Midi.Message value )
