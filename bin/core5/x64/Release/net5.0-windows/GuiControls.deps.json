@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v5.0": {
       "GuiControls/0.0.0.1": {
         "dependencies": {
-          "Consola": "0.0.1.7",
+          "Consola": "0.0.1.8",
           "ControlledValues": "0.0.0.3",
           "Int24Types": "0.0.0.3",
           "TaskAssist": "0.0.1.0"
@@ -17,10 +17,10 @@
           "GuiControls.dll": {}
         }
       },
-      "Consola/0.0.1.7": {
+      "Consola/0.0.1.8": {
         "runtime": {
           "Consola.dll": {
-            "assemblyVersion": "0.0.1.7",
+            "assemblyVersion": "0.0.1.8",
             "fileVersion": "0.0.0.0"
           }
         }
@@ -57,7 +57,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Consola/0.0.1.7": {
+    "Consola/0.0.1.8": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

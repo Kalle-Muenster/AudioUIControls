@@ -9,8 +9,9 @@
       "MidiControls/0.0.0.1": {
         "dependencies": {
           "GuiControls": "0.0.0.1",
-          "Consola": "0.0.1.7",
+          "Consola": "0.0.1.8",
           "ControlledValues": "0.0.0.3",
+          "GuiControls.Reference": "0.0.0.1",
           "Int24Types": "0.0.0.3",
           "TaskAssist": "0.0.1.0"
         },
@@ -18,15 +19,10 @@
           "MidiControls.dll": {}
         }
       },
-      "GuiControls/0.0.0.1": {
-        "runtime": {
-          "GuiControls.dll": {}
-        }
-      },
-      "Consola/0.0.1.7": {
+      "Consola/0.0.1.8": {
         "runtime": {
           "Consola.dll": {
-            "assemblyVersion": "0.0.1.7",
+            "assemblyVersion": "0.0.1.8",
             "fileVersion": "0.0.0.0"
           }
         }
@@ -36,6 +32,14 @@
           "ControlledValues.dll": {
             "assemblyVersion": "0.0.0.3",
             "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "GuiControls.Reference/0.0.0.1": {
+        "runtime": {
+          "GuiControls.dll": {
+            "assemblyVersion": "0.0.0.1",
+            "fileVersion": "0.0.0.1"
           }
         }
       },
@@ -63,17 +67,17 @@
       "serviceable": false,
       "sha512": ""
     },
-    "GuiControls/0.0.0.1": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Consola/0.0.1.7": {
+    "Consola/0.0.1.8": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
     "ControlledValues/0.0.0.3": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GuiControls.Reference/0.0.0.1": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

@@ -10,7 +10,7 @@
         "dependencies": {
           "GuiControls": "0.0.0.1",
           "MidiControls": "0.0.0.1",
-          "Consola": "0.0.1.7",
+          "Consola": "0.0.1.8",
           "Consola.Test": "0.0.1.7",
           "ControlledValues": "0.0.0.3",
           "Int24Types": "0.0.0.3",
@@ -33,10 +33,10 @@
           "MidiControls.dll": {}
         }
       },
-      "Consola/0.0.1.7": {
+      "Consola/0.0.1.8": {
         "runtime": {
           "Consola.dll": {
-            "assemblyVersion": "0.0.1.7",
+            "assemblyVersion": "0.0.1.8",
             "fileVersion": "0.0.0.0"
           }
         }
@@ -91,7 +91,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Consola/0.0.1.7": {
+    "Consola/0.0.1.8": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
