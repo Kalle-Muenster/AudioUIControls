@@ -173,12 +173,12 @@ namespace Stepflow.Gui.Helpers
         }
         public Color Rgb {
             get { return Color.FromArgb( 255,
-                    (int)(alfamatrize.Matrix00*255),
-                    (int)(alfamatrize.Matrix11*255),
-                    (int)(alfamatrize.Matrix22*255) ); }
-            set { alfamatrize.Matrix00 = (float)value.R / 255;
-                  alfamatrize.Matrix11 = (float)value.G / 255;
-                  alfamatrize.Matrix22 = (float)value.B / 255;
+                    (int)(alfamatrize.Matrix00*255.0f),
+                    (int)(alfamatrize.Matrix11*255.0f),
+                    (int)(alfamatrize.Matrix22*255.0f) ); }
+            set { alfamatrize.Matrix00 = (float)value.R / 255.0f;
+                  alfamatrize.Matrix11 = (float)value.G / 255.0f;
+                  alfamatrize.Matrix22 = (float)value.B / 255.0f;
                 attributzke.SetColorMatrix( alfamatrize );
             }
         }
@@ -198,7 +198,7 @@ namespace Stepflow.Gui.Helpers
         public float Hue {
             get { return hueRotation; }
             set { if ( value != hueRotation ) {
-                    float cos = (float)(value*System.Math.PI/180);
+                    float cos = (float)(value*Math.PI/180);
                     float sin = (float)Math.Sin(cos);
                           cos = (float)Math.Cos(cos);
                     ColorMatrix m1 = new ColorMatrix();
@@ -225,7 +225,7 @@ namespace Stepflow.Gui.Helpers
                 case Style.Lite: darkenBrush.Color = Color.FromArgb( 255, 56, 56, 56 ); break;
                 case Style.Dark: darkenBrush.Color = Color.FromArgb( 255, 
                     Color.FromArgb( LedGlower.ledCol[(int)LED.off]) ); break;
-            } Pre = 1.0f - (float)style/3;
+            } Pre = 1.0f - (float)style/3.0f;
         }
         public bool Off {
             get { return lowerglower.Off; }

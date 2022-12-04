@@ -123,7 +123,8 @@ namespace Midi
 
             System.Xml.XPath.XPathNavigator xpath = new System.Xml.XPath.XPathDocument(
                    new System.IO.StringReader( Resources.DieFlachenLeds_xml ) 
-                                                                         ).CreateNavigator();
+            ).CreateNavigator();
+
             ledBG = new Rectangle[] {
                 rectFromXmlSheet(xpath,"Top"), rectFromXmlSheet(xpath,"Left"),
                 rectFromXmlSheet(xpath,"Right"), rectFromXmlSheet(xpath,"Bottom")
@@ -206,13 +207,13 @@ namespace Midi
             set { if( (int)value != style ) {
                     style = (int)value;
                     BackgroundImage = image[style][0];
-                    if( value!=Style.Flat ) {
+                    if( value != Style.Flat ) {
                         int col = (int)LedColor;
                         col = col < 8 ? col : 7;
                         glimmer.SetImage( leds[col] );
                     }
                     glimmer.SetStyle( value );
-                    Invalidate(true);
+                    Invalidate( true );
                 }
             }
         }
@@ -221,7 +222,7 @@ namespace Midi
             get { return glimmer.Led; }
             set {
                 glimmer.Led = value;
-                if( Style!=Style.Flat )
+                if( Style != Style.Flat )
                     if( value < LED.off )
                         glimmer.SetImage( leds[(int)value] );
             }
@@ -359,12 +360,12 @@ namespace Midi
 
             style = (int)Style.Lite;
             BackgroundImage = image[style][0];
-            scaleFactor = 1;
+            scaleFactor = 1.0f;
 
             pos = new Controlled.Float32();
-            pos.SetUp(0, 360, 0, 0, ControlMode.Element);
+            pos.SetUp(0.0f, 360.0f, 0.0f, 0.0f, ControlMode.Element);
             flow = new Controlled.Float32();
-            flow.SetUp(-10, 10, IsDownBelow, 0, ControlMode.Element);
+            flow.SetUp(-10.0f, 10.0f, IsDownBelow, 0.0f, ControlMode.Element);
             unsafe {
                 *(bool*)pos.GetPin(ElementValue.UNSIGNED).ToPointer() = false;
                 *(bool*)pos.GetPin(ElementValue.CYCLED).ToPointer() = true;
@@ -568,13 +569,13 @@ namespace Midi
                 rotator.Multiply( e.Graphics.Transform );
                 e.Graphics.Transform = rotator;
                 foreach( Rectangle led in ledBG )
-                    glimmer.DrawBrush(e.Graphics, led);
+                    glimmer.DrawBrush( e.Graphics, led );
                 rotator.Reset();
                 rotator.RotateAt( 45 , halfSize );
                 rotator.Multiply( e.Graphics.Transform );
                 e.Graphics.Transform = rotator;
                 foreach( Rectangle led in ledBG )
-                    glimmer.DrawBrush(e.Graphics, led);
+                    glimmer.DrawBrush( e.Graphics, led );
                 e.Graphics.Restore( pushed );
               }
                 rotator.Reset();
@@ -755,7 +756,7 @@ namespace Midi
         private void Slope_MouseMove( object sender, EventArgs e )
         {
             if ( softrelease > 0 ) {
-                if(--softrelease <= 0) {
+                if( --softrelease <= 0 ) {
                     if( interaction == InteractionMode.FlowByQuadrants ) {
                         Wheel.MouseMove -= Wheel_VierQuadrantenMouseMove;
                         TouchMove -= Wheel_VierQuadrantenTouchMove;
