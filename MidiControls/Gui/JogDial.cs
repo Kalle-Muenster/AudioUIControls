@@ -582,12 +582,16 @@ namespace Midi
                 rotator.RotateAt( angle , halfSize );
                 rotator.Multiply( e.Graphics.Transform );
                 e.Graphics.Transform = rotator;
-                glimmer.Lum = Math.Abs( Movement ) / ValueRange;
                 e.Graphics.DrawImage( image[style][1], Wheel.Bounds );
-                if( Style != Style.Flat )
+                float absmov =  Math.Abs( Movement );
+                float vrange = ValueRange;
+                float expand = ( (vrange - absmov) / vrange ) * 33.0f;
+                expand = expand < 1.0f ? 1.0f : expand;
+                expand *= ( absmov / vrange );
+                if( Style != Style.Flat ) {
+                    glimmer.Lum = expand;
                     glimmer.DrawSprite( e.Graphics, Wheel.Bounds );
-                else
-                    e.Graphics.DrawImage( image[style][1], Wheel.Bounds );
+                } else glimmer.Lum = expand / 10.0f;
             e.Graphics.Restore( pushed );
         }
 
