@@ -560,11 +560,14 @@ namespace Stepflow.Gui
             MipMap lastSize = mipmap;
             base.OnResize( e );
             
-            switch( Width ) {
-                case >= 48: { mipmap = MipMap.Large; } break;
-                case >= 20: { mipmap = MipMap.Medium; } break; 
-                default: { mipmap = MipMap.Small; } break;
-            } if ( mipmap != lastSize ) {
+            if( Width >= 48 ) {
+                mipmap = MipMap.Large;
+            } else if( Width >= 20 ) {
+                mipmap = MipMap.Medium;
+            } else {
+                mipmap = MipMap.Small;
+            }
+            if ( mipmap != lastSize ) {
                 BackgroundImage = backg();
                 Label.Visible = mipmap == MipMap.Large;
                 if( mipmap < MipMap.Large )

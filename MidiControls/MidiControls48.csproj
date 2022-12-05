@@ -92,15 +92,21 @@
     <Compile Include="Gui\JogDial.Designer.cs">
       <DependentUpon>JogDial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MidiButton.cs" />
+    <Compile Include="Gui\MidiButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\MidiButton.Designer.cs">
       <DependentUpon>MidiButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MidiMeter.cs" />
+    <Compile Include="Gui\MidiMeter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\MidiMeter.Designer.cs">
       <DependentUpon>MidiMeter.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\MidiSlider.cs" />
+    <Compile Include="Gui\MidiSlider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Gui\MidiSlider.Designer.cs">
       <DependentUpon>MidiSlider.cs</DependentUpon>
     </Compile>
